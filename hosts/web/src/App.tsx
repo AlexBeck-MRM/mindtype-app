@@ -76,18 +76,17 @@ export default function App() {
 
   const applyExternalDiff = useCallback(
     (detail: { start: number; end: number; text: string }) => {
-      setText((prev) => {
-        const next = replaceRange(prev, detail.start, detail.end, detail.text, caretRef.current);
+    setText((prev) => {
+      const next = replaceRange(prev, detail.start, detail.end, detail.text, caretRef.current);
         caretRef.current = detail.start + detail.text.length;
         if (textareaRef.current) {
           textareaRef.current.selectionStart = caretRef.current;
           textareaRef.current.selectionEnd = caretRef.current;
         }
-        ingest(next, caretRef.current);
-        return next;
-      });
+      return next;
+    });
     },
-    [ingest],
+    [],
   );
 
   // Listen for mechanical swap events
@@ -132,7 +131,7 @@ export default function App() {
       }
 
       const nextChar = SAMPLE_TEXT[autoIndexRef.current];
-      setText((prev) => {
+        setText((prev) => {
         const nextText = prev + nextChar;
         const nextCaret = nextText.length;
         caretRef.current = nextCaret;
@@ -162,7 +161,7 @@ export default function App() {
   }, [autoTyping, ingest]);
 
   const currentCaret = textareaRef.current?.selectionStart ?? text.length;
-
+  
   return (
     <div className="App">
       {state.errorMessage && state.assetStatus === 'missing' && (
@@ -213,7 +212,7 @@ export default function App() {
       <div className="editor-layout">
         <section className="editor-section">
           <div className="editor-wrapper">
-            <textarea
+          <textarea 
               ref={textareaRef}
               value={text}
               onChange={handleTextChange}
@@ -231,23 +230,23 @@ export default function App() {
               lmWireEvents={diagnostics.lmWireEvents}
               swaps={swaps}
               textareaRef={textareaRef}
-            />
+        />
           </div>
-          <div className="editor-actions">
+        <div className="editor-actions">
             <button onClick={() => ingest(text, currentCaret)} className="action-button">
               Run corrections
             </button>
             <label className="action-label">
-              <input
-                type="checkbox"
-                checked={autoTyping}
-                onChange={(e) => {
-                  setAutoTyping(e.target.checked);
+                <input
+                  type="checkbox"
+              checked={autoTyping}
+              onChange={(e) => {
+                setAutoTyping(e.target.checked);
                   autoIndexRef.current = 0;
-                }}
-              />
-              Autotype sample
-            </label>
+              }}
+            />
+            Autotype sample
+              </label>
             <button
               onClick={() => setScenarioOpen((v) => !v)}
               className="action-button action-button-secondary"
@@ -255,9 +254,9 @@ export default function App() {
               {scenarioOpen ? 'Hide' : 'Show'} Scenarios
             </button>
           </div>
-        </section>
+      </section>
 
-        {panelOpen && (
+      {panelOpen && (
           <aside className="metrics-section">
             <MetricsPanel
               diagnostics={diagnostics}
@@ -269,7 +268,7 @@ export default function App() {
             />
           </aside>
         )}
-      </div>
+                  </div>
 
       {scenarioOpen && (
         <div className="scenario-drawer">
@@ -284,10 +283,10 @@ export default function App() {
                 <div className="scenario-name">{preset.name}</div>
                 <div className="scenario-desc">{preset.description}</div>
               </button>
-            ))}
-          </div>
-        </div>
+                      ))}
+                    </div>
+                  </div>
       )}
-    </div>
-  );
+                            </div>
+                          );
 }

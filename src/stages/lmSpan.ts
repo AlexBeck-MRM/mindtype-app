@@ -12,7 +12,6 @@
 
 import type { LMAdapter, LMStreamParams } from '../lm/types';
 import { extractReplacementText } from '../lm/promptBuilder';
-import { diagBus } from '../pipeline/diagnosticsBus';
 
 export interface StreamActiveRegionOptions {
   text: string;
@@ -41,13 +40,6 @@ export async function streamActiveRegion(
     if (chunk) chunks.push(chunk);
   }
   const normalized = normalizeStreamedText(chunks.join(''));
-  try {
-    diagBus.publish({
-      channel: 'lm-jsonl',
-      time: Date.now(),
-      raw: normalized,
-    });
-  } catch {}
   if (!normalized) return { text: null, chunkCount: chunks.length };
 
   const extracted = extractReplacementText(normalized);
