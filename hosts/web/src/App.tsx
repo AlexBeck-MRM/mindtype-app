@@ -83,10 +83,11 @@ export default function App() {
           textareaRef.current.selectionStart = caretRef.current;
           textareaRef.current.selectionEnd = caretRef.current;
         }
+        ingest(next, caretRef.current);
         return next;
       });
     },
-    [],
+    [ingest],
   );
 
   // Listen for mechanical swap events
