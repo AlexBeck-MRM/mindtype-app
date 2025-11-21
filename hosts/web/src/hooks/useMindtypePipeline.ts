@@ -17,6 +17,7 @@ import { diagBus, type DiagEvent } from '../../../../src/pipeline/diagnosticsBus
 import { setLoggerConfig, type LogRecord } from '../../../../src/pipeline/logger';
 import { createLiveRegion } from '../../../../src/ui/liveRegion';
 import { verifyLocalAssets } from '../../../../src/lm/transformersClient';
+import { buildTestPrompt, extractReplacementText } from '../../../../src/lm/promptBuilder';
 
 const MODEL_PATH = '/mindtype/models/onnx-community/Qwen2.5-0.5B-Instruct';
 const WASM_PATH = '/mindtype/wasm/';
@@ -76,8 +77,9 @@ export interface UseMindtypePipelineReturn {
 }
 
 // Improved test prompt with clear instructions
-const LM_TEST_INPUT = 'heya ha ve you hgeard there was a n icre cream trk outside that s kinda cool right';
-const LM_TEST_PROMPT = `Fix typos and spelling errors in this text. Return ONLY the corrected text:\n\n"${LM_TEST_INPUT}"`;
+const LM_TEST_INPUT =
+  'heya ha ve you hgeard there was a n icre cream trk outside that s kinda cool right';
+const LM_TEST_PROMPT = buildTestPrompt(LM_TEST_INPUT);
 
 export function useMindtypePipeline(): UseMindtypePipelineReturn {
   const pipelineRef = useRef<ReturnType<typeof boot> | null>(null);
@@ -327,7 +329,7 @@ export function useMindtypePipeline(): UseMindtypePipelineReturn {
       const prompt = LM_TEST_PROMPT;
       setLmTest({
         status: 'running',
-        prompt: `Fix typos: "${testInput}"`,
+        prompt,
         response: '',
         trigger,
       });
@@ -347,13 +349,9 @@ export function useMindtypePipeline(): UseMindtypePipelineReturn {
         })) {
           if (chunk) chunks.push(chunk);
         }
-        // Extract just the corrected text (remove any extra model output)
         const rawResponse = chunks.join('').trim();
-        // Clean up: remove quotes if model added them, extract just the corrected text
-        const response = rawResponse
-          .replace(/^["']|["']$/g, '') // Remove surrounding quotes
-          .replace(/^.*?:\s*/i, '') // Remove any prefix like "Corrected:"
-          .trim();
+        const parsed = extractReplacementText(rawResponse);
+        const response = (parsed ?? rawResponse).trim();
         setLmTest({
           status: 'success',
           prompt,
