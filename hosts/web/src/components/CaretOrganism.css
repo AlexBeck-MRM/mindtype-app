@@ -1,0 +1,109 @@
+/*╔══════════════════════════════════════════════════════════════╗
+  ║  ░  C A R E T   O R G A N I S M   S T Y L E S  ░░░░░░░░░░░░  ║
+  ║                                                              ║
+  ║   Understated animations for correction marker and active    ║
+  ║   region overlay. Respects prefers-reduced-motion.          ║
+  ║                                                              ║
+  ╚══════════════════════════════════════════════════════════════╝*/
+
+.caret-organism {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.active-region-overlay {
+  position: absolute;
+  background: rgba(124, 224, 184, 0.12);
+  border-radius: 3px;
+  background: rgba(124, 224, 184, 0.08);
+  border: 1px solid rgba(124, 224, 184, 0.25);
+  transition: opacity 0.2s ease, transform 0.2s ease, width 0.2s ease;
+}
+
+.wake-trail {
+  position: absolute;
+  background: rgba(124, 224, 184, 0.12);
+  transition: opacity 0.3s ease;
+  border-radius: 3px;
+}
+
+.marker {
+  position: absolute;
+  font-size: 18px;
+  color: #7ce0b8;
+  font-family: 'Geist Mono', 'SFMono-Regular', monospace;
+  transition: transform 0.15s ease;
+  filter: drop-shadow(0 1px 2px rgba(124, 224, 184, 0.3));
+}
+
+.marker-listening {
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+.marker-travelling {
+  animation: travel 0.6s ease-in-out infinite;
+}
+
+.marker-applying {
+  animation: apply 0.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes travel {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+}
+
+@keyframes apply {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker-listening,
+  .marker-travelling,
+  .marker-applying {
+    animation: none;
+  }
+  .marker {
+    transition: none;
+  }
+}
+
+.stage-badge {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(11, 15, 18, 0.9);
+  border: 1px solid rgba(124, 224, 184, 0.3);
+  color: #7ce0b8;
+  white-space: nowrap;
+  font-family: 'Geist', 'Inter', system-ui;
+  font-weight: 500;
+}
+
+.stage-listening {
+  border-color: rgba(124, 224, 184, 0.4);
+}
+
+.stage-travelling {
+  border-color: rgba(255, 193, 93, 0.4);
+  color: #ffb869;
+}
+
+.stage-applying {
+  border-color: rgba(0, 200, 120, 0.4);
+  color: #00c878;
+}
+

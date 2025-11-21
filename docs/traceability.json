@@ -1,0 +1,308 @@
+{
+  "CONTRACT-ACTIVE-REGION": {
+    "kind": "CONTRACT",
+    "title": "Active region policy (render vs context ranges)",
+    "modules": [
+      "src/region/policy.ts",
+      "src/region/diffusion.ts",
+      "core-rs/src/active_region.rs"
+    ],
+    "acceptance": [],
+    "tests": [],
+    "invariants": [
+      "Context can extend beyond the render window but never crosses secure fields or the caret",
+      "Render range must exclude the caret and shrink immediately when the user re-enters it"
+    ],
+    "types": [],
+    "source": "docs/contracts.md"
+  },
+  "CONTRACT-LM-ADAPTER": {
+    "kind": "CONTRACT",
+    "title": "LMAdapter streaming contract",
+    "modules": [
+      "src/lm/types.ts",
+      "src/lm/factory.ts",
+      "src/lm/policy.ts",
+      "src/region/policy.ts"
+    ],
+    "acceptance": [],
+    "tests": [],
+    "invariants": [
+      "Never emit a diff that modifies content at/after the caret (REQ-CARET-SAFE)",
+      "Abort or drop stale generations if the active region changes before commit"
+    ],
+    "types": [
+      {
+        "name": "LMStreamParams",
+        "ts": "export interface LMStreamParams {\n  text: string;\n  caret: number;\n  active_region: { start: number; end: number };\n  settings?: Record<string, unknown>;\n}\n"
+      }
+    ],
+    "source": "docs/contracts.md"
+  },
+  "CONTRACT-LM-STREAM": {
+    "kind": "CONTRACT",
+    "title": "JSONL LM stream protocol (context → tone)",
+    "modules": [
+      "src/lm/types.ts",
+      "src/lm/mockStreamAdapter.ts",
+      "hosts/web/src/worker/lmWorker.ts"
+    ],
+    "acceptance": [
+      "tests/lm_stream.spec.ts#SCEN-LM-STREAM-001",
+      "e2e/tests/lm_lab.spec.ts#SCEN-LM-LAB-002"
+    ],
+    "tests": [],
+    "invariants": [
+      "Events are JSON objects per line with required type + stage metadata",
+      "Tone stage cannot start until the context stage commits successfully"
+    ],
+    "types": [],
+    "source": "docs/contracts.md"
+  },
+  "REQ-CARET-SAFETY": {
+    "kind": "REQ",
+    "title": "Never modify at or after the caret",
+    "modules": [
+      "src/region/policy.ts",
+      "src/region/diffusion.ts",
+      "src/safety/grapheme.ts",
+      "src/stages/noise.ts",
+      "src/stages/context.ts",
+      "src/stages/tone.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-CARET-SAFE"
+    ],
+    "tests": [
+      "tests/activeRegion.spec.ts",
+      "tests/grapheme.spec.ts",
+      "tests/diffusionController_policy_guard.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-CONFIDENCE-GATING": {
+    "kind": "REQ",
+    "title": "Confidence gating for context/tone stages",
+    "modules": [
+      "src/pipeline/confidenceGate.ts",
+      "src/stages/context.ts",
+      "src/stages/tone.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-CONFIDENCE-GATE"
+    ],
+    "tests": [
+      "tests/confidenceGate.spec.ts",
+      "tests/contextTransformer_gating.spec.ts",
+      "tests/toneTransformer.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-UNDO-GROUPING": {
+    "kind": "REQ",
+    "title": "Single undo per sweep (atomic)",
+    "modules": [
+      "src/region/diffusion.ts",
+      "src/ui/rollback.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-UNDO-ATOMIC"
+    ],
+    "tests": [
+      "tests/rollbackHandler.spec.ts",
+      "tests/waveHistory.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-PRIVACY-LOCAL": {
+    "kind": "REQ",
+    "title": "On-device by default; secure/IME exclusion",
+    "modules": [
+      "src/safety/security.ts",
+      "src/safety/caretMonitor.ts",
+      "src/pipeline/scheduler.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-PRIVACY-ON-DEVICE"
+    ],
+    "tests": [
+      "tests/secureFields.spec.ts",
+      "tests/security_default.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-ACCESSIBILITY": {
+    "kind": "REQ",
+    "title": "Reduced-motion instant swap; one SR announcement per batch",
+    "modules": [
+      "src/ui/motion.ts",
+      "src/ui/liveRegion.ts",
+      "src/ui/highlighter.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-ACCESSIBILITY"
+    ],
+    "tests": [
+      "tests/motion.spec.ts",
+      "tests/liveRegion.spec.ts",
+      "e2e/tests/a11y-announcements.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-PAUSE-SWEEP": {
+    "kind": "REQ",
+    "title": "Pause-triggered sweep; stops at caret",
+    "modules": [
+      "src/pipeline/monitor.ts",
+      "src/pipeline/scheduler.ts",
+      "src/pipeline/correctionWave.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-PAUSE-TRIGGER"
+    ],
+    "tests": [
+      "tests/typingMonitor.spec.ts",
+      "tests/sweepScheduler_pause.spec.ts",
+      "tests/sweepScheduler_cadence.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-DETERMINISTIC-FIRST": {
+    "kind": "REQ",
+    "title": "Deterministic noise stage continues under load; graceful degradation",
+    "modules": [
+      "src/stages/noise.ts",
+      "src/pipeline/scheduler.ts",
+      "src/lm/deviceTiers.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-DETERMINISTIC-FIRST"
+    ],
+    "tests": [
+      "tests/sweepScheduler_tiers.spec.ts",
+      "tests/sweepScheduler_dynamicThresholds.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-ZONES": {
+    "kind": "REQ",
+    "title": "Active Area editable; Context Area read-only",
+    "modules": [
+      "src/region/policy.ts",
+      "src/stages/noise.ts",
+      "src/stages/context.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-ACTIVE-AREA"
+    ],
+    "tests": [
+      "tests/activeRegionPolicy_v06.spec.ts",
+      "tests/diffusionController.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/00-index/pdf-guide-requirements.md"
+  },
+  "REQ-CORRECTION-MARKER": {
+    "kind": "REQ",
+    "title": "Correction Marker visual system with two-mode operation",
+    "modules": [
+      "src/ui/marker.ts",
+      "src/ui/swapRenderer.ts",
+      "src/ui/motion.ts",
+      "src/pipeline/scheduler.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-CARET-SAFE",
+      "docs/quality.md#AC-ACCESSIBILITY"
+    ],
+    "tests": [
+      "tests/swapRenderer.spec.ts",
+      "tests/motion.spec.ts",
+      "e2e/tests/demo-corrections.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/01-prd/01-PRD.md"
+  },
+  "REQ-BURST-PAUSE-CORRECT": {
+    "kind": "REQ",
+    "title": "Muscle memory training through burst-pause-correct cycles",
+    "modules": [
+      "src/pipeline/monitor.ts",
+      "src/pipeline/scheduler.ts",
+      "src/pipeline/logger.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-PAUSE-TRIGGER"
+    ],
+    "tests": [
+      "tests/typingMonitor.spec.ts",
+      "tests/sweepScheduler_pause.spec.ts",
+      "e2e/tests/typing-flow.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/01-prd/01-PRD.md"
+  },
+  "REQ-VELOCITY-MODE": {
+    "kind": "REQ",
+    "title": "Speed enhancement mode for 180+ WPM typing",
+    "modules": [
+      "src/stages/noise.ts",
+      "src/stages/context.ts",
+      "src/lm/deviceTiers.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-DETERMINISTIC-FIRST",
+      "docs/quality.md#AC-FALLBACKS"
+    ],
+    "tests": [
+      "tests/sweepScheduler_tiers.spec.ts",
+      "tests/lmAdapter_v06.spec.ts",
+      "e2e/tests/lm-responsiveness.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/01-prd/01-PRD.md"
+  },
+  "REQ-SEVEN-SCENARIOS": {
+    "kind": "REQ",
+    "title": "Support for all seven revolutionary usage scenarios",
+    "modules": [
+      "src/pipeline/scheduler.ts",
+      "src/stages/noise.ts",
+      "src/stages/context.ts",
+      "src/stages/tone.ts"
+    ],
+    "acceptance": [
+      "docs/quality.md#AC-CARET-SAFE",
+      "docs/quality.md#AC-ACTIVE-AREA",
+      "docs/quality.md#AC-PAUSE-TRIGGER"
+    ],
+    "tests": [
+      "tests/sweepScheduler.spec.ts",
+      "tests/contextTransformer.spec.ts",
+      "tests/toneTransformer.spec.ts",
+      "tests/integration.spec.ts",
+      "e2e/tests/scenario-corrections.spec.ts"
+    ],
+    "invariants": [],
+    "types": [],
+    "source": "docs/01-prd/01-PRD.md"
+  }
+}

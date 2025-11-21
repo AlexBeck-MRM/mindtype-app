@@ -1,0 +1,172 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0a0e14;
+  color: #c5c8c6;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #14181f;
+  border-bottom: 2px solid #1f2937;
+}
+
+.header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.version {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.status {
+  font-size: 0.875rem;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.main {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.telemetry-panel {
+  position: absolute;
+  right: 2rem;
+  bottom: 2rem;
+  width: 320px;
+  background: rgba(10, 14, 20, 0.95);
+  border: 1px solid #1f2937;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 50;
+}
+
+.telemetry-pill {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  align-self: flex-start;
+}
+
+.telemetry-pill.connected {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.telemetry-pill.connecting,
+.telemetry-pill.idle {
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.telemetry-pill.error {
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+}
+
+.telemetry-pill.disabled {
+  border-color: rgba(107, 114, 128, 0.4);
+  color: #9ca3af;
+}
+
+.event-log {
+  max-height: 240px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: 'Geist Mono', 'SFMono-Regular', monospace;
+  font-size: 0.7rem;
+}
+
+.event-log-row {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: #e5e7eb;
+}
+
+.event-log-time {
+  color: #9ca3af;
+}
+
+.event-log-channel {
+  color: #60a5fa;
+  text-transform: uppercase;
+}
+
+.event-log-detail {
+  color: #fcd34d;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-log-empty {
+  color: #6b7280;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background: #14181f;
+  border-top: 2px solid #1f2937;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #1f2937;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error p {
+  color: #ef4444;
+}

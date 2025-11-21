@@ -1,0 +1,94 @@
+/*╔══════════════════════════════════════════════════════════════╗
+  ║  ░  F T - 2 0 2   I N T E G R A T I O N   H A R N E S S  ░░░  ║
+  ║                                                              ║
+  ║   End-to-end: typing → scheduler → diffusion → engines.      ║
+  ║   Verifies caret safety, pause catch-up, band progression.   ║
+  ║                                                              ║
+  ╚══════════════════════════════════════════════════════════════╝
+  • WHAT ▸ Simulate real typing and pause; assert full pipeline
+  • WHY  ▸ Guard core UX: streamed diffusion and caret safety
+  • HOW  ▸ Fake timers; mock UI renderers; observe engine calls
+*/
+
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { createTypingMonitor } from '../src/pipeline/monitor';
+import { createSweepScheduler } from '../src/pipeline/scheduler';
+import { SHORT_PAUSE_MS, getTypingTickMs } from '../src/config/thresholds';
+import type { CorrectionWaveResult } from '../src/pipeline/correctionWave';
+
+// Capture UI render calls (no DOM in node env)
+const regionCalls: Array<{ start: number; end: number }> = [];
+const highlights: Array<{ start: number; end: number }> = [];
+vi.mock('../src/ui/highlighter', () => ({
+  emitActiveRegion: vi.fn((range: { start: number; end: number }) => {
+    regionCalls.push(range);
+  }),
+  renderHighlight: vi.fn((range: { start: number; end: number }) => {
+    highlights.push(range);
+  }),
+}));
+
+// Spy on LM-only correction wave to ensure it runs on pause catch-up
+const runCorrectionWave = vi.hoisted(() =>
+  vi.fn<[], Promise<CorrectionWaveResult>>(async () => ({
+    diffs: [],
+    activeRegion: { start: 0, end: 0 },
+  })),
+);
+
+vi.mock('../src/pipeline/correctionWave', () => ({
+  runCorrectionWave,
+}));
+
+describe('FT-202 Integration Harness', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    regionCalls.length = 0;
+    highlights.length = 0;
+    runCorrectionWave.mockClear();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('streams active region during typing and catches up on pause without crossing caret', async () => {
+    const monitor = createTypingMonitor();
+    const mockLM = { stream: async function* () {} } as any;
+    const scheduler = createSweepScheduler(monitor, undefined, () => mockLM);
+    scheduler.start();
+
+    // Simulate user typing progressively (3 keystroke snapshots)
+    monitor.emit({ text: 'Hello teh', caret: 9, atMs: Date.now() });
+    vi.advanceTimersByTime(getTypingTickMs() + 1);
+
+    monitor.emit({ text: 'Hello teh w', caret: 11, atMs: Date.now() });
+    vi.advanceTimersByTime(getTypingTickMs() + 1);
+
+    monitor.emit({ text: 'Hello teh world', caret: 15, atMs: Date.now() });
+    vi.advanceTimersByTime(getTypingTickMs() + 1);
+
+    // Expect active region to have rendered at least once during typing
+    expect(regionCalls.length).toBeGreaterThan(0);
+    const lastRegionDuringTyping = regionCalls[regionCalls.length - 1];
+    expect(lastRegionDuringTyping.end).toBeLessThanOrEqual(15);
+
+    // Pause → run catch-up; engines should execute
+    vi.advanceTimersByTime(SHORT_PAUSE_MS + 1);
+    await vi.runOnlyPendingTimersAsync();
+    await Promise.resolve();
+
+    // After pause catch-up, region end should equal caret (frontier reached caret)
+    const afterPauseRegion = regionCalls[regionCalls.length - 1];
+    expect(afterPauseRegion.end).toBe(15);
+
+    // LM-only pipeline invoked as part of pause processing
+    expect(runCorrectionWave).toHaveBeenCalled();
+
+    // Any highlights produced must be strictly behind the caret (caret safety)
+    for (const h of highlights) {
+      expect(h.end).toBeLessThanOrEqual(15);
+    }
+
+    scheduler.stop();
+  });
+});

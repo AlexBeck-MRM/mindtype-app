@@ -1,0 +1,63 @@
+# Mind⠶Flow v0.8 — Git Ignore
+
+# Build artifacts
+dist/
+coverage/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Rust build artifacts
+target/
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Temporary files
+*.backup
+*.tmp
+.cache/
+
+# Monitor build
+monitor/dist/
+
+# Web demo build  
+hosts/web/dist/
+
+# Local LM assets (not in repo)
+mindtype/models/
+mindtype/wasm/
+
+# macOS build artifacts
+hosts/macos/Build/
+hosts/macos/DerivedData/
+*.xcuserstate
+*.xcworkspace
+
+# System files
+.DS_Store
+Thumbs.db
+
