@@ -279,7 +279,7 @@ function emitGeneratedTypes(specs) {
       pieces.push(String(t.ts).trim() + '\n');
     }
   }
-  const outDir = path.join(REPO_ROOT, 'core', 'lm');
+  const outDir = path.join(REPO_ROOT, 'src', 'lm');
   const outFile = path.join(outDir, 'types.generated.ts');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(outFile, pieces.join('\n'));

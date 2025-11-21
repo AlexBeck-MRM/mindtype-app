@@ -21,19 +21,20 @@ export default defineConfig({
       all: true,
       reporter: ['text', 'html', 'lcov', 'json-summary'],
       // Count coverage only for core library code
-      include: ['core/**/*.ts', 'engines/**/*.ts', 'utils/**/*.ts', 'config/**/*.ts'],
+      include: ['src/**/*.ts'],
       exclude: [
         'index.ts',
         'e2e/**',
         'web-demo/**',
+        'hosts/**',
         'scripts/**',
-        'crates/**',
+        'core-rs/**',
         '**/bindings/**',
         '**/*.d.ts',
         'tests/**',
         'coverage/**',
         'node_modules/**',
-        'core/lm/types.generated.ts',
+        'src/lm/types.generated.ts',
       ],
       thresholds: {
         // v0.6 Phase 1: temporary thresholds during rules removal; Phase 6 target ≥85%
