@@ -4,60 +4,25 @@
   "type": "module",
   "description": "Apple-native typing intelligence with on-device language model",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "format:check": "prettier -c .",
-    "format:write": "prettier -w .",
-    "test": "vitest run --reporter=dot --coverage",
-    "ci": "pnpm typecheck && pnpm lint && pnpm run -s format:check && pnpm test && pnpm run -s doc:check",
-    "posttest": "node scripts/coverage-guard.cjs",
-    "dev": "vitest watch",
-    "prepare": "husky",
-    "setup:local": "node scripts/setup-local-assets.cjs",
-    "doc:sync": "node scripts/doc2code.cjs sync",
-    "doc:check": "node scripts/doc2code.cjs check",
-    "copy:wasm": "mkdir -p \"hosts/web/public/wasm\" && cp -R \"node_modules/.pnpm/onnxruntime-web@*/node_modules/onnxruntime-web/dist/\"* \"hosts/web/public/wasm/\" 2>/dev/null || echo 'WASM copy failed; using CDN fallback'",
-    "monitor": "pnpm --prefix monitor dev",
-    "demo:web": "pnpm --prefix hosts/web dev",
-    "diag:smoke": "node scripts/diag-smoke.cjs",
-    "swift:build": "cd apple/MindType && swift build",
-    "swift:test": "cd apple/MindType && swift test",
-    "xcode:open": "open apple/MindTypeApp/MindTypeApp.xcodeproj 2>/dev/null || echo 'Run xcodegen first: cd apple/MindTypeApp && xcodegen'"
+    "build": "cd apple/MindType && swift build",
+    "test": "cd apple/MindType && swift test",
+    "demo": "cd apple/MindType && swift run MindTypeDemo",
+    "xcode": "open apple/MindTypeApp/MindTypeApp.xcodeproj 2>/dev/null || echo 'Generate project first: cd apple/MindTypeApp && xcodegen'"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,md,css,scss,json,mdx}": "prettier --write",
-    "docs/**/*.{md,mdx}": [
-      "prettier --write",
-      "pnpm doc:check"
-    ]
+  "engines": {
+    "node": ">=18"
   },
-  "devDependencies": {
-    "@huggingface/transformers": "^3.7.0",
-    "@mermaid-js/mermaid-cli": "^11.9.0",
-    "@types/js-yaml": "^4.0.9",
-    "@types/node": "^24.2.1",
-    "@typescript-eslint/eslint-plugin": "^8.4.0",
-    "@typescript-eslint/parser": "^8.4.0",
-    "@vitest/coverage-v8": "^1.6.1",
-    "eslint": "^9.9.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.5.4",
-    "fast-glob": "^3.3.3",
-    "glob": "^11.0.3",
-    "gray-matter": "^4.0.3",
-    "husky": "^9.1.7",
-    "js-yaml": "^4.1.0",
-    "jsdom": "^26.1.0",
-    "lint-staged": "^16.1.5",
-    "prettier": "^3.3.3",
-    "remark-frontmatter": "^5.0.0",
-    "remark-gfm": "^4.0.1",
-    "remark-parse": "^11.0.0",
-    "remark-stringify": "^11.0.0",
-    "typescript": "^5.5.4",
-    "unified": "^11.0.5",
-    "vitest": "^1.6.0"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/mindtype"
+  },
+  "keywords": [
+    "typing",
+    "correction",
+    "llm",
+    "apple",
+    "swift",
+    "macos"
+  ],
+  "license": "MIT"
 }

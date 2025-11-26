@@ -239,5 +239,19 @@ extension CorrectionPipeline {
     public static func mock(config: PipelineConfiguration = .default) -> CorrectionPipeline {
         CorrectionPipeline(lmAdapter: MockLMAdapter(), config: config)
     }
+    
+    /// Create a pipeline with the real Llama adapter
+    /// - Parameter modelPath: Path to GGUF model, or nil to auto-discover
+    public static func withLlama(
+        modelPath: String? = nil,
+        config: PipelineConfiguration = .default
+    ) -> CorrectionPipeline {
+        CorrectionPipeline(lmAdapter: LlamaLMAdapter(), config: config)
+    }
+    
+    /// Helper to get the recommended model path
+    public static var recommendedModelPath: String? {
+        ModelDiscovery.findModel()
+    }
 }
 

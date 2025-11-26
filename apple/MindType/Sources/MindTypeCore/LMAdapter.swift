@@ -67,19 +67,15 @@ public struct PromptBuilder: Sendable {
         systemParts.append("Rules:")
         systemParts.append(contentsOf: config.rules.map { "- \($0)" })
         systemParts.append("- Never change meaning or introduce new information.")
-        systemParts.append("- Respond with valid JSON ONLY: {\"replacement\":\"<corrected text>\"}")
+        systemParts.append("- Output ONLY a JSON object with the corrected text.")
         
         let userParts: [String] = [
-            "Correct the fragment between <text> tags using the rules above.",
-            "- If no corrections are necessary, return the original fragment exactly.",
-            "- Example: {\"replacement\":\"the corrected sentence\"}",
+            "Correct the text inside <input> tags. Return the full corrected text in JSON format.",
+            "If no corrections needed, return the original text unchanged.",
             "",
-            "Fragment to correct:",
-            "<text>\(escape(snippet))</text>",
-            contextBefore.map { "Context before: \($0)" } ?? "Context before: \"\"",
-            contextAfter.map { "Context after: \($0)" } ?? "Context after: \"\"",
+            "<input>\(escape(snippet))</input>",
             "",
-            "Output nothing besides the JSON object."
+            "Respond with ONLY: {\"replacement\":\"YOUR CORRECTED TEXT HERE\"}"
         ]
         
         return formatChatPrompt(

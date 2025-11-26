@@ -213,18 +213,22 @@ public struct CorrectionToast: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Preview (Xcode only)
 
-#Preview {
-    VStack(spacing: 20) {
-        ForEach([MarkerState.idle, .listening, .correcting, .done, .error], id: \.self) { state in
-            HStack {
-                Text(String(describing: state))
-                    .frame(width: 100, alignment: .leading)
-                CorrectionMarkerView(state: .constant(state))
+#if DEBUG && canImport(PreviewProvider)
+struct CorrectionMarkerView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(spacing: 20) {
+            ForEach([MarkerState.idle, .listening, .correcting, .done, .error], id: \.self) { state in
+                HStack {
+                    Text(String(describing: state))
+                        .frame(width: 100, alignment: .leading)
+                    CorrectionMarkerView(state: .constant(state))
+                }
             }
         }
+        .padding()
     }
-    .padding()
 }
+#endif
 

@@ -122,14 +122,14 @@ public struct PipelineState: Sendable {
 
 /// Configuration for the language model
 public struct LMConfiguration: Sendable {
-    public let modelPath: String
+    public let modelPath: String?
     public let maxTokens: Int
     public let temperature: Float
     public let contextSize: Int
     public let gpuLayers: Int
     
     public init(
-        modelPath: String,
+        modelPath: String? = nil,
         maxTokens: Int = 64,
         temperature: Float = 0.1,
         contextSize: Int = 2048,
@@ -143,7 +143,12 @@ public struct LMConfiguration: Sendable {
     }
     
     public static var `default`: LMConfiguration {
-        LMConfiguration(modelPath: "")
+        LMConfiguration()
+    }
+    
+    /// Create configuration for a GGUF model
+    public static func gguf(_ path: String, temperature: Float = 0.1) -> LMConfiguration {
+        LMConfiguration(modelPath: path, temperature: temperature)
     }
 }
 

@@ -18,7 +18,51 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on Keep a Changelog and this project adheres to Semantic Versioning (pre‑1.0). Dates are in YYYY‑MM‑DD.
+The format is based on Keep a Changelog and this project adheres to Semantic Versioning. Dates are in YYYY‑MM‑DD.
+
+---
+
+## [1.0.0] - 2025-11-26
+
+### 🎉 Apple-Native Rewrite
+
+**Complete architectural pivot** from cross-platform Rust/TypeScript/WASM to Apple-native Swift.
+
+#### Added
+
+- **Swift Package** (`apple/MindType/`) — Core library with SwiftUI components
+  - `MindTypeCore` — Pipeline, types, caret safety, active region
+  - `MindTypeUI` — SwiftUI visual components (CorrectionMarker)
+  - `MindTypeDemo` — CLI demonstration executable
+
+- **LLM Integration** via llama.cpp
+  - `LlamaLMAdapter` — Metal-accelerated inference using llama.cpp CLI
+  - `MockLMAdapter` — Pattern-matching fallback for testing
+  - Qwen 0.5B model support (~470MB GGUF)
+
+- **Documentation**
+  - `ARCHITECTURE-MIGRATION.md` — Comprehensive analysis of Rust→Swift migration
+  - Updated `README.md` with quick start guide
+
+#### Changed
+
+- **Architecture**: Single-language Swift instead of Rust/TypeScript/Swift hybrid
+- **Build System**: Swift Package Manager only (no Cargo, no npm for core)
+- **LLM Runtime**: llama.cpp with GGUF instead of Transformers.js/ONNX
+
+#### Removed
+
+- **Web Platform**: TypeScript/WASM web demo (archived to `_archived/v0.8-web/`)
+- **Rust Core**: All Rust code moved to archive
+- **FFI Layers**: No more C bindings or WASM bridge
+
+#### Migration Notes
+
+Previous v0.8 code is preserved in `_archived/v0.8-web/` for reference. The new architecture is incompatible with the old codebase—this is a clean rewrite.
+
+See [ARCHITECTURE-MIGRATION.md](ARCHITECTURE-MIGRATION.md) for detailed analysis of trade-offs.
+
+---
 
 ## [0.8.0] - 2025-11-15
 
