@@ -8,6 +8,7 @@
 */
 
 import SwiftUI
+import MindTypeCore
 
 struct TestingGroundView: View {
     @EnvironmentObject var appState: AppState
@@ -15,7 +16,8 @@ struct TestingGroundView: View {
     @State private var inputText: String = ""
     @State private var outputText: String = ""
     @State private var isProcessing = false
-    @State private var appliedDiffs: [CorrectionDiff] = []
+    @State private var appliedDiffs: [AppCorrectionDiff] = []
+    @State private var stagesApplied: [AppCorrectionStage] = []
     @State private var lastLatency: Double = 0
     @State private var showDiffDetail = false
     
@@ -89,6 +91,7 @@ struct TestingGroundView: View {
                         inputText = preset.text
                         outputText = ""
                         appliedDiffs = []
+                        stagesApplied = []
                     }
                 }
             } label: {
@@ -107,6 +110,7 @@ struct TestingGroundView: View {
                 inputText = ""
                 outputText = ""
                 appliedDiffs = []
+                stagesApplied = []
                 lastLatency = 0
             } label: {
                 Image(systemName: "trash")
@@ -158,8 +162,8 @@ struct TestingGroundView: View {
                 
                 Spacer()
                 
-                if !appliedDiffs.isEmpty {
-                    Text("\(appliedDiffs.count) correction(s)")
+                if !stagesApplied.isEmpty {
+                    Text(stagesApplied.map(\.displayName).joined(separator: " → "))
                         .font(.caption)
                         .foregroundStyle(.green)
                 }
@@ -204,7 +208,7 @@ struct TestingGroundView: View {
                 .padding(.horizontal)
                 .padding(.top)
             
-            if appliedDiffs.isEmpty {
+            if stagesApplied.isEmpty {
                 VStack {
                     Image(systemName: "checkmark.circle")
                         .font(.largeTitle)
@@ -214,29 +218,57 @@ struct TestingGroundView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List(appliedDiffs.indices, id: \.self) { index in
-                    let diff = appliedDiffs[index]
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(diff.stage.displayName)
+                VStack(alignment: .leading, spacing: 8) {
+                    // Show stages that were applied
+                    HStack(spacing: 4) {
+                        ForEach(stagesApplied, id: \.self) { stage in
+                            Text(stage.displayName)
                                 .font(.caption)
                                 .fontWeight(.semibold)
-                                .foregroundStyle(diff.stage.color)
-                            
-                            Spacer()
-                            
-                            Text("[\(diff.start):\(diff.end)]")
-                                .font(.caption2)
-                                .foregroundStyle(.tertiary)
+                                .foregroundStyle(stage.color)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(stage.color.opacity(0.15))
+                                .cornerRadius(4)
                         }
-                        
-                        Text("→ \"\(diff.text)\"")
-                            .font(.caption)
-                            .foregroundStyle(.primary)
                     }
-                    .padding(.vertical, 4)
+                    .padding(.horizontal)
+                    
+                    Divider()
+                    
+                    // Show diffs if available
+                    if !appliedDiffs.isEmpty {
+                        List(appliedDiffs.indices, id: \.self) { index in
+                            let diff = appliedDiffs[index]
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(diff.stage.displayName)
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(diff.stage.color)
+                                    
+                                    Spacer()
+                                    
+                                    Text("[\(diff.start):\(diff.end)]")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                }
+                                
+                                Text("→ \"\(diff.text)\"")
+                                    .font(.caption)
+                                    .foregroundStyle(.primary)
+                                    .lineLimit(3)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listStyle(.plain)
+                    } else {
+                        Text("Stages applied changes directly")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    }
                 }
-                .listStyle(.plain)
             }
         }
         .background(Color(nsColor: .windowBackgroundColor))
@@ -258,10 +290,11 @@ struct TestingGroundView: View {
             await MainActor.run {
                 outputText = result.correctedText
                 appliedDiffs = result.diffs
+                stagesApplied = result.stagesApplied
                 lastLatency = result.latencyMs
                 isProcessing = false
                 
-                if !result.diffs.isEmpty {
+                if result.hasChanges {
                     showDiffDetail = true
                 }
             }

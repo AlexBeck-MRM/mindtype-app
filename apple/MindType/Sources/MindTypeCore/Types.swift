@@ -92,14 +92,29 @@ public enum ToneTarget: String, Codable, CaseIterable, Sendable {
 
 /// Result of running the three-stage correction pipeline
 public struct CorrectionWaveResult: Sendable {
+    /// The final cumulative diff(s) to apply to the original text
     public let diffs: [CorrectionDiff]
+    /// The active region that was processed
     public let activeRegion: TextRegion
+    /// Total processing time in milliseconds
     public let durationMs: Double
+    /// Which stages contributed changes (for debugging/display)
+    public let stagesApplied: [CorrectionStage]
+    /// The final corrected text (convenience)
+    public let correctedText: String?
     
-    public init(diffs: [CorrectionDiff], activeRegion: TextRegion, durationMs: Double) {
+    public init(
+        diffs: [CorrectionDiff],
+        activeRegion: TextRegion,
+        durationMs: Double,
+        stagesApplied: [CorrectionStage] = [],
+        correctedText: String? = nil
+    ) {
         self.diffs = diffs
         self.activeRegion = activeRegion
         self.durationMs = durationMs
+        self.stagesApplied = stagesApplied
+        self.correctedText = correctedText
     }
 }
 
@@ -156,21 +171,25 @@ public struct LMConfiguration: Sendable {
 
 /// Configuration for the correction pipeline
 public struct PipelineConfiguration: Sendable {
+    /// Number of words before caret to include in active region (5-50)
     public let activeRegionWords: Int
-    public let pauseDelayMs: Int
+    /// Minimum confidence threshold for applying corrections (0.5-1.0)
     public let confidenceThreshold: Double
+    /// Default tone target for the tone stage
     public let toneTarget: ToneTarget
+    /// LLM temperature for generation creativity (0.0-1.0, lower = more deterministic)
+    public let temperature: Float
     
     public init(
         activeRegionWords: Int = 20,
-        pauseDelayMs: Int = 600,
         confidenceThreshold: Double = 0.80,
-        toneTarget: ToneTarget = .none
+        toneTarget: ToneTarget = .none,
+        temperature: Float = 0.1
     ) {
-        self.activeRegionWords = activeRegionWords
-        self.pauseDelayMs = pauseDelayMs
-        self.confidenceThreshold = confidenceThreshold
+        self.activeRegionWords = max(5, min(50, activeRegionWords))
+        self.confidenceThreshold = max(0.5, min(1.0, confidenceThreshold))
         self.toneTarget = toneTarget
+        self.temperature = max(0.0, min(1.0, temperature))
     }
     
     public static var `default`: PipelineConfiguration {

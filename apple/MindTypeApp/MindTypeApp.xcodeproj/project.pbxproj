@@ -1,0 +1,360 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		15C95A9BE6BD275E1A395C84 /* MindTypeCore in Frameworks */ = {isa = PBXBuildFile; productRef = DCD936AD78F1016D21A4DF05 /* MindTypeCore */; };
+		3A7C87FF26E38F34A559BBEF /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A111E5345C26398DFCC85A /* AppState.swift */; };
+		3AC9BBC566A1DCD242BD1F34 /* TestingGroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DDB350E73A30FC1E6ED3F40 /* TestingGroundView.swift */; };
+		994352E0D8C8112B42475169 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2830ED068FAB9C8F6B99EFD /* MenuBarView.swift */; };
+		AA620E151A21F02918B2384D /* MindTypeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D81150112FB343FDEBA4D7 /* MindTypeApp.swift */; };
+		C1C037F8425E429FFD10B121 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6EEE636940AFEC95C8C977 /* SettingsView.swift */; };
+		F2A128F301BBFCEF09091C03 /* MindTypeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 52BA9C8BD39952275D16DC1C /* MindTypeUI */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0DDB350E73A30FC1E6ED3F40 /* TestingGroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingGroundView.swift; sourceTree = "<group>"; };
+		62CB94855691C457C1A44552 /* MindTypeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MindTypeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A9E2F144EA7A818134D8EE48 /* MindType */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindType; path = ../MindType; sourceTree = SOURCE_ROOT; };
+		D2830ED068FAB9C8F6B99EFD /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		D5D81150112FB343FDEBA4D7 /* MindTypeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindTypeApp.swift; sourceTree = "<group>"; };
+		DA6EEE636940AFEC95C8C977 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		E409B686D142853B580AF26E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F16D9D58DA4C81863E408B12 /* MindTypeApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MindTypeApp.entitlements; sourceTree = "<group>"; };
+		F2A111E5345C26398DFCC85A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3537BEF36569FBE351E473F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				15C95A9BE6BD275E1A395C84 /* MindTypeCore in Frameworks */,
+				F2A128F301BBFCEF09091C03 /* MindTypeUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		36B50E0BC32597C324F300BC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D2830ED068FAB9C8F6B99EFD /* MenuBarView.swift */,
+				DA6EEE636940AFEC95C8C977 /* SettingsView.swift */,
+				0DDB350E73A30FC1E6ED3F40 /* TestingGroundView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		82ECB38BF8F45E34ACFBACB9 /* MindTypeApp */ = {
+			isa = PBXGroup;
+			children = (
+				F2A111E5345C26398DFCC85A /* AppState.swift */,
+				E409B686D142853B580AF26E /* Info.plist */,
+				F16D9D58DA4C81863E408B12 /* MindTypeApp.entitlements */,
+				D5D81150112FB343FDEBA4D7 /* MindTypeApp.swift */,
+				36B50E0BC32597C324F300BC /* Views */,
+			);
+			path = MindTypeApp;
+			sourceTree = "<group>";
+		};
+		9024B1DA17C71ABF40469A8B /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A9E2F144EA7A818134D8EE48 /* MindType */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		A7B3BE512593387E8856FA09 = {
+			isa = PBXGroup;
+			children = (
+				82ECB38BF8F45E34ACFBACB9 /* MindTypeApp */,
+				9024B1DA17C71ABF40469A8B /* Packages */,
+				C2DA9F2C4430D86EC41EFEE9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C2DA9F2C4430D86EC41EFEE9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				62CB94855691C457C1A44552 /* MindTypeApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F16C114706D312AFC4726022 /* MindTypeApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 87E6DAAE493DE4B526354DC2 /* Build configuration list for PBXNativeTarget "MindTypeApp" */;
+			buildPhases = (
+				A0B3917D63B55EDBB33AE448 /* Sources */,
+				3537BEF36569FBE351E473F0 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MindTypeApp;
+			packageProductDependencies = (
+				DCD936AD78F1016D21A4DF05 /* MindTypeCore */,
+				52BA9C8BD39952275D16DC1C /* MindTypeUI */,
+			);
+			productName = MindTypeApp;
+			productReference = 62CB94855691C457C1A44552 /* MindTypeApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		54128D31EFCC12E00AA4FD1D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = CCDBE93E118ED171A23B7148 /* Build configuration list for PBXProject "MindTypeApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = A7B3BE512593387E8856FA09;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7011E71429F204CE2A137C6D /* XCLocalSwiftPackageReference "../MindType" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F16C114706D312AFC4726022 /* MindTypeApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A0B3917D63B55EDBB33AE448 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A7C87FF26E38F34A559BBEF /* AppState.swift in Sources */,
+				994352E0D8C8112B42475169 /* MenuBarView.swift in Sources */,
+				AA620E151A21F02918B2384D /* MindTypeApp.swift in Sources */,
+				C1C037F8425E429FFD10B121 /* SettingsView.swift in Sources */,
+				3AC9BBC566A1DCD242BD1F34 /* TestingGroundView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		034100D4C10602D4E45F7024 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		85884B93E7F31FA848940049 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.9.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		C4DCCDD88B5BB19E25790111 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MindTypeApp/MindTypeApp.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MindTypeApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mindtype.app;
+				PRODUCT_NAME = MindType;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CF478441B8603B59365D7B46 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MindTypeApp/MindTypeApp.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MindTypeApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mindtype.app;
+				PRODUCT_NAME = MindType;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		87E6DAAE493DE4B526354DC2 /* Build configuration list for PBXNativeTarget "MindTypeApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4DCCDD88B5BB19E25790111 /* Debug */,
+				CF478441B8603B59365D7B46 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CCDBE93E118ED171A23B7148 /* Build configuration list for PBXProject "MindTypeApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85884B93E7F31FA848940049 /* Debug */,
+				034100D4C10602D4E45F7024 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		7011E71429F204CE2A137C6D /* XCLocalSwiftPackageReference "../MindType" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MindType;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		52BA9C8BD39952275D16DC1C /* MindTypeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindTypeUI;
+		};
+		DCD936AD78F1016D21A4DF05 /* MindTypeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindTypeCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 54128D31EFCC12E00AA4FD1D /* Project object */;
+}

@@ -9,6 +9,10 @@ options:
   xcodeVersion: "15.0"
   generateEmptyDirectories: true
 
+packages:
+  MindType:
+    path: ../MindType
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
@@ -24,6 +28,11 @@ targets:
       - path: MindTypeApp
         excludes:
           - "*.xcodeproj"
+    dependencies:
+      - package: MindType
+        product: MindTypeCore
+      - package: MindType
+        product: MindTypeUI
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mindtype.app

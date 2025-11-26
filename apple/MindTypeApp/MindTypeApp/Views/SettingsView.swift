@@ -7,6 +7,7 @@
 */
 
 import SwiftUI
+import MindTypeCore
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
@@ -83,7 +84,7 @@ struct SettingsView: View {
         Form {
             Section {
                 Picker("Tone Target", selection: $appState.toneTarget) {
-                    ForEach(ToneTarget.allCases, id: \.self) { tone in
+                    ForEach(MindTypeCore.ToneTarget.allCases, id: \.self) { tone in
                         Text(tone.rawValue).tag(tone)
                     }
                 }
@@ -129,6 +130,7 @@ struct SettingsView: View {
                         Spacer()
                         Text("\(appState.activeRegionWords) words")
                             .foregroundStyle(.secondary)
+                            .monospacedDigit()
                     }
                     
                     Slider(
@@ -137,11 +139,11 @@ struct SettingsView: View {
                             set: { appState.activeRegionWords = Int($0) }
                         ),
                         in: 5...50,
-                        step: 1
+                        step: 5
                     )
                 }
                 
-                Text("The number of words before the cursor to consider for corrections.")
+                Text("How many words before cursor to analyze. More words = more context but slower.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } header: {
@@ -151,27 +153,28 @@ struct SettingsView: View {
             Section {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Pause Delay")
+                        Text("LLM Temperature")
                         Spacer()
-                        Text("\(appState.pauseDelayMs) ms")
+                        Text(String(format: "%.2f", appState.temperature))
                             .foregroundStyle(.secondary)
+                            .monospacedDigit()
                     }
                     
                     Slider(
                         value: Binding(
-                            get: { Double(appState.pauseDelayMs) },
-                            set: { appState.pauseDelayMs = Int($0) }
+                            get: { Double(appState.temperature) },
+                            set: { appState.temperature = Float($0) }
                         ),
-                        in: 300...1500,
-                        step: 100
+                        in: 0.0...0.5,
+                        step: 0.05
                     )
                 }
                 
-                Text("How long to wait after typing stops before running corrections.")
+                Text("Lower = more consistent corrections. Higher = more creative but may hallucinate.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } header: {
-                Text("Timing")
+                Text("Language Model")
             }
         }
         .formStyle(.grouped)

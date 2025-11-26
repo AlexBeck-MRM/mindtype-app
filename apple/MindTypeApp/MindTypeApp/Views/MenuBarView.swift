@@ -108,7 +108,7 @@ struct MenuBarView: View {
         
         switch appState.lmStatus {
         case .ready: return .green
-        case .error: return .red
+        case .error(_): return .red
         case .loading, .initializing: return .orange
         }
     }
@@ -118,7 +118,7 @@ struct MenuBarView: View {
         
         switch appState.lmStatus {
         case .ready: return "Ready"
-        case .error: return "Error"
+        case .error(_): return "Error"
         case .loading, .initializing: return "Loading..."
         }
     }

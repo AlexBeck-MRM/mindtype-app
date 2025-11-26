@@ -22,15 +22,18 @@ public actor CorrectionPipeline {
     
     public init(
         lmAdapter: any LMAdapter,
-        config: PipelineConfiguration = .default,
-        regionPolicy: ActiveRegionPolicy = .default
+        config: PipelineConfiguration = .default
     ) {
         self.lmAdapter = lmAdapter
         self.config = config
-        self.regionPolicy = regionPolicy
+        // Create region policy from config — ensures activeRegionWords is actually used
+        self.regionPolicy = ActiveRegionPolicy(targetWords: config.activeRegionWords)
     }
     
     /// Run the correction wave on the given text
+    /// 
+    /// Returns a single cumulative diff representing all corrections applied.
+    /// This avoids the issue of overlapping diffs from multiple stages.
     public func runCorrectionWave(
         text: String,
         caret: Int,
@@ -38,7 +41,7 @@ public actor CorrectionPipeline {
     ) async throws -> CorrectionWaveResult {
         let startTime = Date()
         
-        // Compute active region
+        // Compute active region on original text
         let activeRegion = regionPolicy.computeRegion(text: text, caret: caret)
         
         guard !activeRegion.isEmpty else {
@@ -58,52 +61,99 @@ public actor CorrectionPipeline {
             )
         }
         
-        var diffs: [CorrectionDiff] = []
+        var stageDiffs: [CorrectionDiff] = []  // Track individual stage contributions
         var currentText = text
+        var currentRegion = activeRegion
+        var currentCaret = caret
         
         // Stage 1: Noise (typo fixes)
         if let noiseDiff = try await runNoiseStage(
             text: currentText,
-            caret: caret,
-            region: activeRegion
-        ) {
-            diffs.append(noiseDiff)
-            if let result = applyDiff(text: currentText, diff: noiseDiff, caret: caret) {
+            caret: currentCaret,
+            region: currentRegion
+        ), noiseDiff.confidence >= config.confidenceThreshold {
+            stageDiffs.append(noiseDiff)
+            if let result = applyDiff(text: currentText, diff: noiseDiff, caret: currentCaret) {
+                // Update tracking variables for next stage
+                let lengthDelta = noiseDiff.lengthDelta
                 currentText = result.text
+                currentCaret = result.caret
+                // Adjust region end to match new text length
+                currentRegion = TextRegion(
+                    start: currentRegion.start,
+                    end: currentRegion.end + lengthDelta
+                )
             }
         }
         
-        // Stage 2: Context (grammar/coherence)
+        // Stage 2: Context (grammar/coherence) — uses updated region
         if let contextDiff = try await runContextStage(
             text: currentText,
-            caret: caret,
-            region: activeRegion
-        ) {
-            diffs.append(contextDiff)
-            if let result = applyDiff(text: currentText, diff: contextDiff, caret: caret) {
+            caret: currentCaret,
+            region: currentRegion
+        ), contextDiff.confidence >= config.confidenceThreshold {
+            stageDiffs.append(contextDiff)
+            if let result = applyDiff(text: currentText, diff: contextDiff, caret: currentCaret) {
+                let lengthDelta = contextDiff.lengthDelta
                 currentText = result.text
+                currentCaret = result.caret
+                currentRegion = TextRegion(
+                    start: currentRegion.start,
+                    end: currentRegion.end + lengthDelta
+                )
             }
         }
         
-        // Stage 3: Tone (optional style adjustment)
+        // Stage 3: Tone (optional style adjustment) — uses updated region
         let effectiveTone = toneTarget ?? config.toneTarget
         if effectiveTone != .none {
             if let toneDiff = try await runToneStage(
                 text: currentText,
-                caret: caret,
-                region: activeRegion,
+                caret: currentCaret,
+                region: currentRegion,
                 toneTarget: effectiveTone
-            ) {
-                diffs.append(toneDiff)
+            ), toneDiff.confidence >= config.confidenceThreshold {
+                stageDiffs.append(toneDiff)
+                if let result = applyDiff(text: currentText, diff: toneDiff, caret: currentCaret) {
+                    currentText = result.text
+                    currentCaret = result.caret
+                }
             }
         }
         
         let durationMs = Date().timeIntervalSince(startTime) * 1000
         
+        // Track which stages actually made changes
+        let stagesApplied = stageDiffs.map(\.stage)
+        
+        // Create a single cumulative diff from original to final
+        // This avoids overlapping diffs problem when caller applies them
+        var finalDiffs: [CorrectionDiff] = []
+        
+        if currentText != text && !stageDiffs.isEmpty {
+            // Extract what the final corrected region looks like
+            let finalRegionText = extractSpan(from: currentText, region: currentRegion)
+            let originalRegionText = extractSpan(from: text, region: activeRegion)
+            
+            if finalRegionText != originalRegionText {
+                // Create ONE diff that captures the cumulative change
+                let cumulativeDiff = CorrectionDiff(
+                    start: activeRegion.start,
+                    end: activeRegion.end,
+                    text: finalRegionText,
+                    stage: stageDiffs.last?.stage ?? .noise,
+                    confidence: stageDiffs.map(\.confidence).min() ?? 0.9
+                )
+                finalDiffs.append(cumulativeDiff)
+            }
+        }
+        
         return CorrectionWaveResult(
-            diffs: diffs,
+            diffs: finalDiffs,
             activeRegion: activeRegion,
-            durationMs: durationMs
+            durationMs: durationMs,
+            stagesApplied: stagesApplied,
+            correctedText: currentText != text ? currentText : nil
         )
     }
     

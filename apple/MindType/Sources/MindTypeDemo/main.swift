@@ -217,22 +217,16 @@ struct MindTypeDemo {
                 toneTarget: toneTarget
             )
             
-            if result.diffs.isEmpty {
-                print("   Output: \"\(text)\" (no changes)")
-            } else {
-                if let applied = applyDiffs(text: text, diffs: result.diffs, caret: text.count) {
-                    print("   Output: \"\(applied.text)\"")
-                } else {
-                    print("   Output: (diffs failed to apply)")
-                }
+            // Use the new correctedText property for clean output
+            if let corrected = result.correctedText {
+                print("   Output: \"\(corrected)\"")
                 
                 if showDetails {
-                    print("   ⏱️  \(String(format: "%.0f", result.durationMs))ms │ 📊 \(result.diffs.count) correction(s)")
-                    for diff in result.diffs {
-                        let stageBadge = stageEmoji(diff.stage)
-                        print("      \(stageBadge) \(diff.stage.displayName): \"\(diff.text)\"")
-                    }
+                    let stages = result.stagesApplied.map(\.displayName).joined(separator: " → ")
+                    print("   ⏱️  \(String(format: "%.0f", result.durationMs))ms │ Stages: \(stages)")
                 }
+            } else {
+                print("   Output: \"\(text)\" (no changes)")
             }
         } catch {
             print("   ❌ Error: \(error.localizedDescription)")

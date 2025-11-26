@@ -2,7 +2,7 @@
 
 **Author**: Engineering Team  
 **Date**: November 2025  
-**Status**: Complete (v0.9.0)
+**Status**: Complete (v0.9.1)
 
 ---
 
@@ -148,6 +148,107 @@ The product's primary use case is **macOS power users** who type extensively. Th
 2. **Single Platform** — macOS-first, iOS as natural extension
 3. **Single LLM** — llama.cpp with GGUF models, Metal acceleration
 4. **Zero FFI** — No cross-language boundaries in core logic
+
+---
+
+## v0.9.1 Refinements — Code Review and Bug Fixes
+
+After the initial v0.9.0 release, a thorough code review identified several issues that were causing incorrect behavior. This section documents what was found and how it was fixed.
+
+### What Was Wrong
+
+#### 1. The App Didn't Use the Core Library
+
+The `MindTypeApp` (the macOS application) was supposed to import and use `MindTypeCore` (the Swift package containing the correction pipeline). Instead, it contained **duplicate copies** of all the types and logic—about 250 lines of code that were copy-pasted rather than imported.
+
+**Why this was a problem:**
+- Changes to `MindTypeCore` had no effect on the app
+- The real `LlamaLMAdapter` (which connects to the actual language model) was never used
+- The app was running entirely on a mock adapter, not real AI corrections
+- Bug fixes in one place didn't apply to the other
+
+**The fix:** Updated the app's `project.yml` to properly declare `MindTypeCore` as a dependency, then rewrote `AppState.swift` to import and use the real library.
+
+#### 2. Pipeline Stage Indices Became Stale
+
+The correction pipeline runs three stages: Noise (typos) → Context (grammar) → Tone (style). Each stage can modify the text, changing its length.
+
+The bug: After Stage 1 modified the text, Stage 2 was still using the original positions to find what text to correct. This caused garbled output like:
+```
+"...hypothesis to be tested and validated.is."
+```
+
+The `.is.` at the end was a fragment left over because the positions didn't match up anymore.
+
+**The fix:** After each stage applies changes, the pipeline now updates the `currentRegion` and `currentCaret` to account for any length changes. Stage 2 then operates on the correct positions in the modified text.
+
+#### 3. Configuration Parameters Weren't Actually Used
+
+The settings panel had sliders for:
+- Active Region Words (how much text to analyze)
+- Confidence Threshold (how certain to be before applying a correction)
+- Pause Delay (how long to wait before correcting)
+
+But internally, these values were either ignored or overridden with hardcoded defaults.
+
+**What each parameter should do:**
+
+| Parameter | What It Controls |
+|-----------|-----------------|
+| Active Region Words | How many words before the cursor to send to the AI for analysis. More words = more context but slower. |
+| Confidence Threshold | The minimum certainty required before applying a correction. Higher = fewer but safer corrections. |
+| Temperature | How creative/random the AI's responses are. Lower = more predictable corrections. |
+
+**The fix:**
+- `activeRegionWords` now creates an `ActiveRegionPolicy` with the user's value
+- `confidenceThreshold` now gates whether each stage's correction gets applied
+- `pauseDelayMs` was removed (it would be used by a typing monitor that doesn't exist yet)
+- `temperature` was added and is now passed to the language model
+
+#### 4. Settings Changes Required App Restart
+
+When you moved a slider in Settings, nothing happened until you quit and reopened the app. The pipeline was created once at startup and never recreated.
+
+**The fix:** Each setting now triggers a debounced reinitialization. When you change a slider, the app waits 500ms (in case you're still adjusting), then recreates the pipeline with the new configuration.
+
+### Current Data Flow
+
+Here's how user settings now flow through the system:
+
+```
+User adjusts slider in SettingsView
+         ↓
+AppState.activeRegionWords = newValue
+         ↓
+didSet triggers scheduleReinitialization()
+         ↓
+After 500ms debounce:
+         ↓
+initializePipeline() creates new CorrectionPipeline with:
+  - PipelineConfiguration(
+      activeRegionWords: 25,        ← from user
+      confidenceThreshold: 0.85,    ← from user
+      temperature: 0.15,            ← from user
+      toneTarget: .professional     ← from user
+    )
+         ↓
+Pipeline uses these values in runCorrectionWave():
+  - ActiveRegionPolicy uses activeRegionWords to decide how much text to analyze
+  - Each stage checks confidenceThreshold before applying its correction
+  - LlamaLMAdapter uses temperature when generating responses
+```
+
+### Why This Matters
+
+These fixes transformed MindType from a demo that looked like it worked into software that actually works correctly:
+
+1. **Real AI corrections** — The app now uses the actual Qwen 0.5B language model running on your Mac's GPU, not pattern-matching mock data.
+
+2. **Clean output** — No more garbled text. Each stage correctly operates on the result of the previous stage.
+
+3. **User control** — The sliders in Settings now do what they say. You can tune the correction behavior to your preferences.
+
+4. **Proper separation** — The core logic lives in `MindTypeCore` (the library), and the app is just a thin layer that presents the UI. This is standard software architecture and makes both parts easier to maintain and test.
 
 ---
 
@@ -429,5 +530,5 @@ The mark of good engineering is not building the most sophisticated system, but 
 
 ---
 
-*Document version: 1.0 | Last updated: November 2025*
+*Document version: 1.1 | Last updated: November 26, 2025*
 
