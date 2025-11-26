@@ -40,6 +40,7 @@ public enum LMStatus: Sendable, Equatable {
 // MARK: - Prompt Builder
 
 /// Builds prompts for the three-stage pipeline
+/// Optimized for small LLMs (0.5B-3B parameters) with concise, direct instructions
 public struct PromptBuilder: Sendable {
     
     /// Build a correction prompt for the given stage
@@ -52,83 +53,111 @@ public struct PromptBuilder: Sendable {
         toneTarget: ToneTarget? = nil
     ) -> String {
         let snippet = extractSnippet(from: text, region: region)
-        let config = stageConfig(for: stage)
         
-        var systemParts: [String] = [
-            "You are a \(config.title).",
-            config.scope
-        ]
-        
-        if let tone = toneTarget, tone != .none, stage == .tone {
-            systemParts.append("Target tone: \(tone.rawValue)")
-        }
-        
-        systemParts.append("")
-        systemParts.append("Rules:")
-        systemParts.append(contentsOf: config.rules.map { "- \($0)" })
-        systemParts.append("- Never change meaning or introduce new information.")
-        systemParts.append("- Output ONLY a JSON object with the corrected text.")
-        
-        let userParts: [String] = [
-            "Correct the text inside <input> tags. Return the full corrected text in JSON format.",
-            "If no corrections needed, return the original text unchanged.",
-            "",
-            "<input>\(escape(snippet))</input>",
-            "",
-            "Respond with ONLY: {\"replacement\":\"YOUR CORRECTED TEXT HERE\"}"
-        ]
-        
-        return formatChatPrompt(
-            system: systemParts.joined(separator: "\n"),
-            user: userParts.joined(separator: "\n")
+        // Build minimal, focused prompts for small LLMs
+        let (system, user) = buildStagePrompt(
+            stage: stage, 
+            snippet: snippet, 
+            context: contextBefore,
+            toneTarget: toneTarget
         )
+        
+        return formatChatPrompt(system: system, user: user)
     }
     
     // MARK: - Private
     
-    private struct StageConfig {
-        let title: String
-        let scope: String
-        let rules: [String]
-    }
-    
-    private static func stageConfig(for stage: CorrectionStage) -> StageConfig {
+    private static func buildStagePrompt(
+        stage: CorrectionStage,
+        snippet: String,
+        context: String?,
+        toneTarget: ToneTarget?
+    ) -> (system: String, user: String) {
         switch stage {
         case .noise:
-            return StageConfig(
-                title: "typo correction assistant",
-                scope: "Fix obvious typos, transpositions, and keyboard slip errors.",
-                rules: [
-                    "Fix single-character typos (missing, extra, swapped letters)",
-                    "Correct common keyboard adjacency errors",
-                    "Fix repeated characters",
-                    "Preserve original capitalization pattern",
-                    "Do not change word choice or phrasing"
-                ]
-            )
+            // Noise stage: INTERPRET INTENT from rapid/garbled typing
+            // Uses phonetic similarity, keyboard adjacency, and context
+            let system = """
+            You decode garbled speed-typing into clear English. 
+            Consider: phonetic similarity (sounds like), keyboard adjacency (nearby keys), common patterns.
+            Return ONLY the corrected text, nothing else.
+            """
+            
+            // Few-shot examples with increasingly complex errors
+            let user = """
+            teh quick brwon fox<|im_end|>
+            <|im_start|>assistant
+            the quick brown fox<|im_end|>
+            <|im_start|>user
+            definately wierd becuase<|im_end|>
+            <|im_start|>assistant
+            definitely weird because<|im_end|>
+            <|im_start|>user
+            Im not shure if thsi wokrs<|im_end|>
+            <|im_start|>assistant
+            I'm not sure if this works<|im_end|>
+            <|im_start|>user
+            ikidna cool but scaratg<|im_end|>
+            <|im_start|>assistant
+            kinda cool but scary<|im_end|>
+            <|im_start|>user
+            technmolgoty is amzaing<|im_end|>
+            <|im_start|>assistant
+            technology is amazing<|im_end|>
+            <|im_start|>user
+            \(escape(snippet))
+            """
+            
+            return (system, user)
+            
         case .context:
-            return StageConfig(
-                title: "grammar and coherence assistant",
-                scope: "Improve grammar, punctuation, and sentence flow.",
-                rules: [
-                    "Fix subject-verb agreement",
-                    "Correct punctuation errors",
-                    "Fix article usage (a/an/the)",
-                    "Improve sentence structure if clearly broken",
-                    "Preserve the author's voice and style"
-                ]
-            )
+            // Context stage: coherence and grammar while preserving voice
+            let system = "Improve grammar and clarity while preserving the author's voice. Return ONLY the improved text."
+            
+            let user = """
+            me and him went store<|im_end|>
+            <|im_start|>assistant
+            He and I went to the store<|im_end|>
+            <|im_start|>user
+            the data shows that results is good<|im_end|>
+            <|im_start|>assistant
+            The data shows that results are good<|im_end|>
+            <|im_start|>user
+            \(escape(snippet))
+            """
+            
+            return (system, user)
+            
         case .tone:
-            return StageConfig(
-                title: "tone adjustment assistant",
-                scope: "Adjust writing tone while preserving meaning.",
-                rules: [
-                    "Adjust formality level as specified",
-                    "Preserve the core message",
-                    "Maintain appropriate word choice for the target tone",
-                    "Keep similar sentence length"
-                ]
-            )
+            // Tone stage: adjust formality with examples
+            let target = toneTarget ?? .none
+            
+            if target == .casual {
+                let system = "Make this text more casual and friendly. Return ONLY the rewritten text."
+                let user = """
+                I would like to inform you that the meeting has been rescheduled.<|im_end|>
+                <|im_start|>assistant
+                Hey, just letting you know the meeting got moved!<|im_end|>
+                <|im_start|>user
+                \(escape(snippet))
+                """
+                return (system, user)
+            } else if target == .professional {
+                let system = "Make this text more professional and formal. Return ONLY the rewritten text."
+                let user = """
+                Hey can u check this out when u get a chance?<|im_end|>
+                <|im_start|>assistant
+                Could you please review this at your earliest convenience?<|im_end|>
+                <|im_start|>user
+                \(escape(snippet))
+                """
+                return (system, user)
+            } else {
+                // No tone change - just return original
+                let system = "Return the text exactly as given."
+                let user = escape(snippet)
+                return (system, user)
+            }
         }
     }
     
@@ -163,10 +192,32 @@ public struct PromptBuilder: Sendable {
 // MARK: - Response Parser
 
 /// Parses LM responses to extract replacement text
+/// Supports both plain text responses and JSON format
 public struct ResponseParser {
     
     /// Extract the replacement text from an LM response
     public static func extractReplacement(from response: String) -> String? {
+        var cleaned = response.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Remove common LLM stop tokens/markers
+        let stopMarkers = ["[end of text]", "<|im_end|>", "<|endoftext|>", "</s>", "[END]"]
+        for marker in stopMarkers {
+            if let range = cleaned.range(of: marker, options: .caseInsensitive) {
+                cleaned = String(cleaned[..<range.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
+        
+        // Try to extract from JSON format first (backwards compatibility)
+        if let json = extractFromJSON(cleaned) {
+            return json
+        }
+        
+        // Otherwise, return the cleaned plain text
+        guard !cleaned.isEmpty else { return nil }
+        return cleaned
+    }
+    
+    private static func extractFromJSON(_ text: String) -> String? {
         // Try to find JSON object with "replacement" key
         let patterns = [
             #"\{[^}]*"replacement"\s*:\s*"([^"\\]*(\\.[^"\\]*)*)""#,
@@ -175,9 +226,9 @@ public struct ResponseParser {
         
         for pattern in patterns {
             if let regex = try? NSRegularExpression(pattern: pattern, options: []),
-               let match = regex.firstMatch(in: response, options: [], range: NSRange(response.startIndex..., in: response)),
-               let range = Range(match.range(at: 1), in: response) {
-                let extracted = String(response[range])
+               let match = regex.firstMatch(in: text, options: [], range: NSRange(text.startIndex..., in: text)),
+               let range = Range(match.range(at: 1), in: text) {
+                let extracted = String(text[range])
                 return unescapeJSON(extracted)
             }
         }
@@ -195,7 +246,8 @@ public struct ResponseParser {
 
 // MARK: - Mock LM Adapter (for testing and development)
 
-/// Mock LM adapter that provides deterministic corrections for testing
+/// Mock LM adapter that provides deterministic intent interpretation for testing
+/// This is NOT autocorrect - it interprets abbreviated/shorthand/garbled input
 public actor MockLMAdapter: LMAdapter {
     private var _status: LMStatus = .uninitialized
     private var _isReady: Bool = false
@@ -243,8 +295,9 @@ public actor MockLMAdapter: LMAdapter {
     private func applyMockCorrections(to text: String) -> String {
         var result = text
         
-        // Comprehensive typo corrections from Seven Scenarios + common errors
-        let corrections: [String: String] = [
+        // Intent interpretation mappings from Seven Scenarios
+        // This expands abbreviations, decodes shorthand, and fixes garbled speed-typing
+        let interpretations: [String: String] = [
             // === Scenario 1: Maya (Academic) - Scientific terminology ===
             "resarch": "research", "analsis": "analysis", "hypotheis": "hypothesis",
             "experiement": "experiment", "laborotory": "laboratory",
@@ -254,13 +307,20 @@ public actor MockLMAdapter: LMAdapter {
             "finacial": "financial", "analisys": "analysis", "managment": "management",
             "developement": "development", "straegy": "strategy", "busines": "business",
             
-            // === Scenario 6: Marcus (Speed) - Legal terms ===
+            // === Scenario 6: Marcus (Speed) - Legal shorthand (VELOCITY MODE) ===
             "defdnt": "defendant", "clamd": "claimed", "contrct": "contract",
             "invld": "invalid", "evdnce": "evidence", "testmny": "testimony",
+            "innocnce": "innocence", "crt": "court", "jdge": "judge",
+            "plntff": "plaintiff", "vrdict": "verdict", "sttmnt": "statement",
             
-            // === Scenario 7: Priya (Data) - Tech/Finance ===
-            "rvn": "revenue", "grwth": "growth", "stk": "stock",
-            "invstmt": "investment", "algrthm": "algorithm",
+            // === Scenario 7: Priya (Data) - Tech/Finance shorthand ===
+            "rvn": "revenue", "grwth": "growth", "stk": "stock", "stks": "stocks",
+            "invstmt": "investment", "invstmnt": "investment", "rtrns": "returns",
+            "algrthm": "algorithm", "tch": "tech", "hgh": "high", "stng": "strong",
+            
+            // === Velocity mode: abbreviated words ===
+            "th": "the", "qck": "quick", "brwn": "brown", "jmps": "jumps",
+            "ovr": "over", "dg": "dog", "wth": "with", "frm": "from",
             
             // === Common transpositions ===
             "teh": "the", "hte": "the", "adn": "and", "taht": "that",
@@ -289,12 +349,12 @@ public actor MockLMAdapter: LMAdapter {
             "corection": "correction", "inteligence": "intelligence",
         ]
         
-        for (typo, correction) in corrections {
+        for (input, interpreted) in interpretations {
             // Case-insensitive replacement preserving case
-            let pattern = "\\b\(NSRegularExpression.escapedPattern(for: typo))\\b"
+            let pattern = "\\b\(NSRegularExpression.escapedPattern(for: input))\\b"
             if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
                 let range = NSRange(result.startIndex..., in: result)
-                result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: correction)
+                result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: interpreted)
             }
         }
         

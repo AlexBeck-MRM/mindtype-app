@@ -17,9 +17,9 @@ Mind⠶Type is a **caret-safe text correction system** that improves your typing
 ### Core Principles
 
 - 🔒 **Private** — 100% on-device processing, no cloud
-- ⚡ **Fast** — Metal-accelerated inference on Apple Silicon (~1.2s latency)
+- ⚡ **Fast** — Metal-accelerated inference on Apple Silicon (~1-2s latency)
 - 🎯 **Caret-safe** — Never modifies text at or after your cursor
-- 🧠 **Intelligent** — Real LLM corrections via Qwen 0.5B
+- 🧠 **Intelligent** — Real LLM intent interpretation via Qwen 1.5B
 
 ---
 
@@ -37,10 +37,16 @@ Mind⠶Type is a **caret-safe text correction system** that improves your typing
 # 1. Install llama.cpp
 brew install llama.cpp
 
-# 2. Download the model (~470MB)
+# 2. Download the model (~1GB for best quality, or ~470MB for fastest)
 mkdir -p apple/Models
-curl -L -o apple/Models/qwen2.5-0.5b-instruct-q4_k_m.gguf \
-  "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf"
+
+# Recommended: Qwen 1.5B (best balance of speed and quality)
+curl -L -o apple/Models/qwen2.5-1.5b-instruct-q4_k_m.gguf \
+  "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf"
+
+# Alternative: Qwen 0.5B (faster, lower quality)
+# curl -L -o apple/Models/qwen2.5-0.5b-instruct-q4_k_m.gguf \
+#   "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf"
 
 # 3. Switch to Xcode toolchain (one-time)
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer

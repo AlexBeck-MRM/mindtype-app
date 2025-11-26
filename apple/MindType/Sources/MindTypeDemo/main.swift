@@ -1,7 +1,9 @@
 /*╔══════════════════════════════════════════════════════════════╗
   ║  ░  M I N D T Y P E   D E M O  ░░░░░░░░░░░░░░░░░░░░░░░░░░░  ║
   ║                                                              ║
-  ║   Interactive demo of the three-stage correction pipeline.  ║
+  ║   Type at the speed of thought. MindType interprets your    ║
+  ║   intent from rapid, abbreviated, or garbled input.         ║
+  ║   This is NOT autocorrect.                                  ║
   ║                                                              ║
   ╚══════════════════════════════════════════════════════════════╝
 */
@@ -46,10 +48,12 @@ struct MindTypeDemo {
          "Data/finance abbreviation expansion"),
     ]
     
+    // Quick tests demonstrating INTENT interpretation (not just autocorrect)
     static let quickTests: [(text: String, description: String)] = [
-        ("Teh quick brown fox jumps over teh lazy dog.", "Classic transpositions"),
-        ("I recieved teh message tommorow.", "Mixed errors"),
-        ("This is definately wierd but I cant help it.", "Common misspellings"),
+        ("Th qck brwn fox jmps ovr th lazy dg.", "Velocity mode: abbreviated typing"),
+        ("defdnt clmd innocnce in crt tday", "Legal shorthand expansion"),
+        ("hgh rvn grwth stng invstmnt rtrns", "Finance abbreviation expansion"),
+        ("definately wierd but I cant help it", "Common misspellings (simple case)"),
     ]
     
     // MARK: - Main Entry Point
@@ -71,10 +75,10 @@ struct MindTypeDemo {
         printHeader()
         
         // Initialize adapter
-        let (adapter, usingRealLM) = await initializeAdapter()
+        let (adapter, usingRealLM, modelPath) = await initializeAdapter()
         let pipeline = CorrectionPipeline(lmAdapter: adapter)
         
-        printModeInfo(usingRealLM: usingRealLM)
+        printModeInfo(usingRealLM: usingRealLM, modelPath: modelPath)
         
         // Run the appropriate mode
         if interactiveMode {
@@ -99,7 +103,8 @@ struct MindTypeDemo {
         ┌─────────────────────────────────────────────────────────────────┐
         │  I N T E R A C T I V E   M O D E                                │
         │                                                                 │
-        │  Type text with typos → see corrections in real-time           │
+        │  Type at thought-speed → MindType interprets your intent       │
+        │  Try: abbreviations, shorthand, garbled speed-typing           │
         │  Commands: :quit, :help, :tone casual, :tone professional      │
         └─────────────────────────────────────────────────────────────────┘
         
@@ -143,7 +148,8 @@ struct MindTypeDemo {
                 }
             }
             
-            // Process text
+            // Process text - show user we're working
+            print("   ⏳ Interpreting...")
             await processText(input, pipeline: pipeline, toneTarget: toneTarget, showDetails: true)
             print("")
         }
@@ -235,14 +241,14 @@ struct MindTypeDemo {
     
     // MARK: - Initialization
     
-    static func initializeAdapter() async -> (any LMAdapter, Bool) {
+    static func initializeAdapter() async -> (any LMAdapter, Bool, String?) {
         if let modelPath = ModelDiscovery.findModel() {
             print("🧠 Found model: \(modelPath.split(separator: "/").last ?? "")")
             let llamaAdapter = LlamaLMAdapter()
             do {
                 try await llamaAdapter.initialize(config: .gguf(modelPath))
                 print("✅ Llama adapter ready (Metal-accelerated)\n")
-                return (llamaAdapter, true)
+                return (llamaAdapter, true, modelPath)
             } catch {
                 print("⚠️  Model load failed: \(error.localizedDescription)")
                 print("   Falling back to mock adapter...\n")
@@ -255,7 +261,7 @@ struct MindTypeDemo {
         
         let mockAdapter = MockLMAdapter()
         try? await mockAdapter.initialize(config: .default)
-        return (mockAdapter, false)
+        return (mockAdapter, false, nil)
     }
     
     // MARK: - UI Helpers
@@ -273,8 +279,24 @@ struct MindTypeDemo {
         """)
     }
     
-    static func printModeInfo(usingRealLM: Bool) {
-        let mode = usingRealLM ? "🚀 Real LLM (Qwen 0.5B, Metal)" : "🎭 Mock (pattern matching)"
+    static func printModeInfo(usingRealLM: Bool, modelPath: String? = nil) {
+        let modelName: String
+        if let path = modelPath {
+            let filename = path.split(separator: "/").last ?? "unknown"
+            if filename.contains("3b") {
+                modelName = "Qwen 3B"
+            } else if filename.contains("1.5b") {
+                modelName = "Qwen 1.5B"
+            } else if filename.contains("0.5b") {
+                modelName = "Qwen 0.5B"
+            } else {
+                modelName = String(filename)
+            }
+        } else {
+            modelName = "Unknown"
+        }
+        
+        let mode = usingRealLM ? "🚀 Real LLM (\(modelName), Metal)" : "🎭 Mock (pattern matching)"
         print("─────────────────────────────────────────────────────────────────")
         print("  Mode: \(mode)")
         print("─────────────────────────────────────────────────────────────────")
@@ -283,7 +305,11 @@ struct MindTypeDemo {
     static func printHelp() {
         print("""
         
-        Mind⠶Type Demo - Three-stage correction pipeline
+        Mind⠶Type Demo - Type at the speed of thought
+        
+        NOT AUTOCORRECT: MindType interprets your intent from rapid,
+        abbreviated, or garbled typing. It expands shorthand and decodes
+        what you meant to say.
         
         USAGE:
             swift run MindTypeDemo [OPTIONS]
@@ -312,7 +338,12 @@ struct MindTypeDemo {
             :tone professional     Enable professional tone
             :tone off              Disable tone adjustment
         
-        Just type any text to see corrections applied.
+        Type at the speed of thought. Try:
+            • Abbreviations: "hgh rvn grwth" → "high revenue growth"
+            • Shorthand: "th defdnt clamd" → "the defendant claimed"
+            • Rapid typing: "definately wierd" → "definitely weird"
+        
+        MindType interprets what you MEANT, not just fixes what you typed.
         
         """)
     }

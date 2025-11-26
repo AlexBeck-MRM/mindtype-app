@@ -238,30 +238,30 @@ struct TestingGroundView: View {
                     
                     // Show diffs if available
                     if !appliedDiffs.isEmpty {
-                        List(appliedDiffs.indices, id: \.self) { index in
-                            let diff = appliedDiffs[index]
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(diff.stage.displayName)
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(diff.stage.color)
-                                    
-                                    Spacer()
-                                    
-                                    Text("[\(diff.start):\(diff.end)]")
-                                        .font(.caption2)
-                                        .foregroundStyle(.tertiary)
-                                }
-                                
-                                Text("→ \"\(diff.text)\"")
-                                    .font(.caption)
-                                    .foregroundStyle(.primary)
-                                    .lineLimit(3)
-                            }
-                            .padding(.vertical, 4)
+                List(appliedDiffs.indices, id: \.self) { index in
+                    let diff = appliedDiffs[index]
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(diff.stage.displayName)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(diff.stage.color)
+                            
+                            Spacer()
+                            
+                            Text("[\(diff.start):\(diff.end)]")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
                         }
-                        .listStyle(.plain)
+                        
+                        Text("→ \"\(diff.text)\"")
+                            .font(.caption)
+                            .foregroundStyle(.primary)
+                                    .lineLimit(3)
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listStyle(.plain)
                     } else {
                         Text("Stages applied changes directly")
                             .font(.caption)

@@ -194,7 +194,7 @@ class AppState: ObservableObject {
         }
     }
 }
-
+        
 // MARK: - App-Level Types (thin wrappers for SwiftUI compatibility)
 
 /// LM status for display

@@ -95,6 +95,7 @@ public actor LlamaLMAdapter: LMAdapter {
             "-ngl", "99",           // Use all GPU layers
             "--no-display-prompt",  // Don't echo the prompt
             "-e",                   // Process escape sequences
+            "--no-conversation",    // Disable conversation mode (prevents stdin blocking)
         ]
         
         // Execute llama-cli with timeout
@@ -153,13 +154,35 @@ public actor LlamaLMAdapter: LMAdapter {
     }
     
     private func runProcess(executable: String, arguments: [String]) async throws -> String {
-        // Run process on background thread to avoid blocking
-        let exec = executable
-        let args = arguments
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.arguments = arguments
         
-        return try await Task.detached {
-            try Self.runProcessSync(executable: exec, arguments: args)
-        }.value
+        let pipe = Pipe()
+        let errorPipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = errorPipe
+        // Provide empty stdin to prevent waiting for input
+        process.standardInput = FileHandle.nullDevice
+        
+        try process.run()
+        
+        // Wait for process with cancellation support
+        while process.isRunning {
+            try Task.checkCancellation()
+            try await Task.sleep(nanoseconds: 50_000_000) // Check every 50ms
+        }
+        
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8) ?? ""
+        
+        if process.terminationStatus != 0 {
+            let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+            let errorOutput = String(data: errorData, encoding: .utf8) ?? "Unknown error"
+            throw MindTypeError.generationFailed("Process exited with \(process.terminationStatus): \(errorOutput)")
+        }
+        
+        return output
     }
     
     private static func runProcessSync(executable: String, arguments: [String]) throws -> String {
@@ -171,6 +194,7 @@ public actor LlamaLMAdapter: LMAdapter {
         let errorPipe = Pipe()
         process.standardOutput = pipe
         process.standardError = errorPipe
+        process.standardInput = FileHandle.nullDevice
         
         try process.run()
         process.waitUntilExit()
@@ -193,14 +217,37 @@ public actor LlamaLMAdapter: LMAdapter {
 /// Utilities for finding and managing GGUF models
 public enum ModelDiscovery {
     
-    /// Default model filename (Qwen 0.5B is ~470MB quantized)
+    /// Supported models in order of preference (best first)
+    public static let supportedModels = [
+        "qwen2.5-3b-instruct-q4_k_m.gguf",   // Best quality
+        "qwen2.5-1.5b-instruct-q4_k_m.gguf", // Good balance
+        "qwen2.5-0.5b-instruct-q4_k_m.gguf", // Fastest, lowest quality
+    ]
+    
+    /// Default model filename (fallback to smallest)
     public static let defaultModelName = "qwen2.5-0.5b-instruct-q4_k_m.gguf"
     
     /// Model size in bytes (approximate)
     public static let defaultModelSize: Int64 = 470_000_000
     
-    /// Find model in common locations
-    public static func findModel(named filename: String = defaultModelName) -> String? {
+    /// Find the best available model
+    public static func findModel(named filename: String? = nil) -> String? {
+        // If specific filename requested, search for it
+        if let specific = filename {
+            return findModelFile(named: specific)
+        }
+        
+        // Otherwise, find the best available model (prefer larger/better)
+        for modelName in supportedModels {
+            if let path = findModelFile(named: modelName) {
+                return path
+            }
+        }
+        
+        return nil
+    }
+    
+    private static func findModelFile(named filename: String) -> String? {
         let searchPaths: [String] = [
             // App bundle
             Bundle.main.bundlePath + "/Models/\(filename)",
@@ -224,9 +271,9 @@ public enum ModelDiscovery {
         return nil
     }
     
-    /// Get the recommended model download URL
+    /// Get the recommended model download URL (3B for quality)
     public static var downloadURL: URL {
-        URL(string: "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf")!
+        URL(string: "https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF/resolve/main/qwen2.5-3b-instruct-q4_k_m.gguf")!
     }
     
     /// Get the target download path (creates directory if needed)
