@@ -1,10 +1,23 @@
 import '@testing-library/jest-dom';
 
 // Polyfill ResizeObserver for jsdom environment
-if (typeof (globalThis as any).ResizeObserver === 'undefined') {
-  (globalThis as any).ResizeObserver = class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  };
+type GlobalWithResizeObserver = typeof globalThis & {
+  ResizeObserver?: typeof ResizeObserver;
+};
+
+const globalWithRO = globalThis as GlobalWithResizeObserver;
+
+if (typeof globalWithRO.ResizeObserver === 'undefined') {
+  class StubResizeObserver implements ResizeObserver {
+    constructor(_callback: ResizeObserverCallback) {}
+
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+    takeRecords(): ResizeObserverEntry[] {
+      return [];
+    }
+  }
+
+  globalWithRO.ResizeObserver = StubResizeObserver as typeof ResizeObserver;
 }

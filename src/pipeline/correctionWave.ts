@@ -79,12 +79,13 @@ export async function runCorrectionWave(
 
   const startedAt = Date.now();
   const activeRegion = defaultActiveRegionPolicy.computeRenderRange(state);
-  log.info('start', {
+  const startPayload = {
     waveId,
     caret,
     textLen: text.length,
     activeRegion,
-  });
+  };
+  log.info('start', startPayload);
 
   if (!isCaretSafe(activeRegion.start, activeRegion.end, caret)) {
     return { diffs: [], activeRegion: { start: caret, end: caret } };
@@ -128,6 +129,12 @@ export async function runCorrectionWave(
 
     for (const proposal of contextResult.proposals) {
       if (isCaretSafe(proposal.start, proposal.end, caret)) {
+        const contextDiff = {
+          start: proposal.start,
+          end: proposal.end,
+          text: proposal.text,
+          stage: 'context' as const,
+        };
         diffs.push({
           start: proposal.start,
           end: proposal.end,
@@ -155,6 +162,12 @@ export async function runCorrectionWave(
 
       for (const proposal of toneResult.proposals) {
         if (isCaretSafe(proposal.start, proposal.end, caret)) {
+          const toneDiff = {
+            start: proposal.start,
+            end: proposal.end,
+            text: proposal.text,
+            stage: 'tone' as const,
+          };
           diffs.push({
             start: proposal.start,
             end: proposal.end,
@@ -165,12 +178,13 @@ export async function runCorrectionWave(
       }
     }
 
-    log.info('complete', {
+    const donePayload = {
       waveId,
       diffCount: diffs.length,
       durationMs: Date.now() - startedAt,
       activeRegion,
-    });
+    };
+    log.info('complete', donePayload);
     return { diffs, activeRegion };
   } catch (error) {
     log.error('error', {

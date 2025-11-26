@@ -15,7 +15,7 @@
   • HOW  ▸ See linked contracts and guides in docs
 */
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createWorkerLMAdapter } from '../../../core/lm/workerAdapter';
 import { createLMContextManager } from '../../../core/lm/contextManager';
 import { replaceRange } from '../../../utils/diff';
@@ -56,7 +56,7 @@ export function LMLab() {
   >([]);
   const [contextInitialized, setContextInitialized] = useState(false);
 
-  async function run() {
+  const run = useCallback(async () => {
     const runId = ++lastRunId.current;
     setRunning(true);
     setJsonl('');
@@ -136,7 +136,7 @@ export function LMLab() {
     } finally {
       setRunning(false);
     }
-  }
+  }, [adapter, contextManager, contextInitialized, input, bandEnd]);
 
   // Auto-run when a preset is applied
   useEffect(() => {
@@ -156,8 +156,7 @@ export function LMLab() {
         if (!running) run();
       }, 0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input, bandStart, bandEnd, tone]);
+  }, [bandEnd, bandStart, input, run, running, tone]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

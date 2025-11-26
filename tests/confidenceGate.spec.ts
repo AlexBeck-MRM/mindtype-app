@@ -6,8 +6,8 @@ import {
   computeInputFidelity,
   clamp01,
   type ConfidenceInputs,
+  computeDynamicThresholds,
 } from '../src/pipeline/confidenceGate';
-import { computeDynamicThresholds, type EditType } from '../src/pipeline/confidenceGate';
 import {
   setConfidenceSensitivity,
   setConfidenceThresholds,

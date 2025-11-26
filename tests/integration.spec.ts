@@ -10,7 +10,6 @@
   • HOW  ▸ Simulates typing events; checks corrections applied properly
 */
 import { describe, it, expect, vi } from 'vitest';
-import { createTypingMonitor } from '../src/pipeline/monitor';
 import { createDiffusionController } from '../src/region/diffusion';
 import type { LMAdapter } from '../src/lm/types';
 

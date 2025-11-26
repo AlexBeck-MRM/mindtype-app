@@ -8,40 +8,39 @@
   • WHY  ▸ Coverage and basic validation
   • HOW  ▸ Mock worker and test message protocol
 */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { createWorkerLMAdapter } from '../src/lm/workerAdapter';
+
+function createMockWorker() {
+  const base = {
+    postMessage: vi.fn(),
+    terminate: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  };
+
+  const worker = {
+    ...base,
+    onmessage: null,
+    onerror: null,
+    onmessageerror: null,
+  };
+
+  return worker as unknown as Worker;
+}
 
 describe('WorkerAdapter (interface)', () => {
   it('creates adapter interface without throwing', () => {
-    // Mock Worker for Node.js environment
-    const mockWorker = {
-      postMessage: vi.fn(),
-      terminate: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    } as unknown as Worker;
+    const mockWorker = createMockWorker();
+    const makeWorker = vi.fn(() => mockWorker);
 
-    const makeWorker = () => mockWorker;
+    const adapter = createWorkerLMAdapter(makeWorker);
+    expect(() => adapter.init?.()).not.toThrow();
+    expect(adapter.getStats?.()).toEqual({ runs: 0, staleDrops: 0 });
 
-    // Dynamic import to avoid issues in Node.js
-    const createAdapter = () => {
-      try {
-        // Use dynamic import to satisfy ESM lint rule
-        // Note: avoid top-level await to keep test sync
-        let mod: any;
-        (function assign() {
-          /* istanbul ignore next */
-        })();
-
-        import('../src/lm/workerAdapter').then(({ createWorkerLMAdapter }) => {
-          mod = createWorkerLMAdapter(makeWorker);
-        });
-        return mod ?? null;
-      } catch {
-        return null;
-      }
-    };
-
-    // Should not throw during creation
-    expect(() => createAdapter()).not.toThrow();
+    adapter.abort?.();
+    expect(makeWorker).toHaveBeenCalledTimes(1);
+    expect(mockWorker.postMessage).toHaveBeenCalledWith({ type: 'abort' });
   });
 });

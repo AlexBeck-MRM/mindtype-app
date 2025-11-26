@@ -103,7 +103,6 @@ export function splitSpan(
   if (!s) return false;
   if (splitAt <= s.start || splitAt >= s.end) return false;
   const leftLen = splitAt - s.start;
-  const rightLen = s.end - splitAt;
   const left: RegionSpan = {
     start: s.start,
     end: splitAt,

@@ -41,11 +41,12 @@ export function createTypingMonitor(): TypingMonitor {
       return () => listeners.delete(listener);
     },
     emit(event) {
-      log?.debug('emit', {
+      const payload = {
         caret: event.caret,
         textLen: event.text.length,
         atMs: event.atMs,
-      });
+      };
+      log?.debug('emit', payload);
       for (const listener of listeners) listener(event);
     },
   };

@@ -82,7 +82,6 @@ describe('LM Context Manager', () => {
     const text2 = 'Alpha changed. Beta.';
     const mgr = createLMContextManager();
     await mgr.initialize(text1, text1.length);
-    const win1 = mgr.getContextWindow();
     mgr.updateWideContext(text2);
     const win2 = mgr.getContextWindow();
     expect(win2.wide.text).toBe(text2);

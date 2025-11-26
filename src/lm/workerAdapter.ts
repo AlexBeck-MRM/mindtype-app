@@ -140,7 +140,7 @@ export function createWorkerLMAdapter(makeWorker: () => Worker): LMAdapter {
             phase: 'msg_recv',
             requestId,
             detail: {
-              type: (msg as any).type,
+              type: msg.type,
               messageRequestId: rid,
               matches: rid === requestId,
               aborted,

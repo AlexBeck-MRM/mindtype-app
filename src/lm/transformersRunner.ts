@@ -45,6 +45,32 @@ type LoadedGenerator = {
   TextStreamer: new (tokenizer: unknown, opts: Record<string, unknown>) => unknown;
 };
 
+type TransformersEnv = {
+  allowLocalModels?: boolean;
+  allowRemoteModels?: boolean;
+  remoteURL?: string | null;
+  remotePath?: string | null;
+  localModelPath?: string;
+  localURL?: string;
+  backends?: {
+    onnx?: {
+      wasm?: {
+        wasmPaths?: string;
+      };
+    };
+  };
+} & Record<string, unknown>;
+
+type TransformersModule = {
+  pipeline: (
+    task: string,
+    model: string,
+    options: Record<string, unknown>,
+  ) => Promise<GeneratorFn>;
+  TextStreamer: new (tokenizer: unknown, opts: Record<string, unknown>) => unknown;
+  env: TransformersEnv;
+};
+
 // ──────────────────────────────────────────────────────────────
 // Singleton loader (locks to first options seen for the session)
 // ──────────────────────────────────────────────────────────────
@@ -77,7 +103,9 @@ async function loadGeneratorSingleton(
   singletonKey = nextKey;
   const modelId = options?.modelId ?? 'onnx-community/Qwen2.5-0.5B-Instruct';
   singletonGenerator = (async (): Promise<LoadedGenerator> => {
-    let pipeline: any, TextStreamer: any, env: any;
+    let pipeline: TransformersModule['pipeline'];
+    let TextStreamer: TransformersModule['TextStreamer'];
+    let env: TransformersEnv;
 
     try {
       log.info('import.begin', { modelId });
@@ -89,18 +117,12 @@ async function loadGeneratorSingleton(
 
       // Dynamic import keeps core decoupled from heavy deps
       log.debug('import.dynamic');
-      const transformersModule = await import('@huggingface/transformers');
+      const transformersModule = (await import(
+        '@huggingface/transformers'
+      )) as TransformersModule;
       log.info('import.success', { keys: Object.keys(transformersModule) });
 
-      ({ pipeline, TextStreamer, env } = transformersModule as unknown as {
-        pipeline: (
-          task: string,
-          model: string,
-          options: Record<string, unknown>,
-        ) => Promise<GeneratorFn>;
-        TextStreamer: new (tokenizer: unknown, opts: Record<string, unknown>) => unknown;
-        env: Record<string, unknown>;
-      });
+      ({ pipeline, TextStreamer, env } = transformersModule);
 
       log.debug('import.components', {
         hasPipeline: typeof pipeline === 'function',
@@ -126,35 +148,32 @@ async function loadGeneratorSingleton(
     // Environment configuration for self‑hosting and fallbacks
     if (opts?.localOnly) {
       // CRITICAL: Disable ALL remote fetching
-      (env as Record<string, unknown>).allowLocalModels = true;
-      (env as Record<string, unknown>).allowRemoteModels = false as unknown as never;
+      env.allowLocalModels = true;
+      env.allowRemoteModels = false;
       // Disable HuggingFace API completely
-      (env as Record<string, unknown>).remoteURL = null;
-      (env as Record<string, unknown>).remotePath = null;
+      env.remoteURL = null;
+      env.remotePath = null;
       // Set local models path to our served directory
       if (opts?.localModelPath) {
-        (env as Record<string, unknown>).localModelPath = opts.localModelPath;
+        env.localModelPath = opts.localModelPath;
         // Also set localURL to ensure Transformers.js uses it
-        (env as Record<string, unknown>).localURL = opts.localModelPath;
+        env.localURL = opts.localModelPath;
       }
     } else {
-      (env as Record<string, unknown>).allowLocalModels = false as unknown as never;
-      (env as Record<string, unknown>).allowRemoteModels = true as unknown as never;
+      env.allowLocalModels = false;
+      env.allowRemoteModels = true;
     }
     // Configure ONNX Runtime Web WASM path
     // Use provided path if set; otherwise default:
     // - localOnly: '/wasm/' served by host
     // - remote: jsdelivr CDN to avoid local 404s
     {
-      const e = env as unknown as {
-        backends?: { onnx?: { wasm?: { wasmPaths?: string } } };
-      } & Record<string, unknown>;
-      e.backends = e.backends ?? {};
-      e.backends.onnx = e.backends.onnx ?? { wasm: {} };
-      e.backends.onnx.wasm = e.backends.onnx.wasm ?? {};
+      env.backends = env.backends ?? {};
+      env.backends.onnx = env.backends.onnx ?? { wasm: {} };
+      env.backends.onnx.wasm = env.backends.onnx.wasm ?? {};
       const cdn = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@latest/dist/';
       const wasmBase = opts?.wasmPaths ?? (opts?.localOnly ? '/wasm/' : cdn);
-      e.backends.onnx.wasm.wasmPaths = wasmBase;
+      env.backends.onnx.wasm.wasmPaths = wasmBase;
     }
 
     const backend = detectBackend();
@@ -177,9 +196,7 @@ async function loadGeneratorSingleton(
             return false;
           }
         });
-      const base = String(
-        (env as Record<string, unknown>).localModelPath ?? opts?.localModelPath ?? '',
-      );
+      const base = String(env.localModelPath ?? opts?.localModelPath ?? '');
       if (!base) {
         throw new Error('[LM] localOnly enabled but no localModelPath configured');
       }

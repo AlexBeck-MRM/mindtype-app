@@ -96,8 +96,6 @@ describe('Performance Benchmarks', () => {
       const largeData = generateTestData(5000);
       processTestData(largeData);
 
-      const peakMemory = getMemoryUsage();
-
       // Force garbage collection if available
       if (global.gc) {
         global.gc();

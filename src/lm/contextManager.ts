@@ -12,7 +12,7 @@
 
 import { getSentenceContextPerSide } from '../config/thresholds';
 import { createLogger } from '../pipeline/logger';
-import type { StagingBuffer, Proposal } from '../pipeline/stagingBuffer';
+import type { StagingBuffer } from '../pipeline/stagingBuffer';
 
 const log = createLogger('lm.context');
 

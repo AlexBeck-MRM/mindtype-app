@@ -8,7 +8,7 @@
 import { describe, it, expect } from 'vitest';
 import { createDefaultLMAdapter } from '../src/lm/factory';
 import { detectBackend } from '../src/lm/transformersClient';
-import { withNormalizedRegion, streamWithNormalizedRegion } from './helpers/lmParams';
+import { streamWithNormalizedRegion } from './helpers/lmParams';
 
 describe('createDefaultLMAdapter', () => {
   it('streams from a provided runner and respects boundary coalescing by consumer', async () => {

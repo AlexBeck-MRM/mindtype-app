@@ -40,6 +40,12 @@ export type LMJsonlEvent = {
   channel: 'lm-jsonl';
   time: number;
   raw: string;
+  stage?: string;
+  spanStart?: number;
+  spanEnd?: number;
+  chunkCount?: number;
+  extracted?: string | null;
+  success?: boolean;
 };
 
 export type ContextWindowEvent = {

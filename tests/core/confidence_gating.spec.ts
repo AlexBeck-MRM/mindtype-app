@@ -198,9 +198,6 @@ describe('Confidence Gating System', () => {
     });
 
     it('allows corrections within reasonable time window', () => {
-      // Simulate timing-based decision
-      const startTime = Date.now();
-
       // SHORT_PAUSE_MS should be long enough for LM processing
       // but short enough for good UX
       expect(SHORT_PAUSE_MS).toBeGreaterThan(300); // Not too fast

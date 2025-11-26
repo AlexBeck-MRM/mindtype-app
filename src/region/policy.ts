@@ -128,7 +128,7 @@ export const defaultActiveRegionPolicy: ActiveRegionPolicy = {
     return computeRenderRangeInternal(state);
   },
   computeContextRange(state) {
-    // v0.6: Same range for render and context (single Active Region)
-    return computeRenderRangeInternal(state);
+    const render = computeRenderRangeInternal(state);
+    return computeContextRangeInternal(state, render);
   },
 };

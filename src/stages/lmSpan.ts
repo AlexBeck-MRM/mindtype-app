@@ -11,7 +11,8 @@
 */
 
 import type { LMAdapter, LMStreamParams } from '../lm/types';
-import { extractReplacementText } from '../lm/promptBuilder';
+import { extractReplacementText, type CorrectionStage } from '../lm/promptBuilder';
+import { diagBus } from '../pipeline/diagnosticsBus';
 
 export interface StreamActiveRegionOptions {
   text: string;
@@ -40,9 +41,30 @@ export async function streamActiveRegion(
     if (chunk) chunks.push(chunk);
   }
   const normalized = normalizeStreamedText(chunks.join(''));
-  if (!normalized) return { text: null, chunkCount: chunks.length };
+  const stage = (settings?.stage as CorrectionStage | undefined) ?? 'noise';
+  const truncated = normalized.length > 800 ? `${normalized.slice(0, 800)}…` : normalized;
+
+  if (!normalized) {
+    publishJsonlEvent({
+      stage,
+      raw: truncated,
+      spanStart: activeRegion.start,
+      spanEnd: activeRegion.end,
+      chunkCount: chunks.length,
+      extracted: null,
+    });
+    return { text: null, chunkCount: chunks.length };
+  }
 
   const extracted = extractReplacementText(normalized);
+  publishJsonlEvent({
+    stage,
+    raw: truncated,
+    spanStart: activeRegion.start,
+    spanEnd: activeRegion.end,
+    chunkCount: chunks.length,
+    extracted: extracted ?? null,
+  });
   if (extracted) {
     if (extracted === originalSpan) return { text: null, chunkCount: chunks.length };
     return { text: extracted, chunkCount: chunks.length };
@@ -56,4 +78,29 @@ export function normalizeStreamedText(raw: string): string {
   if (!raw) return '';
   // Drop carriage returns / nulls but preserve deliberate whitespace
   return raw.replace(/\r/g, '').replace(/\u0000/g, '');
+}
+
+function publishJsonlEvent(event: {
+  stage: CorrectionStage;
+  raw: string;
+  spanStart: number;
+  spanEnd: number;
+  chunkCount: number;
+  extracted: string | null;
+}) {
+  try {
+    diagBus.publish({
+      channel: 'lm-jsonl',
+      time: Date.now(),
+      raw: event.raw,
+      stage: event.stage,
+      spanStart: event.spanStart,
+      spanEnd: event.spanEnd,
+      chunkCount: event.chunkCount,
+      extracted: event.extracted,
+      success: Boolean(event.extracted),
+    });
+  } catch {
+    // Diagnostics are best-effort only.
+  }
 }

@@ -10,9 +10,8 @@ import { createTransformersAdapter, detectBackend } from '../src/lm/transformers
 import { cooldownForBackend } from '../src/lm/transformersClient';
 import type { LMCapabilities } from '../src/lm/types';
 
-import { withNormalizedRegion, streamWithNormalizedRegion } from './helpers/lmParams';
+import { streamWithNormalizedRegion } from './helpers/lmParams';
 
-const legacyParams = withNormalizedRegion;
 const streamWithLegacyParams = streamWithNormalizedRegion;
 
 function makeRunner(chunks: string[], delay = 0) {

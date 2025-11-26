@@ -17,7 +17,10 @@ import { diagBus, type DiagEvent } from '../../../../src/pipeline/diagnosticsBus
 import { setLoggerConfig, type LogRecord } from '../../../../src/pipeline/logger';
 import { createLiveRegion } from '../../../../src/ui/liveRegion';
 import { verifyLocalAssets } from '../../../../src/lm/transformersClient';
-import { buildTestPrompt, extractReplacementText } from '../../../../src/lm/promptBuilder';
+import {
+  buildTestPrompt,
+  extractReplacementText,
+} from '../../../../src/lm/promptBuilder';
 
 const MODEL_PATH = '/mindtype/models/onnx-community/Qwen2.5-0.5B-Instruct';
 const WASM_PATH = '/mindtype/wasm/';
@@ -225,7 +228,6 @@ export function useMindtypePipeline(): UseMindtypePipelineReturn {
       window.removeEventListener('mindtype:mechanicalSwap', onMechanicalSwap);
       window.removeEventListener('mindtype:swapAnnouncement', onSwapAnnouncement);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggerSink]);
 
   // Initialize LM adapter
@@ -311,71 +313,68 @@ export function useMindtypePipeline(): UseMindtypePipelineReturn {
     setAssetProbe((n) => n + 1);
   }, []);
 
-  const runLMTest = useCallback(
-    async (trigger: 'warmup' | 'manual' = 'manual') => {
-      const adapter = lmAdapterRef.current;
-      if (!adapter) {
-        setLmTest((prev) => ({
-          ...prev,
-          status: 'error',
-          errorMessage: 'LM adapter not ready',
-          trigger,
-          lastRun: Date.now(),
-        }));
-        return;
+  const runLMTest = useCallback(async (trigger: 'warmup' | 'manual' = 'manual') => {
+    const adapter = lmAdapterRef.current;
+    if (!adapter) {
+      setLmTest((prev) => ({
+        ...prev,
+        status: 'error',
+        errorMessage: 'LM adapter not ready',
+        trigger,
+        lastRun: Date.now(),
+      }));
+      return;
+    }
+    // Use the test input text directly (prompt builder will format it)
+    const testInput = LM_TEST_INPUT;
+    const prompt = LM_TEST_PROMPT;
+    setLmTest({
+      status: 'running',
+      prompt,
+      response: '',
+      trigger,
+    });
+    const start = performance.now();
+    try {
+      const chunks: string[] = [];
+      // Stream with proper prompt formatting
+      for await (const chunk of adapter.stream({
+        text: testInput,
+        caret: testInput.length,
+        activeRegion: { start: 0, end: testInput.length },
+        settings: {
+          maxNewTokens: 64,
+          deviceTier: 'wasm',
+          stage: 'noise', // Use noise stage for test
+        },
+      })) {
+        if (chunk) chunks.push(chunk);
       }
-      // Use the test input text directly (prompt builder will format it)
-      const testInput = LM_TEST_INPUT;
-      const prompt = LM_TEST_PROMPT;
+      const rawResponse = chunks.join('').trim();
+      const parsed = extractReplacementText(rawResponse);
+      const response = (parsed ?? rawResponse).trim();
       setLmTest({
-        status: 'running',
+        status: 'success',
+        prompt,
+        response,
+        trigger,
+        durationMs: performance.now() - start,
+        chunkCount: chunks.length,
+        lastRun: Date.now(),
+      });
+    } catch (err) {
+      setLmTest({
+        status: 'error',
         prompt,
         response: '',
         trigger,
+        errorMessage: err instanceof Error ? err.message : 'LM test failed',
+        lastRun: Date.now(),
+        durationMs: 0,
+        chunkCount: 0,
       });
-      const start = performance.now();
-      try {
-        const chunks: string[] = [];
-        // Stream with proper prompt formatting
-        for await (const chunk of adapter.stream({
-          text: testInput,
-          caret: testInput.length,
-          activeRegion: { start: 0, end: testInput.length },
-          settings: {
-            maxNewTokens: 64,
-            deviceTier: 'wasm',
-            stage: 'noise', // Use noise stage for test
-          },
-        })) {
-          if (chunk) chunks.push(chunk);
-        }
-        const rawResponse = chunks.join('').trim();
-        const parsed = extractReplacementText(rawResponse);
-        const response = (parsed ?? rawResponse).trim();
-        setLmTest({
-          status: 'success',
-          prompt,
-          response,
-          trigger,
-          durationMs: performance.now() - start,
-          chunkCount: chunks.length,
-          lastRun: Date.now(),
-        });
-      } catch (err) {
-        setLmTest({
-          status: 'error',
-          prompt,
-          response: '',
-          trigger,
-          errorMessage: err instanceof Error ? err.message : 'LM test failed',
-          lastRun: Date.now(),
-          durationMs: 0,
-          chunkCount: 0,
-        });
-      }
-    },
-    [],
-  );
+    }
+  }, []);
 
   useEffect(() => {
     if (state.lmStatus === 'ready' && !warmupTriggeredRef.current) {

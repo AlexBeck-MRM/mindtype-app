@@ -35,6 +35,10 @@ export interface DiffusionState {
   frontier: number; // leftmost index not yet validated
 }
 
+function traceDiffusion(event: string, payload: Record<string, unknown>) {
+  console.debug(`[Diffusion] ${event}`, payload);
+}
+
 // ActiveRegionPolicy: future‑proof hook for LM integration (type in core/activeRegionPolicy.ts)
 // - computeRenderRange: what to visualize (active region)
 // - computeContextRange: what to provide to an LLM adapter (can span sentences/paragraphs)
@@ -54,11 +58,6 @@ export function createDiffusionController(
     seg = null;
   }
   const log = createLogger('diffusion');
-  // v0.6: internal undo isolation removed; hosts own undo. Wave rollback is implemented in Phase 4.
-  const undo = null as unknown as {
-    addEdit: (...args: unknown[]) => void;
-    popLastGroup: () => unknown;
-  };
 
   let state: DiffusionState = { text: '', caret: 0, frontier: 0 };
   // Throttle rendering to avoid UI storms (esp. Safari). ~60fps ceiling.
@@ -98,6 +97,11 @@ export function createDiffusionController(
     state.caret = caret;
     clampFrontier();
     log.debug('update', { caret, frontier: state.frontier, textLen: text.length });
+    traceDiffusion('update', {
+      caret,
+      frontier: state.frontier,
+      textLen: text.length,
+    });
     maybeRender();
   }
 
@@ -155,6 +159,7 @@ export function createDiffusionController(
     // Streaming tick now only advances the validation frontier; corrections happen via LM
     state.frontier = Math.max(state.frontier, r.end);
     clampFrontier();
+    traceDiffusion('tickOnce', { frontier: state.frontier, caret: state.caret });
     maybeRender();
   }
 
@@ -162,6 +167,10 @@ export function createDiffusionController(
     // Process in small chunks to avoid blocking the UI/event loop.
     const MAX_PER_CHUNK = 20;
     let processed = 0;
+    traceDiffusion('catchUp-start', {
+      frontier: state.frontier,
+      caret: state.caret,
+    });
     while (state.frontier < state.caret && processed < MAX_PER_CHUNK) {
       tickOnce();
       processed += 1;
@@ -234,6 +243,10 @@ export function createDiffusionController(
       }
       clampFrontier();
       maybeRender();
+      traceDiffusion('catchUp-complete', {
+        frontier: state.frontier,
+        caret: state.caret,
+      });
     } catch {}
   }
 
@@ -257,6 +270,13 @@ export function createDiffusionController(
         replacedLen: before.length,
         newLen: diff.text.length,
       });
+      traceDiffusion('applyExternal', {
+        start: diff.start,
+        end: diff.end,
+        replacedLen: before.length,
+        newLen: diff.text.length,
+        frontier: state.frontier,
+      });
       maybeRender();
       try {
         // Emit highlight so hosts (web demo) apply the visible replacement
@@ -271,6 +291,11 @@ export function createDiffusionController(
       return true;
     } catch (error) {
       log.warn('applyExternal_failed', {
+        start: diff.start,
+        end: diff.end,
+        error: error instanceof Error ? error.message : error,
+      });
+      traceDiffusion('applyExternal_failed', {
         start: diff.start,
         end: diff.end,
         error: error instanceof Error ? error.message : error,

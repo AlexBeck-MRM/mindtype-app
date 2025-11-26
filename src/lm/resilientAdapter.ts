@@ -40,7 +40,7 @@ export function createResilientLMAdapter(
               // primary ended without chunks; prefer fallback
               decided = 'fallback';
             }
-          } catch (err) {
+          } catch {
             decided = 'fallback';
           }
         })();

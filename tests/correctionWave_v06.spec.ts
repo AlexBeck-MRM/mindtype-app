@@ -15,7 +15,7 @@
   • HOW  ▸ Mock LMAdapter; test Noise→Context→Tone sequence
 */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { runCorrectionWave } from '../src/pipeline/correctionWave';
 import type { LMAdapter } from '../src/lm/types';
 

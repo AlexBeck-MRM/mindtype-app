@@ -87,13 +87,14 @@ export async function noiseTransform(input: NoiseInput): Promise<NoiseResult> {
 
     // Only apply if LM produced a meaningful change
     if (correctedText && correctedText !== spanText && correctedText.length > 0) {
-      log.info('diff', {
+      const diffPayload = {
         ...telemetry,
         durationMs,
         replacedLen: spanText.length,
         newLen: correctedText.length,
         chunkCount,
-      });
+      };
+      log.info('diff', diffPayload);
       return {
         diff: {
           start: activeRegion.start,

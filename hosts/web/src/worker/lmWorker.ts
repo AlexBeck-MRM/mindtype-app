@@ -31,9 +31,6 @@ type Msg =
   | { type: 'generate'; requestId: string; params: GenerateParams }
   | { type: 'abort' };
 
-// Force local-only assets for user requirement
-const MT_LM_AVAILABLE = 'local';
-
 let streamerPromise: Promise<ReturnType<typeof createQwenTokenStreamer>> | null = null;
 async function getStreamer() {
   if (streamerPromise) return streamerPromise;

@@ -136,28 +136,16 @@ export function createSweepScheduler(
         '[SweepScheduler] LM adapter missing — call setLMAdapter() before corrections run.',
       );
       log.error('wave.skip_no_lm', { waveId, caret: lastEvent?.caret, toneTarget });
-      console.error('[SweepScheduler] LM adapter missing — corrections will not run');
       try {
         (globalThis as unknown as Record<string, unknown>).__mtLastLMError = err;
       } catch {}
       return;
     }
-    console.log('[SweepScheduler] Running correction wave', {
-      waveId,
-      textLength: lastEvent.text.length,
-      caret: lastEvent.caret,
-      hasLMAdapter: !!lmAdapter,
-    });
     log.info('wave.schedule', {
       waveId,
       caret: lastEvent.caret,
       textLen: lastEvent.text.length,
       toneTarget,
-    });
-    console.log('[SweepScheduler] Starting correction wave', {
-      waveId,
-      textPreview: lastEvent.text.slice(Math.max(0, lastEvent.caret - 50), lastEvent.caret),
-      caret: lastEvent.caret,
     });
     const wave = await runCorrectionWave({
       text: lastEvent.text,
@@ -168,16 +156,6 @@ export function createSweepScheduler(
     });
     // lastEvent is guaranteed non-null here (checked at start of function)
     const eventText = lastEvent.text;
-    console.log('[SweepScheduler] Correction wave completed', {
-      waveId,
-      diffCount: wave.diffs.length,
-      diffs: wave.diffs.map((d) => ({
-        start: d.start,
-        end: d.end,
-        original: eventText.slice(d.start, d.end),
-        corrected: d.text,
-      })),
-    });
 
     try {
       (
@@ -194,27 +172,15 @@ export function createSweepScheduler(
 
     if (wave.diffs.length === 0) {
       log.info('pause resolved with LM — no diffs', { waveId });
-      console.log('[SweepScheduler] No corrections found', { waveId });
       return;
     }
 
     log.info('pause resolved with LM diffs', { waveId, count: wave.diffs.length });
-    console.log('[SweepScheduler] Applying corrections', {
-      waveId,
-      count: wave.diffs.length,
-    });
     for (const diff of wave.diffs) {
-      const applied = diffusion.applyExternal({
+      diffusion.applyExternal({
         start: diff.start,
         end: diff.end,
         text: diff.text,
-      });
-      console.log('[SweepScheduler] Applied diff', {
-        start: diff.start,
-        end: diff.end,
-        original: lastEvent?.text.slice(diff.start, diff.end) || '',
-        corrected: diff.text,
-        applied,
       });
     }
   }

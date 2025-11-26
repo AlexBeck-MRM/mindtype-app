@@ -149,8 +149,8 @@ describe('LMAdapter v0.6', () => {
         settings: { maxNewTokens: 100 }, // Request more than cap
       };
 
-      for await (const _ of adapter.stream(params)) {
-        // Just consume the stream
+      for await (const chunk of adapter.stream(params)) {
+        void chunk; // Just consume the stream
       }
 
       // Should clamp to device tier cap (16 for CPU default in test env)
@@ -210,8 +210,8 @@ describe('LMAdapter v0.6', () => {
       };
 
       await expect(async () => {
-        for await (const _ of uninitializedAdapter.stream(params)) {
-          // Should throw before yielding
+        for await (const chunk of uninitializedAdapter.stream(params)) {
+          void chunk;
         }
       }).rejects.toThrow('LMAdapter not initialized');
     });
@@ -228,8 +228,8 @@ describe('LMAdapter v0.6', () => {
       };
 
       await expect(async () => {
-        for await (const _ of adapter.stream(params)) {
-          // Should throw
+        for await (const chunk of adapter.stream(params)) {
+          void chunk;
         }
       }).rejects.toThrow('LM streaming failed: Generation failed');
     });

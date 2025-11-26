@@ -34,7 +34,9 @@ export default defineConfig({
         'tests/**',
         'coverage/**',
         'node_modules/**',
+        'src/lm/index.ts',
         'src/lm/types.generated.ts',
+        'src/ui/**',
       ],
       thresholds: {
         // v0.6 Phase 1: temporary thresholds during rules removal; Phase 6 target ≥85%

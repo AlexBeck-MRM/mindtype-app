@@ -109,12 +109,13 @@ export async function toneTransform(input: ToneInput): Promise<ToneResult> {
       const decision = applyThresholds(confidence, thresholds, { requireTone: true });
 
       if (decision === 'commit') {
-        log.info('proposal.commit', {
+        const payload = {
           ...telemetry,
           durationMs: Date.now() - stageStart,
           confidence: confidence.combined,
           chunkCount,
-        });
+        };
+        log.info('proposal.commit', payload);
         return {
           proposals: [
             {
@@ -127,20 +128,22 @@ export async function toneTransform(input: ToneInput): Promise<ToneResult> {
         };
       }
 
-      log.debug('proposal.rejected', {
+      const rejectPayload = {
         ...telemetry,
         durationMs: Date.now() - stageStart,
         confidence: confidence.combined,
-      });
+      };
+      log.debug('proposal.rejected', rejectPayload);
     }
 
     return { proposals: [] };
   } catch (error) {
     // v0.6: LM errors disable corrections rather than fallback
-    log.error('error', {
+    const errorPayload = {
       ...telemetry,
       error: error instanceof Error ? error.message : error,
-    });
+    };
+    log.error('error', errorPayload);
     return { proposals: [] };
   }
 }

@@ -74,7 +74,7 @@ function createSSEPlugin(): PluginOption {
           }
         });
         sendNoContent();
-      } catch (error) {
+      } catch {
         res.writeHead(400, {
           'Access-Control-Allow-Origin': '*',
         });

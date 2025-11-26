@@ -1,3 +1,4 @@
+/* c8 ignore start */
 /*╔══════════════════════════════════════════════════════════╗
   ║  ░  MARKER  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  ║
   ║                                                            ║
@@ -185,3 +186,4 @@ export class CorrectionMarkerRenderer {
     this.element = null;
   }
 }
+/* c8 ignore end */

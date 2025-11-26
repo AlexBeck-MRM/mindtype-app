@@ -10,20 +10,23 @@
 */
 
 import { describe, it, expect } from 'vitest';
+import { createWorkerLMAdapter } from '../src/lm/workerAdapter';
+
+type MessageListener = (event: MessageEvent) => void;
 
 describe('WorkerAdapter branches', () => {
   it('handles chunk and done messages', async () => {
-    const listeners: Record<string, Function[]> = { message: [] };
+    const listeners: Record<string, MessageListener[]> = { message: [] };
     let lastRequestId: string | null = null;
     const mockWorker = {
-      postMessage: (msg: any) => {
+      postMessage: (msg: unknown) => {
         // Capture requestId from generate message to echo back in events
         if (msg && typeof msg === 'object' && 'requestId' in msg) {
           lastRequestId = String(msg.requestId);
         }
       },
       terminate: () => {},
-      addEventListener: (type: string, fn: Function) => {
+      addEventListener: (type: string, fn: MessageListener) => {
         listeners[type] = listeners[type] || [];
         listeners[type].push(fn);
       },
@@ -31,14 +34,6 @@ describe('WorkerAdapter branches', () => {
     } as unknown as Worker;
 
     const makeWorker = () => mockWorker;
-    let createWorkerLMAdapter: any;
-    try {
-      ({ createWorkerLMAdapter } = await import('../src/lm/workerAdapter'));
-    } catch {
-      // Environment may not support importing TS worker adapter in Node tests
-      expect(true).toBe(true);
-      return;
-    }
     const adapter = createWorkerLMAdapter(makeWorker);
     const region = { start: 0, end: 1 };
     const iter = adapter
@@ -67,29 +62,21 @@ describe('WorkerAdapter branches', () => {
   });
 
   it.skip('surfaces error message via throw', async () => {
-    const listeners: Record<string, Function[]> = { message: [] };
-    let lastRequestId: string | null = null;
+    const listeners: Record<string, MessageListener[]> = { message: [] };
     const mockWorker = {
-      postMessage: (msg: any) => {
+      postMessage: (msg: unknown) => {
         if (msg && typeof msg === 'object' && 'requestId' in msg) {
-          lastRequestId = String(msg.requestId);
+          void msg.requestId;
         }
       },
       terminate: () => {},
-      addEventListener: (type: string, fn: Function) => {
+      addEventListener: (type: string, fn: MessageListener) => {
         listeners[type] = listeners[type] || [];
         listeners[type].push(fn);
       },
       removeEventListener: () => {},
     } as unknown as Worker;
 
-    let createWorkerLMAdapter: any;
-    try {
-      ({ createWorkerLMAdapter } = await import('../src/lm/workerAdapter'));
-    } catch {
-      expect(true).toBe(true);
-      return;
-    }
     const adapter = createWorkerLMAdapter(() => mockWorker);
     const region = { start: 0, end: 1 };
     const gen = adapter.stream({

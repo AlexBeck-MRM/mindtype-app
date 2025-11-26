@@ -22,29 +22,11 @@ function makeLMAdapter(chunks: string[]) {
   } as any;
 }
 
-function makeContextManager(text: string) {
-  return {
-    isInitialized() {
-      return true;
-    },
-    getContextWindow() {
-      return {
-        wide: { text, tokenCount: Math.min(512, text.length) },
-        close: { text: text.slice(-80) },
-      } as any;
-    },
-    validateProposal(_proposal: string, _original: string) {
-      return true;
-    },
-  } as any;
-}
-
 describe('contextTransformer confidence gating', () => {
   it('commits LM proposal when score meets dynamic thresholds', async () => {
     const text = 'The teh quick brown fox jumps. ';
     const caret = text.indexOf('quick') + 2; // inside sentence
     const lmAdapter = makeLMAdapter(['the ']);
-    const mgr = makeContextManager(text);
     const res = await contextTransform({
       text,
       caret,
@@ -62,7 +44,6 @@ describe('contextTransformer confidence gating', () => {
     const text = 'Alpha beta gamma. ';
     const caret = text.length - 1;
     const lmAdapter = makeLMAdapter([text.slice(0, caret)]);
-    const mgr = makeContextManager(text);
     const res = await contextTransform({
       text,
       caret,
@@ -78,8 +59,6 @@ describe('contextTransformer confidence gating', () => {
       const text = 'Hello teh world needs correction';
       const caret = 15; // after "world"
       const lmAdapter = makeLMAdapter(['the ']);
-      const mgr = makeContextManager(text);
-
       // Mock selectSpanAndPrompt to capture band selection
       let capturedBand: any = null;
       const originalImport = await import('../src/lm/policy');
@@ -114,8 +93,6 @@ describe('contextTransformer confidence gating', () => {
       const text = 'Hello teh world';
       const caret = text.length; // at end
       const lmAdapter = makeLMAdapter(['the ']);
-      const mgr = makeContextManager(text);
-
       const res = await contextTransform({
         text,
         caret,
@@ -135,8 +112,6 @@ describe('contextTransformer confidence gating', () => {
       const text = '';
       const caret = 0;
       const lmAdapter = makeLMAdapter(['']);
-      const mgr = makeContextManager(text);
-
       const res = await contextTransform({
         text,
         caret,
@@ -152,8 +127,6 @@ describe('contextTransformer confidence gating', () => {
       const text = 'Hello world';
       const caret = 0;
       const lmAdapter = makeLMAdapter(['']);
-      const mgr = makeContextManager(text);
-
       const res = await contextTransform({
         text,
         caret,

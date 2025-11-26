@@ -12,11 +12,7 @@ import {
   computeDistanceFromCaret,
   type Thresholds,
 } from '../src/pipeline/confidenceGate';
-import {
-  setConfidenceThresholds,
-  setConfidenceSensitivity,
-  getConfidenceThresholds,
-} from '../src/config/thresholds';
+import { setConfidenceSensitivity } from '../src/config/thresholds';
 
 describe('confidenceGate dynamic branches', () => {
   it('computeDistanceFromCaret handles before/inside/after and reversed ranges', () => {

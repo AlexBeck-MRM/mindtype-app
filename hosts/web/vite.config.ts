@@ -23,7 +23,7 @@ export default defineConfig({
           if (url.includes('.wasm')) {
             // Override setHeader to always set correct WASM MIME type
             const originalSetHeader = res.setHeader.bind(res);
-            res.setHeader = function(name: string, value: string | string[] | number) {
+            res.setHeader = function (name: string, value: string | string[] | number) {
               if (name.toLowerCase() === 'content-type') {
                 return originalSetHeader('Content-Type', 'application/wasm');
               }
@@ -45,7 +45,7 @@ export default defineConfig({
         const MODELS = join(MINDTYPE_ROOT, 'models');
         const WASM = join(MINDTYPE_ROOT, 'wasm');
         const DEMO_DIR = resolve(__dirname, '..', 'demo');
-        
+
         console.log('[mt-assets-alias] MODELS path:', MODELS);
         console.log('[mt-assets-alias] WASM path:', WASM);
 
@@ -100,7 +100,7 @@ export default defineConfig({
             const serve = (baseDir: string, prefix: string) => {
               const rel = url.slice(prefix.length);
               const filePath = join(baseDir, rel);
-              
+
               if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
                 const ext = filePath.split('.').pop() || '';
                 const m: Record<string, string> = {

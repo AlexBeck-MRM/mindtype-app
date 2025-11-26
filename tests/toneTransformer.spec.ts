@@ -1,6 +1,10 @@
 /* Auto-generated test for REQ-TONE-TRANSFORMER */
 import { describe, it, expect } from 'vitest';
 import type { LMAdapter } from '../src/lm/types';
+import {
+  getConfidenceThresholds,
+  setConfidenceThresholds,
+} from '../src/config/thresholds';
 import { toneTransform } from '../src/stages/tone';
 
 const baseInput = {
@@ -49,5 +53,63 @@ describe('toneTransformer', () => {
       lmAdapter: adapter,
     });
     expect(result.proposals).toHaveLength(0);
+  });
+
+  it('returns empty proposals when LM adapter is missing', async () => {
+    const result = await toneTransform({
+      ...baseInput,
+      toneTarget: 'Professional',
+      lmAdapter: undefined,
+    });
+    expect(result.proposals).toHaveLength(0);
+  });
+
+  it('returns empty proposals when active region crosses the caret', async () => {
+    const adapter = createStubAdapter('A completely different span');
+    const result = await toneTransform({
+      ...baseInput,
+      toneTarget: 'Professional',
+      activeRegion: { start: 0, end: baseInput.caret + 2 },
+      lmAdapter: adapter,
+    });
+    expect(result.proposals).toHaveLength(0);
+  });
+
+  it('returns empty proposals when the span is empty', async () => {
+    const adapter = createStubAdapter('anything');
+    const result = await toneTransform({
+      ...baseInput,
+      toneTarget: 'Professional',
+      activeRegion: { start: baseInput.caret, end: baseInput.caret },
+      lmAdapter: adapter,
+    });
+    expect(result.proposals).toHaveLength(0);
+  });
+
+  it('returns empty proposals when the LM adapter throws', async () => {
+    const adapter = {
+      stream: async function* () {
+        throw new Error('LM failure');
+      },
+    } as LMAdapter;
+    const result = await toneTransform({
+      ...baseInput,
+      toneTarget: 'Professional',
+      lmAdapter: adapter,
+    });
+    expect(result.proposals).toHaveLength(0);
+  });
+
+  it('respects tone confidence thresholds and can reject proposals', async () => {
+    const original = getConfidenceThresholds();
+    setConfidenceThresholds({ τ_tone: 0.99 });
+    const adapter = createStubAdapter('Hello refined world');
+    const result = await toneTransform({
+      ...baseInput,
+      toneTarget: 'Professional',
+      lmAdapter: adapter,
+    });
+    expect(result.proposals).toHaveLength(0);
+    setConfidenceThresholds(original);
   });
 });

@@ -94,11 +94,12 @@ export async function contextTransform(input: ContextInput): Promise<ContextResu
     });
 
     if (inputFidelity < thresholds.τ_input) {
-      log.debug('gate.input-fidelity', {
+      const gatePayload = {
         ...telemetry,
         inputFidelity,
         threshold: thresholds.τ_input,
-      });
+      };
+      log.debug('gate.input-fidelity', gatePayload);
       return { proposals: [] }; // Input quality too low
     }
 
@@ -129,12 +130,13 @@ export async function contextTransform(input: ContextInput): Promise<ContextResu
       const decision = applyThresholds(confidence, thresholds);
 
       if (decision === 'commit') {
-        log.info('proposal.commit', {
+        const commitPayload = {
           ...telemetry,
           durationMs: Date.now() - stageStart,
           confidence: confidence.combined,
           chunkCount,
-        });
+        };
+        log.info('proposal.commit', commitPayload);
         return {
           proposals: [
             {
@@ -147,21 +149,23 @@ export async function contextTransform(input: ContextInput): Promise<ContextResu
         };
       }
 
-      log.debug('proposal.rejected', {
+      const rejectPayload = {
         ...telemetry,
         durationMs: Date.now() - stageStart,
         confidence: confidence.combined,
         thresholds,
-      });
+      };
+      log.debug('proposal.rejected', rejectPayload);
     }
 
     return { proposals: [] };
   } catch (error) {
     // v0.6: LM errors disable corrections rather than fallback
-    log.error('error', {
+    const errorPayload = {
       waveId,
       error: error instanceof Error ? error.message : error,
-    });
+    };
+    log.error('error', errorPayload);
     return { proposals: [] };
   }
 }

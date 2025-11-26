@@ -61,7 +61,6 @@ const STAGE_CONFIG: Record<CorrectionStage, StageConfig> = {
 
 const JSON_CONTRACT =
   'Respond with valid JSON ONLY: {"replacement":"<corrected text>"} (double quotes, UTF-8).';
-
 const EXAMPLE_JSON = '{"replacement":"the corrected sentence"}';
 
 export function buildCorrectionPrompt(options: PromptOptions): string {
@@ -81,35 +80,39 @@ export function buildCorrectionPrompt(options: PromptOptions): string {
     return items.map((rule) => `- ${rule}`).join('\n');
   }
 
-  return [
+  const systemSections = [
     `You are a ${config.title}.`,
     config.scope,
     toneLine,
     '',
     'Rules:',
     bulletList(config.rules),
-    '- If no corrections are necessary, return the original fragment exactly.',
-    '',
-    'Response format:',
+    '- Never change meaning or introduce new information.',
     `- ${JSON_CONTRACT}`,
+  ];
+
+  const userSections = [
+    'Correct the fragment between <text> tags using the rules above.',
+    '- If no corrections are necessary, return the original fragment exactly.',
     `- Example: ${EXAMPLE_JSON}`,
     '',
-    'Fragment to correct (between <text> tags):',
+    'Fragment to correct:',
     `<text>${escapeForPrompt(snippet)}</text>`,
     before ? `Context before: ${before}` : 'Context before: ""',
     after ? `Context after: ${after}` : 'Context after: ""',
     '',
-    'Return ONLY the JSON object. Do not wrap it in code fences or commentary.',
-  ].join('\n');
+    'Output nothing besides the JSON object.',
+  ];
+
+  return formatChatPrompt(systemSections.join('\n'), userSections.join('\n'));
 }
 
 export function buildTestPrompt(inputText: string): string {
-  return [
-    'Fix the following fragment as the noise stage would.',
-    JSON_CONTRACT,
-    'Fragment:',
-    `"${escapeForPrompt(inputText)}"`,
-  ].join('\n');
+  return buildCorrectionPrompt({
+    stage: 'noise',
+    text: inputText,
+    activeRegion: { start: 0, end: inputText.length },
+  });
 }
 
 export function extractReplacementText(raw: string): string | null {
@@ -139,3 +142,17 @@ function escapeForPrompt(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
+function formatChatPrompt(systemContent: string, userContent: string): string {
+  const system = systemContent.trim();
+  const user = userContent.trim();
+  return [
+    '<|im_start|>system',
+    system,
+    '<|im_end|>',
+    '<|im_start|>user',
+    user,
+    '<|im_end|>',
+    '<|im_start|>assistant',
+    '',
+  ].join('\n');
+}

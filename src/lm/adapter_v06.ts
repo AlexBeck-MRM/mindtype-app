@@ -17,6 +17,21 @@
 
 import type { LMAdapter, LMCapabilities, LMInitOptions, LMStreamParams } from './types';
 
+type TextGenerationResult = Array<{ generated_text?: string }>;
+type TextGenerationRunner = (
+  prompt: string,
+  options?: {
+    max_new_tokens?: number;
+    do_sample?: boolean;
+    return_full_text?: boolean;
+  },
+) => Promise<TextGenerationResult>;
+type PipelineFactory = (
+  task: 'text-generation',
+  modelId: string,
+  options: Record<string, unknown>,
+) => Promise<TextGenerationRunner>;
+
 // Device tier token caps from PRD
 const DEVICE_TIER_CAPS = {
   webgpu: 48,
@@ -26,7 +41,7 @@ const DEVICE_TIER_CAPS = {
 
 export class LMAdapterV06 implements LMAdapter {
   private capabilities: LMCapabilities | null = null;
-  private pipeline: any = null;
+  private pipeline: TextGenerationRunner | null = null;
   private isInitialized = false;
   private currentRequest: string | null = null;
 
@@ -40,7 +55,9 @@ export class LMAdapterV06 implements LMAdapter {
 
     try {
       // Import Transformers.js dynamically
-      const { pipeline } = await import('@huggingface/transformers');
+      const { pipeline } = (await import('@huggingface/transformers')) as {
+        pipeline: PipelineFactory;
+      };
 
       // Initialize text generation pipeline with device-specific settings
       const modelId = opts?.modelId || 'onnx-community/Qwen2.5-0.5B-Instruct';
