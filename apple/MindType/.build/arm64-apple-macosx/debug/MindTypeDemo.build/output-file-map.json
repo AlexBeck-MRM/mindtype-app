@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/master.swiftdeps"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeDemo/main.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.dia"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/master.swiftdeps"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/ActiveRegion.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.dia"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CaretSafety.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.dia"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CorrectionPipeline.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.dia"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/LMAdapter.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.dia"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/Types.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.dia"
+  }
+}

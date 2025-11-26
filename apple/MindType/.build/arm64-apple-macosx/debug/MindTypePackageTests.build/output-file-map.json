@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/master.swiftdeps"
+  },
+  "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift": {
+    "dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.d",
+    "object": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.dia"
+  }
+}

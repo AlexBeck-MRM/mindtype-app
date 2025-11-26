@@ -1,0 +1,1132 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.xctest/Contents/MacOS/MindTypePackageTests",
+      "packagePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType",
+      "productName" : "MindTypePackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.MindTypeCore-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/sources",
+      "importPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/ActiveRegion.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CaretSafety.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CorrectionPipeline.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/LMAdapter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/Types.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MindTypeCore",
+      "moduleOutputPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCore.swiftmodule",
+      "objects" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.swift.o",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.swift.o",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.swift.o",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.swift.o",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/include/MindTypeCore-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mindtype"
+      ],
+      "outputFileMapPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/ActiveRegion.swift",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CaretSafety.swift",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CorrectionPipeline.swift",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/LMAdapter.swift",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/Types.swift"
+      ],
+      "tempsPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.MindTypeCoreTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/sources",
+      "importPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Tests/MindTypeCoreTests/CaretSafetyTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MindTypeCoreTests",
+      "moduleOutputPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCoreTests.swiftmodule",
+      "objects" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/CaretSafetyTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mindtype"
+      ],
+      "outputFileMapPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/CaretSafetyTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCoreTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Tests/MindTypeCoreTests/CaretSafetyTests.swift"
+      ],
+      "tempsPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.MindTypeDemo-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/sources",
+      "importPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeDemo/main.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/sources"
+        }
+      ],
+      "isLibrary" : false,
+      "moduleName" : "MindTypeDemo",
+      "moduleOutputPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeDemo.swiftmodule",
+      "objects" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-Xfrontend",
+        "-entry-point-function-name",
+        "-Xfrontend",
+        "MindTypeDemo_main",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mindtype"
+      ],
+      "outputFileMapPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeDemo.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeDemo/main.swift"
+      ],
+      "tempsPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.MindTypePackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/sources",
+      "importPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCoreTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MindTypePackageTests",
+      "moduleOutputPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypePackageTests.swiftmodule",
+      "objects" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/include/MindTypePackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mindtype"
+      ],
+      "outputFileMapPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypePackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.MindTypeUI-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/sources",
+      "importPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeUI/CorrectionMarker.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "MindTypeUI",
+      "moduleOutputPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeUI.swiftmodule",
+      "objects" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/CorrectionMarker.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/include/MindTypeUI-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "mindtype"
+      ],
+      "outputFileMapPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/CorrectionMarker.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules/MindTypeUI.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeUI/CorrectionMarker.swift"
+      ],
+      "tempsPath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "MindTypeCore" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "MindTypeCore",
+      "-package-name",
+      "mindtype",
+      "-c",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/ActiveRegion.swift",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CaretSafety.swift",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CorrectionPipeline.swift",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/LMAdapter.swift",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/Types.swift",
+      "-I",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/include/MindTypeCore-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mindtype",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "MindTypeCoreTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "MindTypeCoreTests",
+      "-package-name",
+      "mindtype",
+      "-c",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Tests/MindTypeCoreTests/CaretSafetyTests.swift",
+      "-I",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mindtype",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "MindTypeDemo" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "MindTypeDemo",
+      "-package-name",
+      "mindtype",
+      "-c",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeDemo/main.swift",
+      "-I",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-Xfrontend",
+      "-entry-point-function-name",
+      "-Xfrontend",
+      "MindTypeDemo_main",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mindtype",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "MindTypePackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "MindTypePackageTests",
+      "-package-name",
+      "mindtype",
+      "-c",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift",
+      "-I",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/include/MindTypePackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mindtype",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "MindTypeUI" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "MindTypeUI",
+      "-package-name",
+      "mindtype",
+      "-c",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeUI/CorrectionMarker.swift",
+      "-I",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/include/MindTypeUI-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "mindtype",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "MindTypeCore" : [
+
+    ],
+    "MindTypeCoreTests" : [
+      "MindTypeCore"
+    ],
+    "MindTypeDemo" : [
+      "MindTypeCore"
+    ],
+    "MindTypePackageTests" : [
+      "MindTypeCoreTests",
+      "MindTypeCore"
+    ],
+    "MindTypeUI" : [
+      "MindTypeCore"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/ActiveRegion.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CaretSafety.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/CorrectionPipeline.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/LMAdapter.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeCore/Types.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/sources"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Tests/MindTypeCoreTests/CaretSafetyTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/sources"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo-entitlement.plist" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<entitlement-plist>"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<com.apple.security.get-task-allow>"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo-entitlement.plist"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeDemo/main.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/sources"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.build/main.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeDemo.product/Objects.LinkFileList"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/sources"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/ActiveRegion.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CaretSafety.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/CorrectionPipeline.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/LMAdapter.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCore.build/Types.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeCoreTests.build/CaretSafetyTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.build/runner.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypePackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/Sources/MindTypeUI/CorrectionMarker.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/MindTypeUI.build/sources"
+    },
+    "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/alexanderbeck/Coding Folder /MindType/project/apple/MindType/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}
