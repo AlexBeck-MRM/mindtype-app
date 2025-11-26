@@ -73,6 +73,9 @@ public actor LlamaLMAdapter: LMAdapter {
         print("  CLI: \(llamaCliPath!)")
     }
     
+    /// Generation timeout in seconds
+    private let generationTimeout: TimeInterval = 30.0
+    
     /// Generate text completion using llama-cli
     public func generate(prompt: String, maxTokens: Int) async throws -> String {
         guard _isReady, let model = modelPath, let cli = llamaCliPath else {
@@ -94,8 +97,22 @@ public actor LlamaLMAdapter: LMAdapter {
             "-e",                   // Process escape sequences
         ]
         
-        // Execute llama-cli
-        let result = try await runProcess(executable: cli, arguments: args)
+        // Execute llama-cli with timeout
+        let result = try await withThrowingTaskGroup(of: String.self) { group in
+            group.addTask {
+                try await self.runProcess(executable: cli, arguments: args)
+            }
+            
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(self.generationTimeout * 1_000_000_000))
+                throw MindTypeError.generationFailed("Generation timed out after \(Int(self.generationTimeout))s")
+            }
+            
+            // Return first completed, cancel remaining
+            let result = try await group.next()!
+            group.cancelAll()
+            return result
+        }
         
         // Clean up output (remove any trailing special tokens)
         var output = result.trimmingCharacters(in: .whitespacesAndNewlines)

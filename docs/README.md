@@ -1,37 +1,71 @@
-# MindType Documentation
+# Mind⠶Type Documentation
 
-## Overview
+**v1.0** — Apple-native typing intelligence
 
-This folder contains the documentation for MindType v1.0, an Apple-native typing intelligence system.
+---
 
-## Structure
+## Quick Navigation
 
+| Document | Purpose | Read When |
+|----------|---------|-----------|
+| **[CORE.md](CORE.md)** | Vision, scenarios, principles | Understanding *what* and *why* |
+| **[IMPLEMENTATION.md](IMPLEMENTATION.md)** | Architecture, API, build guide | Understanding *how* |
+| **[adr/](adr/)** | Architecture decisions | Understanding *why this way* |
+
+---
+
+## At a Glance
+
+**Mind⠶Type** transforms typing into fluid thought expression through:
+
+1. **Three-Stage Pipeline** — Noise → Context → Tone
+2. **Caret-Safe Guarantee** — Never modifies text at/after cursor
+3. **On-Device LLM** — Private, fast, Metal-accelerated
+
+---
+
+## Current Build Status (v1.0.0)
+
+| Layer | Component | Status |
+|-------|-----------|--------|
+| **Core** | Three-stage pipeline | ✅ Working |
+| | Caret safety | ✅ Enforced |
+| | LlamaLMAdapter | ✅ With timeout |
+| | MockLMAdapter | ✅ For dev/test |
+| **UX** | Burst-Pause-Correct | 📋 Planned |
+| | Correction Marker | 🔧 Scaffold |
+| | System-wide input | 📋 Planned |
+| **App** | CLI Demo | ✅ Working |
+| | Menu Bar App | 📋 Planned |
+
+---
+
+## For AI Agents
+
+When working with this codebase:
+
+1. **Start with [CORE.md](CORE.md)** — Contains the Seven Scenarios that drive all features
+2. **Reference [IMPLEMENTATION.md](IMPLEMENTATION.md)** — For API contracts and code patterns
+3. **Check [adr/0009-swift-rewrite.md](adr/0009-swift-rewrite.md)** — For architecture context
+4. **Validate against caret-safety** — The invariant in [adr/0002-caret-safe.md](adr/0002-caret-safe.md)
+
+---
+
+## For Human Developers
+
+```bash
+# Quick start
+brew install llama.cpp
+cd apple/MindType && swift run MindTypeDemo
+
+# Full setup
+see IMPLEMENTATION.md → Build & Run
 ```
-docs/
-├── 01-prd/                    # Product Requirements
-│   └── 01-PRD.md             # Vision, scenarios, success metrics
-│
-├── 03-system-principles/      # Core Design Philosophy
-│   └── 03-System-Principles.md  # Caret safety, privacy, flow
-│
-└── 05-adr/                    # Architecture Decisions
-    ├── 0002-caret-safe-diff.md     # Core UX guarantee
-    ├── 0003-architecture-constraints.md
-    └── 0009-apple-native-rewrite.md  # v1.0 architecture decision
-```
 
-## Key Documents
-
-| Document | Description |
-|----------|-------------|
-| [PRD](01-prd/01-PRD.md) | Product vision and the Seven Scenarios |
-| [System Principles](03-system-principles/03-System-Principles.md) | Core design philosophy |
-| [ADR-0009](05-adr/0009-apple-native-rewrite.md) | Why we moved to Swift |
-| [ARCHITECTURE-MIGRATION.md](/ARCHITECTURE-MIGRATION.md) | Detailed migration analysis |
+---
 
 ## Historical Documentation
 
-Documentation for the previous Rust/TypeScript/WASM architecture (v0.5–v0.8) has been archived to `_archived/v0.8-web/docs/` for reference.
+Previous Rust/TypeScript/WASM architecture docs are in `/_archived/v0.8-web/docs/`.
 
-<!-- DOC META: VERSION=2.0 | UPDATED=2025-11-26T00:00:00Z -->
-
+<!-- DOC META: VERSION=2.0 | UPDATED=2025-11-26 -->

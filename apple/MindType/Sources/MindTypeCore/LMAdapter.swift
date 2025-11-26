@@ -221,12 +221,20 @@ public actor MockLMAdapter: LMAdapter {
         // Simulate inference delay
         try await Task.sleep(nanoseconds: 100_000_000)
         
-        // Extract the text from the prompt and apply simple corrections
-        if prompt.range(of: #"<text>(.*?)</text>"#, options: .regularExpression) != nil,
-           let innerRange = prompt.range(of: #"(?<=<text>).*(?=</text>)"#, options: .regularExpression) {
-            let inputText = String(prompt[innerRange])
-            let corrected = applyMockCorrections(to: inputText)
-            return "{\"replacement\":\"\(corrected)\"}"
+        // Extract the text from the prompt (support both <input> and <text> tags)
+        let tagPatterns = [
+            #"(?<=<input>).*(?=</input>)"#,
+            #"(?<=<text>).*(?=</text>)"#
+        ]
+        
+        for pattern in tagPatterns {
+            if let range = prompt.range(of: pattern, options: .regularExpression) {
+                let inputText = String(prompt[range])
+                let corrected = applyMockCorrections(to: inputText)
+                // Escape quotes in output for valid JSON
+                let escaped = corrected.replacingOccurrences(of: "\"", with: "\\\"")
+                return "{\"replacement\":\"\(escaped)\"}"
+            }
         }
         
         return "{\"replacement\":\"\"}"
@@ -235,17 +243,37 @@ public actor MockLMAdapter: LMAdapter {
     private func applyMockCorrections(to text: String) -> String {
         var result = text
         
-        // Common typo corrections (expanded list)
+        // Comprehensive typo corrections from Seven Scenarios + common errors
         let corrections: [String: String] = [
-            // Common transpositions
+            // === Scenario 1: Maya (Academic) - Scientific terminology ===
+            "resarch": "research", "analsis": "analysis", "hypotheis": "hypothesis",
+            "experiement": "experiment", "laborotory": "laboratory",
+            "enviromental": "environmental", "sustainabile": "sustainable",
+            
+            // === Scenario 2: Carlos (Multilingual) - Business terms ===
+            "finacial": "financial", "analisys": "analysis", "managment": "management",
+            "developement": "development", "straegy": "strategy", "busines": "business",
+            
+            // === Scenario 6: Marcus (Speed) - Legal terms ===
+            "defdnt": "defendant", "clamd": "claimed", "contrct": "contract",
+            "invld": "invalid", "evdnce": "evidence", "testmny": "testimony",
+            
+            // === Scenario 7: Priya (Data) - Tech/Finance ===
+            "rvn": "revenue", "grwth": "growth", "stk": "stock",
+            "invstmt": "investment", "algrthm": "algorithm",
+            
+            // === Common transpositions ===
             "teh": "the", "hte": "the", "adn": "and", "taht": "that",
             "wiht": "with", "waht": "what", "becuase": "because",
             "freind": "friend", "beleive": "believe", "wierd": "weird",
-            "recieve": "receive", "recieved": "received",
-            // Missing apostrophes
+            "recieve": "receive", "recieved": "received", "lettr": "letter",
+            
+            // === Missing apostrophes ===
             "dont": "don't", "cant": "can't", "wont": "won't",
             "isnt": "isn't", "wasnt": "wasn't", "didnt": "didn't",
-            // Common misspellings
+            "its": "it's",  // contextual, but common in corrections
+            
+            // === Common misspellings ===
             "thier": "their", "occured": "occurred", "occurence": "occurrence",
             "seperate": "separate", "definately": "definitely",
             "accomodate": "accommodate", "enviroment": "environment",
@@ -254,7 +282,9 @@ public actor MockLMAdapter: LMAdapter {
             "noticable": "noticeable", "priviledge": "privilege",
             "succesful": "successful", "tommorow": "tomorrow",
             "untill": "until", "wich": "which", "writting": "writing",
-            // Test words
+            "campain": "campaign", "adress": "address", "begining": "beginning",
+            
+            // === Test/demo words ===
             "helo": "hello", "wrld": "world", "tpying": "typing",
             "corection": "correction", "inteligence": "intelligence",
         ]
