@@ -38,3 +38,4 @@ _archived/
 .env
 .env.local
 node_modules/
+.playwright-mcp/
