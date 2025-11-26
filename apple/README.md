@@ -1,6 +1,6 @@
 # Mind⠶Type for Apple Platforms
 
-**v1.0** — Apple-native typing intelligence with on-device language model
+**v0.9** — Apple-native typing intelligence with on-device language model
 
 ---
 
@@ -157,7 +157,7 @@ This ensures:
 
 ## Language Model
 
-The v1.0 demo uses a mock LM adapter with common typo corrections. For production:
+The v0.9 demo uses a mock LM adapter with common typo corrections. For production:
 
 ### Option 1: llama.cpp (Recommended)
 
@@ -212,6 +212,6 @@ MIT License — See LICENSE file for details.
 
 | Version | Date | Changes |
 |---------|------|---------|
-| v1.0.0 | 2025-11 | Apple-native rewrite, Swift/SwiftUI |
+| v0.9.0 | 2025-11 | Apple-native rewrite, Swift/SwiftUI |
 | v0.8.0 | 2025-11 | Final TypeScript/WASM version (archived) |
 

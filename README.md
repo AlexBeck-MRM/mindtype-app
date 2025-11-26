@@ -1,6 +1,6 @@
 # Mind⠶Type
 
-**v1.0.0** — Apple-native typing intelligence with on-device LLM
+**v0.9.0** — Apple-native typing intelligence with on-device LLM
 
 ---
 
@@ -208,7 +208,7 @@ npm run demo           # or: cd apple/MindType && swift run MindTypeDemo
 
 | Version | Date | Platform | Notes |
 |---------|------|----------|-------|
-| **1.0.0** | 2025-11 | Apple | Swift/SwiftUI native, llama.cpp LLM |
+| **0.9.0** | 2025-11 | Apple | Swift/SwiftUI native, llama.cpp LLM |
 | 0.8.0 | 2025-11 | Web | TypeScript/WASM restructure (archived) |
 | 0.5.0 | 2025-09 | Web | Rust core + TypeScript UI |
 | 0.4.0 | 2025-09 | Web | LM integration + dual context |

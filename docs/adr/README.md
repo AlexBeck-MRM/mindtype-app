@@ -13,5 +13,5 @@ ADRs document significant architectural decisions and their rationale.
 
 Archived with v0.8 documentation in `/_archived/v0.8-web/docs/05-adr/`.
 
-<!-- DOC META: VERSION=1.0 | UPDATED=2025-11-26 -->
+<!-- DOC META: VERSION=0.9 | UPDATED=2025-11-26 -->
 

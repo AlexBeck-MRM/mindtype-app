@@ -1,6 +1,6 @@
 # Mind⠶Type Documentation
 
-**v1.0** — Apple-native typing intelligence
+**v0.9** — Apple-native typing intelligence
 
 ---
 
@@ -24,7 +24,7 @@
 
 ---
 
-## Current Build Status (v1.0.0)
+## Current Build Status (v0.9.0)
 
 | Layer | Component | Status |
 |-------|-----------|--------|

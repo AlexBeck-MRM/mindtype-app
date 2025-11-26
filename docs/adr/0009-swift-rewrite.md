@@ -92,5 +92,5 @@ After 6+ months developing a cross-platform Rust/TypeScript/WASM architecture, s
 
 *"The mark of good engineering is not building the most sophisticated system, but building the right system for the current context."*
 
-<!-- DOC META: VERSION=1.0 | UPDATED=2025-11-26 -->
+<!-- DOC META: VERSION=0.9 | UPDATED=2025-11-26 -->
 

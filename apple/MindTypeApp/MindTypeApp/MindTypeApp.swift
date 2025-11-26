@@ -4,7 +4,7 @@
   ║   Menu bar app with testing ground for typing corrections.  ║
   ║                                                              ║
   ╚══════════════════════════════════════════════════════════════╝
-  • WHAT ▸ macOS menu bar app for MindType v1.0
+  • WHAT ▸ macOS menu bar app for MindType v0.9
   • WHY  ▸ Apple-native typing intelligence
   • HOW  ▸ SwiftUI + native pipeline (no Rust/WASM)
 */

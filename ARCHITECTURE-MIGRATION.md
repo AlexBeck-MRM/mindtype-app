@@ -2,13 +2,13 @@
 
 **Author**: Engineering Team  
 **Date**: November 2025  
-**Status**: Complete (v1.0.0)
+**Status**: Complete (v0.9.0)
 
 ---
 
 ## Executive Summary
 
-MindType v1.0 represents a **complete architectural pivot** from a cross-platform Rust/TypeScript/WASM stack to an Apple-native Swift implementation. This document provides an objective analysis of why this decision was made, what we gained, what we lost, and the engineering trade-offs involved.
+MindType v0.9 represents a **complete architectural pivot** from a cross-platform Rust/TypeScript/WASM stack to an Apple-native Swift implementation. This document provides an objective analysis of why this decision was made, what we gained, what we lost, and the engineering trade-offs involved.
 
 ---
 
@@ -115,7 +115,7 @@ The product's primary use case is **macOS power users** who type extensively. Th
 
 ---
 
-## The New Architecture (v1.0)
+## The New Architecture (v0.9)
 
 ### Stack Overview
 
@@ -157,7 +157,7 @@ The product's primary use case is **macOS power users** who type extensively. Th
 
 #### 1. Dramatic Simplification
 
-| Metric | v0.8 (Rust/TS) | v1.0 (Swift) | Change |
+| Metric | v0.8 (Rust/TS) | v0.9 (Swift) | Change |
 |--------|----------------|--------------|--------|
 | Languages | 3 (Rust, TS, Swift) | 1 (Swift) | -67% |
 | Build systems | 4 (Cargo, pnpm, wasm-pack, Xcode) | 1 (Swift PM) | -75% |
@@ -167,7 +167,7 @@ The product's primary use case is **macOS power users** who type extensively. Th
 
 #### 2. Working LLM Out of the Box
 
-The v1.0 architecture has a **functional LLM** from day one:
+The v0.9 architecture has a **functional LLM** from day one:
 - llama.cpp with Metal acceleration
 - Qwen 0.5B model (~470MB)
 - ~1.2 second correction latency
@@ -177,7 +177,7 @@ The v1.0 architecture has a **functional LLM** from day one:
 
 #### 3. Native Performance
 
-| Operation | v0.8 (WASM) | v1.0 (Native) | Improvement |
+| Operation | v0.8 (WASM) | v0.9 (Native) | Improvement |
 |-----------|-------------|---------------|-------------|
 | String manipulation | WASM overhead | Native | ~5× faster |
 | LLM inference | ONNX Runtime | Metal GPU | ~3× faster |
@@ -193,7 +193,7 @@ The v1.0 architecture has a **functional LLM** from day one:
 
 #### 5. Development Velocity
 
-| Task | v0.8 Time | v1.0 Time | Improvement |
+| Task | v0.8 Time | v0.9 Time | Improvement |
 |------|-----------|-----------|-------------|
 | Add new config option | 2-4 hours | 15 minutes | ~10× faster |
 | Debug correction issue | 1-2 hours | 15-30 min | ~4× faster |
@@ -206,7 +206,7 @@ The v1.0 architecture has a **functional LLM** from day one:
 
 #### 1. Cross-Platform Capability
 
-| Platform | v0.8 Support | v1.0 Support |
+| Platform | v0.8 Support | v0.9 Support |
 |----------|--------------|--------------|
 | macOS | ✅ (partial) | ✅ Full |
 | iOS | ⚠️ Planned | ✅ Compatible |
@@ -253,7 +253,7 @@ v0.8 had:
 - ~30 E2E tests
 - 90%+ code coverage
 
-v1.0 has:
+v0.9 has:
 - ~10 Swift unit tests
 - 0 E2E tests
 - ~40% code coverage (estimated)
@@ -264,7 +264,7 @@ v1.0 has:
 
 #### 5. Community/Ecosystem
 
-| Aspect | v0.8 | v1.0 |
+| Aspect | v0.8 | v0.9 |
 |--------|------|------|
 | npm ecosystem | ✅ Full access | ❌ N/A |
 | Rust crates | ✅ Full access | ❌ N/A |
@@ -303,7 +303,7 @@ v1.0 has:
 3. No unified inference API
 4. WebGPU support inconsistent across browsers
 
-### v1.0 LLM Stack
+### v0.9 LLM Stack
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

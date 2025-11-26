@@ -55,7 +55,7 @@ public func isCaretSafe(region: TextRegion, caret: Int) -> Bool {
 
 ## Implementation
 
-**Swift (v1.0):**
+**Swift (v0.9):**
 ```swift
 // CaretSafety.swift
 public func isCaretSafe(region: TextRegion, caret: Int) -> Bool {

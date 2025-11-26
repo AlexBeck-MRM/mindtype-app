@@ -1,6 +1,6 @@
 {
   "name": "mindtype",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "type": "module",
   "description": "Apple-native typing intelligence with on-device language model",
   "scripts": {

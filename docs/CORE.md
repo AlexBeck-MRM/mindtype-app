@@ -212,7 +212,7 @@ Output: "I was writing a letter to my friend because I believe"
 
 ## Implementation Status
 
-**v1.0 (Current):** Apple-native Swift implementation with llama.cpp LLM.
+**v0.9 (Current):** Apple-native Swift implementation with llama.cpp LLM.
 
 See [IMPLEMENTATION.md](IMPLEMENTATION.md) for technical details and [adr/0009-swift-rewrite.md](adr/0009-swift-rewrite.md) for architecture rationale.
 

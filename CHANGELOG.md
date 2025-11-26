@@ -22,7 +22,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ---
 
-## [1.0.0] - 2025-11-26
+## [0.9.0] - 2025-11-26
 
 ### 🎉 Apple-Native Rewrite
 

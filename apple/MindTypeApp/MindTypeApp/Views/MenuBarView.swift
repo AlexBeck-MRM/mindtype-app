@@ -20,7 +20,7 @@ struct MenuBarView: View {
                     .font(.headline)
                     .fontWeight(.bold)
                 
-                Text("v1.0")
+                Text("v0.9")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 

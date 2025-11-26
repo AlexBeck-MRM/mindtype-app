@@ -14,7 +14,7 @@ struct MindTypeDemo {
     static func main() async {
         print("""
         ╔══════════════════════════════════════════════════════════════╗
-        ║           M I N D ⠶ T Y P E   D E M O   v 1 . 0              ║
+        ║           M I N D ⠶ T Y P E   D E M O   v 0 . 9              ║
         ╚══════════════════════════════════════════════════════════════╝
         
         Testing the three-stage correction pipeline:

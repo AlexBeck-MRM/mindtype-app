@@ -11,7 +11,7 @@
 
 # Implementation Guide
 
-**Version:** 1.0.0  
+**Version:** 0.9.0  
 **Platform:** macOS 14+ / iOS 17+ (Apple Silicon)  
 **Language:** Swift 5.9+
 
@@ -403,5 +403,5 @@ public enum MindTypeError: Error, Sendable {
 
 *For product vision and design principles, see [CORE.md](CORE.md).*
 
-<!-- DOC META: VERSION=1.0 | UPDATED=2025-11-26 -->
+<!-- DOC META: VERSION=0.9 | UPDATED=2025-11-26 -->
 
