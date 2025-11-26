@@ -51,20 +51,68 @@ swift build
 swift run MindTypeDemo
 ```
 
-### Expected Output
+---
+
+## Demo Modes
+
+```bash
+# Seven Scenarios test (default)
+swift run MindTypeDemo
+
+# Interactive REPL - type your own text
+swift run MindTypeDemo --interactive
+
+# Quick test suite
+swift run MindTypeDemo --quick
+
+# Help
+swift run MindTypeDemo --help
+```
+
+### Sample Output
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║           M I N D ⠶ T Y P E   D E M O   v 1 . 0              ║
+║           M I N D ⠶ T Y P E   D E M O   v 0 . 9              ║
+║                                                              ║
+║   Three-stage on-device typing intelligence                  ║
+║   Noise → Context → Tone                                     ║
 ╚══════════════════════════════════════════════════════════════╝
 
-🧠 Found model: .../qwen2.5-0.5b-instruct-q4_k_m.gguf
-✅ Llama adapter initialized (Metal-accelerated)
+🧠 Found model: qwen2.5-0.5b-instruct-q4_k_m.gguf
+✅ Llama adapter ready (Metal-accelerated)
+─────────────────────────────────────────────────────────────────
+  Mode: 🚀 Real LLM (Qwen 0.5B, Metal)
+─────────────────────────────────────────────────────────────────
 
-📝 Test 1: Multiple typos
-   Input:  "I was writting a letter to my freind becuase I beleive its neccessary."
-   Output: "I was writing a letter to my friend because I believe it is necessary."
-   ⏱️  Latency: 1291.5 ms
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Maya 📚  Academic writing with scientific terminology
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   Input:  "The resarch shows that enviromental sustainabile practices..."
+   Output: "The research shows that environmental sustainability practices..."
+   ⏱️  1675ms │ 📊 2 correction(s)
+      🔧 Typo Fix: Fixed 5 misspellings
+      📖 Grammar: Improved sentence structure
+```
+
+### Interactive Mode
+
+```bash
+swift run MindTypeDemo -i
+```
+
+```
+⠶ I was writting a lettr to my freind
+   Input:  "I was writting a lettr to my freind"
+   Output: "I was writing a letter to my friend"
+   ⏱️  1102ms │ 📊 1 correction(s)
+
+⠶ :tone professional
+   → Tone set to: Professional
+
+⠶ :quit
+👋 Goodbye!
 ```
 
 ---
@@ -119,10 +167,9 @@ mindtype/
 │   └── Models/                     # GGUF model files (gitignored)
 │
 ├── docs/                           # Documentation
-│   ├── 01-prd/                     # Product requirements
-│   ├── 02-implementation/          # Technical specs
-│   ├── 05-adr/                     # Architecture decisions
-│   └── ...
+│   ├── CORE.md                     # Vision, scenarios, principles
+│   ├── IMPLEMENTATION.md           # Architecture, API, build status
+│   └── adr/                        # Architecture decisions
 │
 ├── _archived/                      # Previous v0.8 TypeScript/Rust code
 │   └── v0.8-web/
@@ -197,10 +244,10 @@ npm run demo           # or: cd apple/MindType && swift run MindTypeDemo
 
 | Document | Description |
 |----------|-------------|
+| [docs/CORE.md](docs/CORE.md) | Vision, scenarios, principles |
+| [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) | Architecture, API, build status |
+| [docs/adr/](docs/adr/) | Architecture decision records |
 | [ARCHITECTURE-MIGRATION.md](ARCHITECTURE-MIGRATION.md) | Why we migrated from Rust to Swift |
-| [docs/01-prd/](docs/01-prd/) | Product requirements |
-| [docs/05-adr/](docs/05-adr/) | Architecture decision records |
-| [docs/contracts.md](docs/contracts.md) | API contracts |
 
 ---
 
