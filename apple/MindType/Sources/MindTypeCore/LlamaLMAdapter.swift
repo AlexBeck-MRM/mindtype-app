@@ -219,7 +219,9 @@ public enum ModelDiscovery {
     
     /// Supported models in order of preference (best first)
     public static let supportedModels = [
-        "qwen2.5-3b-instruct-q4_k_m.gguf",   // Best quality
+        "mindtype-finetuned-q4_k_m.gguf",   // Fine-tuned for MindType (best)
+        "mindtype-finetuned.gguf",           // Fine-tuned alternate name
+        "qwen2.5-3b-instruct-q4_k_m.gguf",   // Best base quality
         "qwen2.5-1.5b-instruct-q4_k_m.gguf", // Good balance
         "qwen2.5-0.5b-instruct-q4_k_m.gguf", // Fastest, lowest quality
     ]

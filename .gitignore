@@ -39,3 +39,14 @@ _archived/
 .env.local
 node_modules/
 .playwright-mcp/
+
+# MLX fused models (too large for git)
+tools/mlx_output/fused_*/
+tools/mlx_output/fused_model/
+tools/mlx_output/fused_1.5b/
+tools/mlx_output/fused_v2/
+
+
+# MLX adapter weights (large binary files)
+tools/mlx_output/**/*.safetensors
+
