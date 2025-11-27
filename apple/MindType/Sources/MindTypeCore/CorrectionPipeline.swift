@@ -115,8 +115,14 @@ public actor CorrectionPipeline {
             ), toneDiff.confidence >= config.confidenceThreshold {
                 stageDiffs.append(toneDiff)
                 if let result = applyDiff(text: currentText, diff: toneDiff, caret: currentCaret) {
+                    let lengthDelta = toneDiff.lengthDelta
                     currentText = result.text
                     currentCaret = result.caret
+                    // Adjust region end to match new text length
+                    currentRegion = TextRegion(
+                        start: currentRegion.start,
+                        end: currentRegion.end + lengthDelta
+                    )
                 }
             }
         }
@@ -137,6 +143,8 @@ public actor CorrectionPipeline {
             
             if finalRegionText != originalRegionText {
                 // Create ONE diff that captures the cumulative change
+                // Use activeRegion boundaries (original text positions) as diff applies to original text
+                // Extract finalRegionText using currentRegion which tracks where the region ended up after all changes
                 let cumulativeDiff = CorrectionDiff(
                     start: activeRegion.start,
                     end: activeRegion.end,

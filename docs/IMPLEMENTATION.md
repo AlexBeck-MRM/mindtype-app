@@ -1,467 +1,520 @@
 <!--══════════════════════════════════════════════════════════════════════════
   ╔═══════════════════════════════════════════════════════════════════════════╗
-  ║  M I N D ⠶ T Y P E   I M P L E M E N T A T I O N                           ║
+  ║  M I N D ⠶ T Y P E   I M P L E M E N T A T I O N                          ║
   ║                                                                           ║
-  ║  Architecture · API · Build Status · Integration                          ║
+  ║  Technical Architecture · Model Training · Pipeline Design                 ║
   ╚═══════════════════════════════════════════════════════════════════════════╝
-    • WHAT  ▸  Technical implementation reference
-    • WHO   ▸  AI agents and developers building on MindType
-    • WHY   ▸  Reduce onboarding time, ensure consistent integration
 -->
 
-# Implementation Guide
+# MindType Implementation Guide
 
-**Version:** 0.9.0  
-**Platform:** macOS 14+ / iOS 17+ (Apple Silicon)  
-**Language:** Swift 5.9+
+This document explains the technical architecture, model training methodology, and the clever engineering decisions that make Mind⠶Type fast and accurate.
 
 ---
 
-## Architecture Overview
+## Overview
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           MindType System                               │
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                        MindTypeCore                              │  │
-│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │  │
-│  │  │ CorrectionPipe  │  │ ActiveRegion    │  │ CaretSafety     │  │  │
-│  │  │ line            │→ │ Policy          │→ │                 │  │  │
-│  │  └────────┬────────┘  └─────────────────┘  └─────────────────┘  │  │
-│  │           │                                                      │  │
-│  │  ┌────────▼────────┐                                            │  │
-│  │  │   LMAdapter     │ ← Protocol (Mock | Llama | CoreML)         │  │
-│  │  └─────────────────┘                                            │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                        MindTypeUI                                │  │
-│  │  ┌─────────────────┐  ┌─────────────────┐                       │  │
-│  │  │ CorrectionMarker│  │ StatusIndicator │                       │  │
-│  │  └─────────────────┘  └─────────────────┘                       │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+Mind⠶Type is a fuzzy typing interpreter built on:
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Model** | MindFlow Qwen 3B | Fine-tuned LLM for typo interpretation |
+| **Framework** | MLX | Apple Silicon-native ML inference |
+| **Training** | LoRA | Efficient fine-tuning (6.6M params / 3B total) |
+| **App** | Swift + SwiftUI | Native macOS app (future) |
+| **Demo** | Python | Rapid prototyping and testing |
 
 ---
 
-## Core Types
+## The MindFlow Qwen Model
 
-### TextRegion
+### Why Custom Training?
 
-Defines a contiguous range of text for processing.
+Base language models (GPT, Claude, Qwen) are trained to be helpful assistants. When you give them garbled text:
 
-```swift
-public struct TextRegion: Sendable, Equatable {
-    public let start: Int   // Inclusive, character offset
-    public let end: Int     // Exclusive, character offset
-    
-    public var isEmpty: Bool { start >= end }
-    public var length: Int { max(0, end - start) }
-}
+```
+User: "th wthtr hs bn rly nce ltly"
+Base Qwen: "It seems like you're trying to say 'the weather has been really nice 
+            lately.' Is there something specific you'd like to discuss about the 
+            weather?"
 ```
 
-### CorrectionDiff
-
-Represents a single text modification.
-
-```swift
-public struct CorrectionDiff: Sendable, Equatable {
-    public let start: Int           // Where the replacement begins
-    public let end: Int             // Where the original text ends
-    public let text: String         // Replacement text
-    public let stage: CorrectionStage
-    public let confidence: Float    // 0.0–1.0
-}
+This is wrong for our use case. We need:
+```
+User: "th wthtr hs bn rly nce ltly"
+MindFlow: "The weather has been really nice lately"
 ```
 
-### CorrectionStage
+Just the corrected text. No conversation. No explanations.
 
-```swift
-public enum CorrectionStage: String, Sendable, CaseIterable {
-    case noise      // Typos, transpositions
-    case context    // Grammar, coherence
-    case tone       // Style adjustment
-}
-```
+### Model Versions
 
-### ToneTarget
+| Version | Training Data | Characteristics |
+|---------|--------------|-----------------|
+| **v2** (default) | 2000 samples, 43 handcrafted context examples | Literal interpretation, 100% accuracy on test suite |
+| **v3** | 4000 samples, human typing pattern simulation | More creative, may paraphrase (75% exact match) |
 
-```swift
-public enum ToneTarget: String, Sendable {
-    case none           // No tone adjustment
-    case casual         // Relaxed, conversational
-    case professional   // Formal, polished
-}
-```
+**v2 is recommended** because it does what you asked—fixes typos without adding its own interpretation.
 
 ---
 
-## Key Protocols
+## Training Data Generation
 
-### LMAdapter
+The training data generator (`tools/generate_fuzzy_training.py`) creates realistic typing errors based on human typing research.
 
-The abstraction for language model interaction.
+### Error Types (Based on Typing Research)
 
-```swift
-public protocol LMAdapter: Actor {
-    func initialize(config: LMConfiguration) async throws
-    func generate(prompt: String, maxTokens: Int) async throws -> String
-    var isReady: Bool { get }
-    var status: LMStatus { get }
+#### 1. Muscle Memory Errors
+Common words get typed so fast they blur:
+```python
+MUSCLE_MEMORY_ERRORS = {
+    'the': ['teh', 'hte', 'th', 'thw'],
+    'that': ['taht', 'tath', 'htat'],
+    'just': ['jsut', 'juts', 'ujst'],
+    'because': ['becuase', 'becasue', 'beacuse'],
+    ...
 }
 ```
 
-**Implementations:**
-- `MockLMAdapter` — Pattern-matching for testing/demo
-- `LlamaLMAdapter` — llama.cpp CLI integration (production)
-
----
-
-## Pipeline API
-
-### CorrectionPipeline
-
-The main entry point for text correction.
-
-```swift
-public actor CorrectionPipeline {
-    /// Run a complete correction wave
-    public func runCorrectionWave(
-        text: String,
-        caret: Int,
-        toneTarget: ToneTarget? = nil
-    ) async throws -> CorrectionWaveResult
+#### 2. Same-Finger Sequences
+Letters typed by the same finger are slow and error-prone:
+```python
+SAME_FINGER_PAIRS = {
+    'e': 'd', 'd': 'e',  # Left middle finger
+    'r': 'f', 'f': 'r',  # Left index
+    'u': 'j', 'j': 'u',  # Right index
+    ...
 }
 ```
+When you type "ed" quickly, you might get "de" or just "e".
 
-### Usage Example
-
-```swift
-// Initialize with LLM
-let adapter = LlamaLMAdapter()
-try await adapter.initialize(config: LMConfiguration(
-    modelPath: "/path/to/model.gguf"
-))
-
-let pipeline = CorrectionPipeline(lmAdapter: adapter)
-
-// Run correction
-let result = try await pipeline.runCorrectionWave(
-    text: "I was writting a lettr",
-    caret: 22  // End of text
-)
-
-// Apply diffs
-for diff in result.diffs {
-    print("[\(diff.stage)] \(diff.start):\(diff.end) → \"\(diff.text)\"")
-}
+#### 3. Adjacent Key Errors
+QWERTY proximity causes substitutions:
+```python
+# 'e' is next to 'w', 'r', 'd', 's'
+# So "the" might become "thw" or "thr"
 ```
 
----
-
-## Caret Safety
-
-All corrections must pass safety validation:
-
-```swift
-public func isCaretSafe(region: TextRegion, caret: Int) -> Bool {
-    region.end <= caret && region.start < region.end
-}
+#### 4. Vowel Dropping
+Speed typing often drops vowels:
+```
+"please review the report before tomorrow"
+→ "plse rvw th rprt bfre tmrrw"
 ```
 
-**Invariants:**
-1. `diff.end <= caret` — Never modify at/after cursor
-2. `diff.start < diff.end` — Region must be non-empty
-3. `diff.start >= 0` — No negative indices
-
----
-
-## Configuration
-
-### PipelineConfiguration
-
-```swift
-public struct PipelineConfiguration: Sendable {
-    public let toneTarget: ToneTarget       // Default: .none
-    public let confidenceThreshold: Float   // Default: 0.80
-    
-    public static var `default`: PipelineConfiguration
-}
+#### 5. Hand Shift Errors
+Entire hand shifts one key position:
+```
+"the" → "yhr" (hand shifted right)
+"algorithm" → "slgptithm" (hand shifted left)
 ```
 
-### ActiveRegionPolicy
-
-```swift
-public struct ActiveRegionPolicy: Sendable {
-    public let maxWords: Int        // Default: 20
-    public let sentenceBoundary: Bool
-    
-    public static var `default`: ActiveRegionPolicy { ... }
-}
+#### 6. Rhythm Errors
+Double letters go wrong:
+```
+"coming" → "commming" (extra tap)
+"really" → "realy" (missing double)
 ```
 
-### LMConfiguration
+### Context-Dependent Examples
 
-```swift
-public struct LMConfiguration: Sendable {
-    public let modelPath: String
-    public let maxTokens: Int       // Default: 64
-    public let temperature: Float   // Default: 0.1
-    public let contextSize: Int     // Default: 2048
-    public let gpuLayers: Int       // Default: -1 (all)
-}
-```
-
----
-
-## Build & Run
-
-### Prerequisites
-
-```bash
-# Install llama.cpp (provides llama-cli)
-brew install llama.cpp
-
-# Verify installation
-llama-cli --version
-```
-
-### Download Model
-
-```bash
-mkdir -p apple/Models
-curl -L -o apple/Models/qwen2.5-0.5b-instruct-q4_k_m.gguf \
-  "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf"
-```
-
-### Build & Test
-
-```bash
-cd apple/MindType
-
-# Build
-swift build
-
-# Test
-swift test
-
-# Run demo
-swift run MindTypeDemo
-```
-
-### Xcode Integration
-
-```bash
-# Ensure Xcode toolchain is active
-sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-# Open package in Xcode
-open Package.swift
-```
-
----
-
-## File Structure
-
-```
-apple/MindType/
-├── Package.swift
-├── Sources/
-│   ├── MindTypeCore/
-│   │   ├── Types.swift              # Data structures
-│   │   ├── CorrectionPipeline.swift # Main pipeline
-│   │   ├── CaretSafety.swift        # Safety validation
-│   │   ├── LMAdapter.swift          # Protocol + MockLMAdapter
-│   │   ├── LlamaLMAdapter.swift     # llama.cpp integration
-│   │   └── Errors.swift             # Error types
-│   ├── MindTypeUI/
-│   │   ├── CorrectionMarker.swift   # Visual indicator
-│   │   └── StatusIndicator.swift    # State display
-│   └── MindTypeDemo/
-│       └── main.swift               # CLI demo
-└── Tests/
-    └── MindTypeCoreTests/
-        ├── CaretSafetyTests.swift
-        ├── CorrectionPipelineTests.swift
-        └── TypesTests.swift
-```
-
----
-
-## Python Demos (MLX)
-
-For rapid prototyping and Apple Silicon optimization, MindType includes Python demos using MLX.
-
-### Demo Scripts
-
-```bash
-# ENTER mode - type, press Enter, see interpretation
-python3 tools/mindtype_mlx.py
-
-# Real-time mode - interpretations happen as you pause
-python3 tools/mindtype_realtime.py
-```
-
-### Core Engine (`tools/mindtype_core.py`)
-
-The Python core implements the fuzzy typing interpreter:
+The key innovation: **handcrafted examples showing how the same garbled word has different meanings in context**:
 
 ```python
-from tools.mindtype_core import CorrectionEngine, MindTypeConfig
-
-config = MindTypeConfig(
-    min_words=3,           # Minimum words before interpreting
-    length_ratio_max=1.8,  # Output can be up to 1.8x input length
-    length_ratio_min=0.5,  # Output must be at least 0.5x input
-    sentence_tolerance=1,  # Allow ±1 sentence difference
-    enable_self_review=True,  # LLM validates its own output
-    pause_ms=600,          # Pause before auto-correct (realtime)
-)
-
-engine = CorrectionEngine(config)
-engine.load_model()
-
-result = engine.correct("once iualpio a time tbere weas a prince")
-print(result.text)  # "Once upon a time there was a prince"
+HANDCRAFTED_EXAMPLES = [
+    # "msses" means different things based on context
+    ("the msses were amzd by the prfrmance on stage", 
+     "The masses were amazed by the performance on stage"),
+    
+    ("she msses her fmly when shes away frm home", 
+     "She misses her family when she's away from home"),
+    
+    ("he mde a lot of msses while lrning to cook", 
+     "He made a lot of messes while learning to cook"),
+    ...
+]
 ```
 
-### Configuration Presets
+This teaches the model that `"msses"` isn't a fixed mapping—it depends on the surrounding words.
 
-| Preset | Use Case |
-|--------|----------|
-| `STRICT_CONFIG` | More validation, less hallucination risk |
-| `BALANCED_CONFIG` | Default settings |
-| `LENIENT_CONFIG` | Trust LLM more, faster |
+### Corruption Levels
 
-### Validation Strategy
+```python
+LIGHT   = CorruptionLevel("light",   1, 0.2)   # 20% of words, light errors
+MEDIUM  = CorruptionLevel("medium",  2, 0.35)  # 40% of words, medium errors
+HEAVY   = CorruptionLevel("heavy",   3, 0.5)   # 60% of words, heavy errors
+EXTREME = CorruptionLevel("extreme", 4, 0.7)   # 80% of words, heavy errors
+```
 
-The engine validates interpretations structurally (not lexically):
-
-1. **Reject conversational responses** — "I'm not sure...", "Can you..."
-2. **Check length ratio** — Output must be 0.5x–1.8x input length
-3. **Check sentence count** — Must match within tolerance (±1)
-4. **Check for garbled output** — Rejects if output still looks garbled
-
-**Why no word matching?** With fuzzy typing, input words are garbled (`"msaasexd"`) and don't match output words (`"masses"`). We trust the LLM for word-level interpretation and validate structure only.
+Dataset composition:
+- 13.5% light (easy cases)
+- 31.5% medium (typical typing)
+- 31.5% heavy (fast typing)
+- 13.5% extreme (velocity mode)
+- 9% clean (prevent over-correction)
+- 1% handcrafted (context disambiguation)
 
 ---
 
-## Prompt Engineering
+## The Correction Engine
 
-The LM receives ChatML-formatted prompts for **interpretation** (not correction):
+The `CorrectionEngine` class (`tools/mindtype_core.py`) implements a multi-pass validation system.
 
-```xml
-<|im_start|>system
-You interpret garbled/fuzzy typing into what the user intended to write.
+### Pass 1: Generate Interpretation
 
-The user types VERY fast, so:
-- Letters may be transposed (teh → the)
-- Letters may be missing (bcause → because)
-- Keys may be adjacent wrong keys (wprds → words)
-- Words may be run together (onceupon → once upon)
-- Words may be split (cre ate → create)
-- Words may be completely garbled but sound similar
-
-Your job: Figure out what they MEANT to type.
-
-RULES:
-1. Output the interpreted text, nothing else
-2. Keep the same meaning and intent
-3. Keep roughly the same structure (sentence count)
-4. Fix ALL the typing errors
-5. Do NOT add new ideas or change the topic
-<|im_end|>
+```python
+def _interpret(self, text: str) -> str:
+    """Call the LLM to interpret garbled text."""
+    prompt = f"""<|im_start|>system
+Fix typos in the text. Return only the corrected text.<|im_end|>
 <|im_start|>user
-once iualpio a time tbere weas a prince tgbhat wanted to crezt e
-<|im_end|>
+{text}<|im_end|>
 <|im_start|>assistant
+"""
+    return generate(self.model, self.tokenizer, prompt=prompt)
 ```
 
-**Expected response:**
+### Pass 2: Self-Review (Optional)
+
+The model reviews its own output:
+
+```python
+def _review(self, original: str, interpretation: str) -> bool:
+    """Ask the model: is this interpretation reasonable?"""
+    prompt = f"""Original: {original}
+Interpretation: {interpretation}
+Is this a reasonable interpretation?"""
+    response = self._generate("Answer ONLY with REASONABLE or UNREASONABLE.", prompt)
+    return "UNREASONABLE" not in response.upper()
 ```
-Once upon a time there was a prince who wanted to create
+
+### Pass 3: Structural Validation
+
+Even if the LLM says it's reasonable, we apply hard structural checks:
+
+```python
+def validate_interpretation(input_text, output_text, config):
+    # Check 1: Not a conversational response
+    for pattern in REJECTION_PATTERNS:
+        if re.search(pattern, output_lower):
+            return ValidationResult(False, 0.0, "conversational response")
+    
+    # Check 2: Length ratio
+    ratio = len(output) / len(input)
+    if ratio > 1.8 or ratio < 0.5:
+        return ValidationResult(False, 0.0, "length mismatch")
+    
+    # Check 3: Sentence count preserved
+    if abs(count_sentences(output) - count_sentences(input)) > 1:
+        return ValidationResult(False, 0.0, "structure changed")
+    
+    # Check 4: Not still garbled
+    non_words = len(re.findall(r'\b[bcdfghjklmnpqrstvwxz]{4,}\b', output))
+    if non_words > 2:
+        return ValidationResult(False, 0.0, "output still garbled")
+    
+    return ValidationResult(True, confidence, "valid")
+```
+
+### Why This Works
+
+1. **LLM handles interpretation** — It's good at understanding what garbled text means
+2. **Structural checks prevent hallucination** — Can't add sentences or change length dramatically
+3. **Rejection patterns catch chat mode** — If the model starts explaining, we reject
+4. **Fail-safe** — On any doubt, return the original text unchanged
+
+---
+
+## MLX and Apple Silicon Optimization
+
+Mind⠶Type uses [MLX](https://github.com/ml-explore/mlx), Apple's machine learning framework optimized for Apple Silicon.
+
+### Why MLX over PyTorch/llama.cpp?
+
+| Aspect | MLX | PyTorch | llama.cpp |
+|--------|-----|---------|-----------|
+| Apple Silicon | Native | MPS backend | Metal |
+| Memory | Unified memory | CPU/GPU copies | Efficient |
+| LoRA Training | Built-in | Needs libraries | Not supported |
+| Model Format | Safetensors | Various | GGUF |
+| Setup | `pip install mlx` | Complex | brew install |
+
+MLX gives us:
+- **Zero-copy memory** — Model weights live in unified memory, no CPU↔GPU transfers
+- **Lazy evaluation** — Computations only run when needed
+- **Built-in LoRA** — Fine-tuning with `python3 -m mlx_lm lora`
+
+### LoRA Fine-Tuning
+
+We don't retrain the entire 3B parameter model. LoRA (Low-Rank Adaptation) adds small trainable matrices:
+
+```
+Base model: 3,085,939,000 parameters (frozen)
+LoRA adapters: 6,652,000 parameters (trained)
+Trainable: 0.216%
+```
+
+This means:
+- **Fast training** — 5 minutes on M1 Max
+- **Small adapters** — ~25MB instead of 6GB
+- **Preserved base knowledge** — Model still understands language
+
+Training command:
+```bash
+python3 -m mlx_lm lora \
+    --model Qwen/Qwen2.5-3B-Instruct \
+    --train \
+    --data tools/mlx_data \
+    --batch-size 2 \
+    --num-layers 16 \        # How many layers to adapt
+    --learning-rate 1e-5 \   # Conservative learning rate
+    --iters 300 \            # Training iterations
+    --adapter-path adapters
+```
+
+After training, fuse adapters into the base model:
+```bash
+python3 -m mlx_lm fuse \
+    --model Qwen/Qwen2.5-3B-Instruct \
+    --adapter-path adapters \
+    --save-path apple/Models/mindflow-qwen-3b
 ```
 
 ---
 
-## Performance Targets
+## Real-Time Input Handling
 
-| Metric | Target | Current |
-|--------|--------|---------|
-| Correction wave latency | <2000ms | ~1200ms |
-| Memory (idle) | <100MB | ~50MB |
-| Memory (processing) | <500MB | ~400MB |
-| GPU utilization | >80% | ~90% (Metal) |
-| Generation timeout | — | 30s |
+The real-time demo (`tools/mindtype_realtime.py`) implements non-blocking keyboard input with state machine logic.
 
----
+### State Machine
 
-## Implementation Status
+```
+IDLE → TYPING → PAUSED → CORRECTING → IDLE
+  ↑       ↓        ↓         |
+  └───────┴────────┴─────────┘
+          (on keystroke)
+```
 
-**Legend:** ✅ Complete | 🔧 Partial | 📋 Planned
+- **IDLE** — Waiting for input
+- **TYPING** — User is actively typing (reset timer on each key)
+- **PAUSED** — No keystroke for 500ms, about to interpret
+- **CORRECTING** — LLM is running
 
-### Core Pipeline
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Three-stage pipeline (Noise/Context/Tone) | ✅ | Working with real LLM |
-| Caret safety validation | ✅ | Enforced at all stages |
-| Active region computation | ✅ | Word-boundary aware |
-| Diff application | ✅ | With length adjustment |
-| MockLMAdapter | ✅ | Pattern-matching for dev |
-| LlamaLMAdapter | ✅ | llama-cli with timeout |
-| Model discovery | ✅ | Multi-path search |
+### Terminal Raw Mode
 
-### User Experience
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Burst-Pause-Correct timing | 📋 | Documented, not implemented |
-| Correction Marker animation | 🔧 | Scaffold only |
-| Typing monitor | 📋 | Needs Accessibility API |
-| System-wide integration | 📋 | Needs InputMethodKit |
+To capture keystrokes without waiting for Enter:
 
-### Reliability
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Process timeout | ✅ | 30s default |
-| Graceful degradation | ✅ | Mock fallback |
-| Cancellation support | 📋 | Task-based |
-| Structured logging | 📋 | Needs os.log |
+```python
+import termios, tty, sys
 
-### Testing
-| Component | Status | Notes |
-|-----------|--------|-------|
-| CaretSafety tests | ✅ | Comprehensive |
-| Pipeline tests | 📋 | Priority for v1.1 |
-| Integration tests | 📋 | Priority for v1.1 |
+def enable_raw_mode():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    tty.setraw(fd)
+    return old_settings
 
----
+def disable_raw_mode(old_settings):
+    termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, old_settings)
+```
 
-## Error Handling
+**Critical:** Always restore terminal settings on exit, including crashes:
+```python
+import atexit, signal
 
-```swift
-public enum MindTypeError: Error, Sendable {
-    case modelLoadFailed(String)
-    case modelNotLoaded
-    case generationFailed(String)
-    case invalidRegion(String)
-    case caretSafetyViolation(String)
+atexit.register(disable_raw_mode, old_settings)
+signal.signal(signal.SIGINT, cleanup_handler)
+signal.signal(signal.SIGTERM, cleanup_handler)
+```
+
+### Braille Activity Symbols
+
+Visual feedback without cluttering the screen:
+
+```python
+SYMBOLS = {
+    'idle':      '⠶',  # Dots: waiting
+    'typing':    '⠷',  # More dots: active
+    'paused':    '⠾',  # Pattern: about to act
+    'thinking':  '⠿',  # Full: processing
+    'success':   '✓',  # Check: done
+    'waiting':   '⠴',  # Partial: ready
 }
 ```
 
 ---
 
-## Next Steps (v1.1)
+## Configuration Options
 
-- [ ] Direct llama.cpp C library integration (remove CLI wrapper)
-- [ ] Accessibility API integration for system-wide corrections
-- [ ] Menu bar app with real-time status
-- [ ] Test coverage to 80%+
+### MindTypeConfig
+
+```python
+@dataclass
+class MindTypeConfig:
+    # Model path (auto-detected if None)
+    model_path: Path = None
+    
+    # Minimum input thresholds
+    min_words: int = 3          # Don't process < 3 words
+    min_chars: int = 10         # Don't process < 10 chars
+    
+    # Validation thresholds
+    length_ratio_max: float = 1.8   # Output can't be 1.8x longer
+    length_ratio_min: float = 0.5   # Output can't be 0.5x shorter
+    sentence_tolerance: int = 1     # Allow ±1 sentence difference
+    
+    # Real-time mode
+    pause_ms: int = 500         # Wait before interpreting
+    
+    # Behavior
+    enable_self_review: bool = True
+    return_original_on_failure: bool = True
+    show_confidence: bool = False
+```
+
+### Presets
+
+```python
+STRICT_CONFIG = MindTypeConfig(
+    length_ratio_max=1.3,
+    length_ratio_min=0.7,
+    enable_self_review=True,
+)
+
+LENIENT_CONFIG = MindTypeConfig(
+    length_ratio_max=2.0,
+    length_ratio_min=0.4,
+    enable_self_review=False,
+)
+```
 
 ---
 
-*For product vision and design principles, see [CORE.md](CORE.md).*
+## File Reference
 
-<!-- DOC META: VERSION=0.9.1 | UPDATED=2025-11-27 -->
+### Python Tools (`tools/`)
 
+| File | Purpose | Key Functions |
+|------|---------|---------------|
+| `mindtype_core.py` | Shared engine | `CorrectionEngine`, `MindTypeConfig`, `validate_interpretation` |
+| `mindtype_mlx.py` | ENTER mode demo | Interactive CLI |
+| `mindtype_realtime.py` | Real-time demo | State machine, raw terminal input |
+| `generate_fuzzy_training.py` | Training data | `corrupt_word`, `HANDCRAFTED_EXAMPLES` |
+| `evaluate_model.py` | Model evaluation | `evaluate_model`, test suite |
+| `train_mlx_simple.py` | LoRA training | MLX lora wrapper |
+| `train_fuzzy.sh` | Training workflow | End-to-end training script |
+
+### Swift Core (`apple/MindType/Sources/MindTypeCore/`)
+
+| File | Purpose |
+|------|---------|
+| `Types.swift` | Core types: `TextRegion`, `CorrectionDiff`, `CorrectionStage` |
+| `CorrectionPipeline.swift` | Three-stage correction orchestration |
+| `ActiveRegion.swift` | Compute region before caret |
+| `CaretSafety.swift` | Ensure corrections don't pass caret |
+| `LlamaLMAdapter.swift` | llama.cpp CLI integration |
+
+### Models (`apple/Models/`)
+
+| Directory | Description |
+|-----------|-------------|
+| `mindflow-qwen-3b-v2/` | Default model, literal interpretation |
+| `mindflow-qwen-3b-v3/` | Alternative, more creative |
+
+---
+
+## Performance Characteristics
+
+| Operation | Typical Time | Notes |
+|-----------|--------------|-------|
+| Model load | ~3s | First inference only |
+| Interpretation | 200-800ms | Depends on input length |
+| Validation | <1ms | Pure Python checks |
+| Full pipeline | 300-1000ms | Including all passes |
+
+Memory usage:
+- Model loaded: ~6GB unified memory
+- Per-inference: Negligible additional
+
+---
+
+## Extending the System
+
+### Adding New Error Patterns
+
+Edit `tools/generate_fuzzy_training.py`:
+
+```python
+# Add to MUSCLE_MEMORY_ERRORS
+MUSCLE_MEMORY_ERRORS['should'] = ['shoudl', 'shuold', 'shold']
+
+# Add new corruption function
+def corrupt_my_pattern(word: str) -> str:
+    # Your logic here
+    return corrupted_word
+
+# Add to operation weights in corrupt_word()
+operations = [
+    (corrupt_my_pattern, 0.15),  # 15% weight
+    ...
+]
+```
+
+### Custom Validation Rules
+
+Edit `tools/mindtype_core.py`:
+
+```python
+def validate_interpretation(input_text, output_text, config):
+    # Add your custom check
+    if my_custom_check_fails(output_text):
+        return ValidationResult(False, 0.0, "my check failed")
+    
+    # Continue with other checks...
+```
+
+### Training with Different Base Models
+
+```bash
+# Use a different base model
+python3 -m mlx_lm lora \
+    --model mistralai/Mistral-7B-Instruct-v0.2 \  # Different model
+    --train \
+    --data tools/mlx_data \
+    ...
+```
+
+---
+
+## Troubleshooting
+
+### Model not loading
+
+```bash
+# Check model exists
+ls -la apple/Models/
+
+# Verify with direct MLX test
+python3 -c "from mlx_lm import load; load('apple/Models/mindflow-qwen-3b-v2')"
+```
+
+### Terminal corrupted after crash
+
+```bash
+reset
+# or
+stty sane
+```
+
+### Output is conversational
+
+The model may have reverted to chat mode. Retrain with stricter prompts or use v2.
+
+### Interpretation too slow
+
+- Use smaller model (1.5B instead of 3B)
+- Reduce max_tokens in generation
+- Check for thermal throttling on laptop
+
+---
+
+*Mind⠶Type: where context makes garbled text clear.*

@@ -65,8 +65,11 @@ class MindTypeConfig:
         if self.model_path is None:
             project_root = Path(__file__).parent.parent
             # MindFlow Qwen models live in apple/Models/
+            # v2 = context-aware, literal interpretation (recommended)
+            # v3 = more training data, can be more creative
             for candidate in [
-                project_root / "apple" / "Models" / "mindflow-qwen-3b",
+                project_root / "apple" / "Models" / "mindflow-qwen-3b-v2",
+                project_root / "apple" / "Models" / "mindflow-qwen-3b-v3",
             ]:
                 if candidate.exists():
                     self.model_path = candidate

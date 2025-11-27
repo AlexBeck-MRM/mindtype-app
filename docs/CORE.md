@@ -251,13 +251,42 @@ Output: "Once upon a time there was a prince who wanted to create"
 
 ## Implementation Status
 
-**v0.9 (Current):** Apple-native Swift implementation with llama.cpp LLM.
+**v0.9.1 (Current):** Apple-native implementation with custom-trained MindFlow Qwen model.
+
+### Model Architecture
+
+| Component | Technology |
+|-----------|------------|
+| Base Model | Qwen 2.5 3B Instruct |
+| Training | LoRA fine-tuning via MLX |
+| Framework | MLX (Apple Silicon native) |
+| Training Data | 4000 synthetic samples + 43 handcrafted context examples |
+
+### Model Versions
+
+| Version | Accuracy | Characteristics |
+|---------|----------|-----------------|
+| **v2** (default) | 100% | Literal interpretation, won't paraphrase |
+| v3 | 75% | More creative, may change wording |
+
+### Demo Commands
+
+```bash
+# ENTER mode - type, press Enter, see interpretation
+python3 tools/mindtype_mlx.py
+
+# Real-time - corrections happen as you type
+python3 tools/mindtype_realtime.py
+
+# Evaluate model
+python3 tools/evaluate_model.py
+```
 
 See [IMPLEMENTATION.md](IMPLEMENTATION.md) for technical details and [adr/0009-swift-rewrite.md](adr/0009-swift-rewrite.md) for architecture rationale.
 
 ---
 
-*Mind⠶Type doesn't correct typing—it interprets intent. Type at the speed of thought.*
+*Mind⠶Type doesn't correct typing—it interprets intent. Context makes garbled text clear.*
 
-<!-- DOC META: VERSION=2.1 | UPDATED=2025-11-27 -->
+<!-- DOC META: VERSION=2.2 | UPDATED=2025-11-27 -->
 

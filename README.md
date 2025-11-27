@@ -1,202 +1,170 @@
 # Mind⠶Type
 
-**v0.9.0** — Apple-native typing intelligence with on-device LLM
+**v0.9.1** — Fuzzy typing interpreter with custom-trained on-device LLM
 
 ---
 
 ## What is Mind⠶Type?
 
-Mind⠶Type is a **fuzzy typing interpreter** that understands what you *meant* to type, not just what you typed. Unlike autocorrect, which fixes individual words, Mind⠶Type interprets your **intent** from the full context—even when your typing is completely garbled.
+Mind⠶Type is a **fuzzy typing interpreter** that understands what you *meant* to type, not just what you typed. Unlike autocorrect (which matches dictionary words), Mind⠶Type uses a **custom-trained language model** to interpret your intent from full sentence context—even when your typing is completely garbled.
 
 | What it does | Example |
 |--------------|---------|
 | **Interprets garbled words** | `iualpio` → "upon" |
-| **Decodes velocity typing** | `msaasexd` → "masses" |
-| **Understands run-togethers** | `crezt e` → "create" |
-| **Preserves meaning** | Your intent, not your keystrokes |
+| **Context-dependent decoding** | `msses` → "masses" (performance) or "misses" (family) |
+| **Handles extreme velocity** | `th wthtr hs bn rly nce ltly` → "The weather has been really nice lately" |
+| **Preserves intent** | Your meaning, not your keystrokes |
 
 ### This is NOT Autocorrect
 
 | Autocorrect | Mind⠶Type |
 |-------------|-----------|
-| Matches words in dictionary | Interprets intent from context |
-| Fails on unknown words | Decodes any garbled input |
+| Dictionary lookup per word | LLM interprets full context |
+| Fails on `msaasexd` | Decodes to "masses" from context |
 | Per-word corrections | Whole-sentence understanding |
 | "Did you mean...?" | Just knows |
-
-### Core Principles
-
-- 🔒 **Private** — 100% on-device processing, no cloud
-- ⚡ **Fast** — Metal-accelerated inference on Apple Silicon
-- 🎯 **Caret-safe** — Never modifies text at or after your cursor
-- 🧠 **Intelligent** — LLM-powered intent interpretation via MLX/Qwen
-
----
-
-## Fuzzy Typing in Action
-
-Type at the speed of thought. Mind⠶Type figures out what you meant.
-
-**Input (garbled):**
-```
-once iualpio a time tbere weas a prince tgbhat wanted to crezt e a new 
-ways to write. the msaasexd has no idea who he wa showever he was a 
-visionsary that create d a new ftookl atht the workds hasnf experiencex before.
-```
-
-**Output (interpreted):**
-```
-Once upon a time there was a prince who wanted to create a new way to 
-write. The masses had no idea who he was, however he was a visionary 
-that created a new tool that the world hadn't experienced before.
-```
-
-### How it Works
-
-Mind⠶Type uses a fine-tuned language model to **interpret** rather than **correct**:
-
-1. **Word-level interpretation** — `iualpio` becomes "upon" through phonetic and contextual reasoning
-2. **Structure preservation** — Same number of sentences, same overall meaning
-3. **Self-review** — The model validates its interpretations make sense
-4. **Structural guards** — Output must match input structure (length, sentences)
-
-### Try the Demo
-
-```bash
-# ENTER mode - type, press Enter, see interpretation
-python3 tools/mindtype_mlx.py
-
-# Real-time mode - interpretations happen as you type
-python3 tools/mindtype_realtime.py
-```
 
 ---
 
 ## Quick Start
 
-### Prerequisites
-
-- macOS 14.0+ (Sonoma)
-- Xcode 15+ (for toolchain)
-- Homebrew
-
-### Setup
+### Python Demo (Fastest)
 
 ```bash
-# 1. Install llama.cpp
-brew install llama.cpp
+# Install dependencies
+pip install mlx mlx-lm
 
-# 2. Download the model (~1GB for best quality, or ~470MB for fastest)
-mkdir -p apple/Models
+# Run ENTER mode demo
+python3 tools/mindtype_mlx.py
 
-# Recommended: Qwen 1.5B (best balance of speed and quality)
-curl -L -o apple/Models/qwen2.5-1.5b-instruct-q4_k_m.gguf \
-  "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf"
-
-# Alternative: Qwen 0.5B (faster, lower quality)
-# curl -L -o apple/Models/qwen2.5-0.5b-instruct-q4_k_m.gguf \
-#   "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf"
-
-# 3. Switch to Xcode toolchain (one-time)
-sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-# 4. Build and run demo
-cd apple/MindType
-swift build
-swift run MindTypeDemo
+# Run real-time demo (corrects as you type)
+python3 tools/mindtype_realtime.py
 ```
 
----
-
-## Demo Modes
-
-```bash
-# Seven Scenarios test (default)
-swift run MindTypeDemo
-
-# Interactive REPL - type your own text
-swift run MindTypeDemo --interactive
-
-# Quick test suite
-swift run MindTypeDemo --quick
-
-# Help
-swift run MindTypeDemo --help
-```
-
-### Sample Output
+### Demo Output
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║           M I N D ⠶ T Y P E   D E M O   v 0 . 9              ║
+║  M I N D ⠶ T Y P E   D E M O                                 ║
 ║                                                              ║
-║   Three-stage on-device typing intelligence                  ║
-║   Noise → Context → Tone                                     ║
+║  Type naturally. Press ENTER to interpret.                   ║
 ╚══════════════════════════════════════════════════════════════╝
 
-🧠 Found model: qwen2.5-0.5b-instruct-q4_k_m.gguf
-✅ Llama adapter ready (Metal-accelerated)
-─────────────────────────────────────────────────────────────────
-  Mode: 🚀 Real LLM (Qwen 0.5B, Metal)
-─────────────────────────────────────────────────────────────────
+Loading mindflow-qwen-3b-v2...
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- Maya 📚  Academic writing with scientific terminology
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⠶ Type something (or 'quit' to exit):
+> th wthtr hs bn rly nce ltly
 
-   Input:  "The resarch shows that enviromental sustainabile practices..."
-   Output: "The research shows that environmental sustainability practices..."
-   ⏱️  1675ms │ 📊 2 correction(s)
-      🔧 Typo Fix: Fixed 5 misspellings
-      📖 Grammar: Improved sentence structure
-```
+⠿ Interpreting...
+✓ The weather has been really nice lately
 
-### Interactive Mode
+> once iualpio a time tbere weas a prince
 
-```bash
-swift run MindTypeDemo -i
-```
-
-```
-⠶ I was writting a lettr to my freind
-   Input:  "I was writting a lettr to my freind"
-   Output: "I was writing a letter to my friend"
-   ⏱️  1102ms │ 📊 1 correction(s)
-
-⠶ :tone professional
-   → Tone set to: Professional
-
-⠶ :quit
-👋 Goodbye!
+⠿ Interpreting...
+✓ Once upon a time there was a prince
 ```
 
 ---
 
-## Architecture
+## The Custom Model: MindFlow Qwen
+
+Mind⠶Type uses **MindFlow Qwen**, a custom fine-tuned model optimized for fuzzy typing interpretation:
+
+### Model Versions
+
+| Model | Training | Best For | Accuracy |
+|-------|----------|----------|----------|
+| **mindflow-qwen-3b-v2** (default) | 2000 samples, context-aware | Literal interpretation | 100% on test suite |
+| mindflow-qwen-3b-v3 | 4000 samples, human patterns | More creative | 75% on test suite |
+
+### Why Custom Training?
+
+Base Qwen models are trained for general chat. When given garbled text, they:
+- Try to have a conversation
+- Add explanatory text
+- Hallucinate content
+
+MindFlow Qwen is trained specifically to:
+- **Only fix typos** — no conversation, no additions
+- **Preserve structure** — same sentence count in = same out
+- **Context-disambiguate** — `"msses"` becomes "masses" or "misses" based on surrounding words
+
+### Training Methodology
+
+The model is trained on **synthetically corrupted text** that mimics real human typing patterns:
+
+```python
+# Training data generation pipeline
+1. Start with clean sentences → "The weather has been really nice lately"
+2. Apply human typing error patterns:
+   - Muscle memory errors (teh, jsut, taht, waht)
+   - Same-finger sequences (ed, rf - slow combos)
+   - Rhythm errors (commming, realy)
+   - Vowel dropping (plse, rvw, th, rprt)
+   - Hand shift errors (yhr → the)
+   - Adjacent key errors (QWERTY proximity)
+3. Output: "th wthtr hs bn rly nce ltly" → "The weather has been really nice lately"
+```
+
+**Key insight:** Context-dependent disambiguation examples teach the model that `"msses"` could be:
+- "masses" when talking about a performance/audience
+- "misses" when talking about family/emotion
+- "messes" when talking about cooking/cleaning
+
+---
+
+## How It Works
+
+### The Interpretation Pipeline
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    MindType App (Future)                    │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
-│  │ Menu Bar ⠶  │  │ Testing     │  │ Settings            │ │
-│  └─────────────┘  │ Ground      │  └─────────────────────┘ │
-│                   └─────────────┘                           │
-└───────────────────────┬─────────────────────────────────────┘
-                        │
-┌───────────────────────▼─────────────────────────────────────┐
-│                    MindTypeCore                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
-│  │ Correction  │──│ Active      │──│ Caret               │ │
-│  │ Pipeline    │  │ Region      │  │ Safety              │ │
-│  └──────┬──────┘  └─────────────┘  └─────────────────────┘ │
-│         │                                                   │
-│  ┌──────▼──────────────────────────────────────────────┐   │
-│  │ LM Adapter (Protocol)                               │   │
-│  │   ├── MockLMAdapter     (pattern matching)          │   │
-│  │   └── LlamaLMAdapter    (llama.cpp + Metal)         │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│ INPUT: "the msses were amzd by the prfrmance"                   │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. INTERPRET (MindFlow Qwen LLM)                                │
+│    ├─ Read full sentence context                                │
+│    ├─ Phonetic reasoning: "amzd" sounds like "amazed"          │
+│    ├─ Context reasoning: "performance" → audience context       │
+│    └─ Output: "The masses were amazed by the performance"       │
+├─────────────────────────────────────────────────────────────────┤
+│ 2. VALIDATE (Structural Checks)                                 │
+│    ├─ Same sentence count? ✓                                    │
+│    ├─ Length ratio 0.5x–1.8x? ✓                                 │
+│    └─ Not conversational? ✓                                     │
+├─────────────────────────────────────────────────────────────────┤
+│ 3. SELF-REVIEW (Optional)                                       │
+│    └─ "Is this interpretation reasonable?" → REASONABLE         │
+└─────────────────────────────────────────────────────────────────┘
+│ OUTPUT: "The masses were amazed by the performance"             │
 ```
+
+### Why Context Matters
+
+The same garbled word can mean different things:
+
+| Input | Context | Interpretation |
+|-------|---------|----------------|
+| `the msses were amzd by the prfrmance` | performance/stage | **masses** |
+| `she msses her fmly when shes away` | family/emotion | **misses** |
+| `he mde a lot of msses while lrning` | learning/cooking | **messes** |
+
+Base autocorrect can't do this—it sees `msses` and guesses. Mind⠶Type reads the whole sentence.
+
+---
+
+## Core Principles
+
+### 🔒 Private
+100% on-device. No cloud. No data leaves your machine.
+
+### ⚡ Fast
+Metal-accelerated MLX inference on Apple Silicon. ~500ms per interpretation.
+
+### 🎯 Caret-Safe
+Never modifies text at or after your cursor. Corrections happen behind you.
+
+### 🧠 Context-Aware
+Full sentence understanding, not word-by-word matching.
 
 ---
 
@@ -205,65 +173,98 @@ swift run MindTypeDemo -i
 ```
 mindtype/
 ├── apple/                          # Apple-native implementation
-│   ├── MindType/                   # Swift Package
-│   │   ├── Package.swift
-│   │   ├── Sources/
-│   │   │   ├── MindTypeCore/       # Core logic
-│   │   │   │   ├── Types.swift
-│   │   │   │   ├── CaretSafety.swift
-│   │   │   │   ├── ActiveRegion.swift
-│   │   │   │   ├── CorrectionPipeline.swift
-│   │   │   │   ├── LMAdapter.swift
-│   │   │   │   └── LlamaLMAdapter.swift
-│   │   │   ├── MindTypeUI/         # SwiftUI components
-│   │   │   └── MindTypeDemo/       # CLI demo
+│   ├── MindType/                   # Swift Package (macOS app)
+│   │   ├── Sources/MindTypeCore/   # Core logic (Swift)
 │   │   └── Tests/
 │   ├── MindTypeApp/                # macOS menu bar app
-│   └── Models/                     # GGUF model files (gitignored)
+│   └── Models/                     # Fine-tuned models live here
+│       ├── mindflow-qwen-3b-v2/    # Default model (literal)
+│       └── mindflow-qwen-3b-v3/    # Alternative (creative)
+│
+├── tools/                          # Python tooling
+│   ├── mindtype_core.py            # Shared engine + config
+│   ├── mindtype_mlx.py             # ENTER mode demo
+│   ├── mindtype_realtime.py        # Real-time demo
+│   ├── generate_fuzzy_training.py  # Training data generator
+│   ├── evaluate_model.py           # Model evaluation
+│   ├── train_fuzzy.sh              # Training workflow
+│   ├── train_mlx_simple.py         # LoRA fine-tuning
+│   └── mlx_data/                   # Training data
 │
 ├── docs/                           # Documentation
 │   ├── CORE.md                     # Vision, scenarios, principles
-│   ├── IMPLEMENTATION.md           # Architecture, API, build status
-│   └── adr/                        # Architecture decisions
+│   ├── IMPLEMENTATION.md           # Technical deep-dive
+│   └── ARCHITECTURE-MIGRATION.md   # Why Swift over Rust
 │
-├── _archived/                      # Previous v0.8 TypeScript/Rust code
-│   └── v0.8-web/
-│
-├── README.md                       # This file
-├── ARCHITECTURE-MIGRATION.md       # Why we moved from Rust to Swift
-├── CHANGELOG.md                    # Release history
-└── package.json                    # npm scripts for convenience
+└── README.md                       # This file
 ```
 
 ---
 
 ## Configuration
 
-| Setting | Default | Range | Description |
-|---------|---------|-------|-------------|
-| Active Region | 20 words | 5–50 | Text before cursor to process |
-| Temperature | 0.1 | 0.0–1.0 | LLM creativity (lower = more consistent) |
-| Max Tokens | 64 | 16–256 | Maximum generation length |
-| GPU Layers | 99 | -1 to 99 | Metal layers (-1 = auto) |
+All tunable parameters are in `tools/mindtype_core.py`:
+
+```python
+@dataclass
+class MindTypeConfig:
+    # Minimum input requirements
+    min_words: int = 3              # Need at least 3 words
+    min_chars: int = 10             # Need at least 10 characters
+    
+    # Validation strictness
+    similarity_threshold: float = 0.3     # Base similarity requirement
+    length_ratio_max: float = 1.8         # Output can't be 1.8x longer
+    length_ratio_min: float = 0.5         # Output can't be 0.5x shorter
+    
+    # Timing (real-time mode)
+    pause_ms: int = 500             # Pause before interpretation
+    
+    # Model behavior
+    enable_self_review: bool = True # Two-pass verification
+    return_original_on_failure: bool = True
+```
 
 ---
 
-## Caret Safety
+## Training Your Own Model
 
-The **core UX guarantee**: corrections never disrupt your typing flow.
+### Generate Training Data
 
-```swift
-/// A region is only safe to modify if entirely before the caret
-func isCaretSafe(start: Int, end: Int, caret: Int) -> Bool {
-    end <= caret && start < end
-}
+```bash
+# Generate 4000 samples with human typing patterns
+python3 tools/generate_fuzzy_training.py --samples 4000 --seed 42
 ```
 
-This means:
-- ✅ Text **before** the cursor can be corrected
-- ❌ Text **at** the cursor is never touched
-- ❌ Text **after** the cursor is never touched
-- ❌ No visual jumps or cursor displacement
+### Fine-Tune with MLX
+
+```bash
+# Full training workflow
+bash tools/train_fuzzy.sh
+
+# Or manually:
+python3 -m mlx_lm lora \
+    --model Qwen/Qwen2.5-3B-Instruct \
+    --train \
+    --data tools/mlx_data \
+    --batch-size 2 \
+    --num-layers 16 \
+    --learning-rate 1e-5 \
+    --iters 300 \
+    --adapter-path apple/Models/my-adapters
+
+# Fuse adapters into final model
+python3 -m mlx_lm fuse \
+    --model Qwen/Qwen2.5-3B-Instruct \
+    --adapter-path apple/Models/my-adapters \
+    --save-path apple/Models/my-model
+```
+
+### Evaluate
+
+```bash
+python3 tools/evaluate_model.py --model apple/Models/my-model
+```
 
 ---
 
@@ -272,25 +273,26 @@ This means:
 | Component | Requirement |
 |-----------|-------------|
 | macOS | 14.0+ (Sonoma) |
-| Chip | Apple Silicon recommended (M1/M2/M3/M4) |
-| Xcode | 15.0+ |
-| Swift | 5.9+ |
-| llama.cpp | Via Homebrew |
-| Model | Qwen2.5-0.5B (~470MB) |
+| Chip | Apple Silicon (M1/M2/M3/M4) |
+| Python | 3.10+ |
+| MLX | `pip install mlx mlx-lm` |
+| Storage | ~6GB for 3B model |
 
 ---
 
 ## Commands
 
 ```bash
-# Build
-npm run build          # or: cd apple/MindType && swift build
+# Demo modes
+python3 tools/mindtype_mlx.py          # ENTER mode
+python3 tools/mindtype_realtime.py     # Real-time mode
 
-# Test
-npm run test           # or: cd apple/MindType && swift test
+# Evaluation
+python3 tools/evaluate_model.py
 
-# Demo
-npm run demo           # or: cd apple/MindType && swift run MindTypeDemo
+# Training
+python3 tools/generate_fuzzy_training.py --samples 4000
+bash tools/train_fuzzy.sh
 ```
 
 ---
@@ -300,20 +302,9 @@ npm run demo           # or: cd apple/MindType && swift run MindTypeDemo
 | Document | Description |
 |----------|-------------|
 | [docs/CORE.md](docs/CORE.md) | Vision, scenarios, principles |
-| [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) | Architecture, API, build status |
-| [docs/adr/](docs/adr/) | Architecture decision records |
-| [ARCHITECTURE-MIGRATION.md](ARCHITECTURE-MIGRATION.md) | Why we migrated from Rust to Swift |
-
----
-
-## Version History
-
-| Version | Date | Platform | Notes |
-|---------|------|----------|-------|
-| **0.9.0** | 2025-11 | Apple | Swift/SwiftUI native, llama.cpp LLM |
-| 0.8.0 | 2025-11 | Web | TypeScript/WASM restructure (archived) |
-| 0.5.0 | 2025-09 | Web | Rust core + TypeScript UI |
-| 0.4.0 | 2025-09 | Web | LM integration + dual context |
+| [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md) | Technical architecture deep-dive |
+| [docs/ARCHITECTURE-MIGRATION.md](docs/ARCHITECTURE-MIGRATION.md) | Why Swift over Rust |
+| [tools/README.md](tools/README.md) | Python tools guide |
 
 ---
 
@@ -325,5 +316,5 @@ MIT License — See [LICENSE](LICENSE) for details.
 
 <p align="center">
   <strong>Mind⠶Type</strong><br>
-  <em>Type naturally. Corrections happen.</em>
+  <em>Type at the speed of thought. Context makes it clear.</em>
 </p>

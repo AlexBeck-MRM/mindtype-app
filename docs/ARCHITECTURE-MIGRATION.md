@@ -509,6 +509,62 @@ Options:
 
 ---
 
+## Current State: Custom MLX Models (v0.9.1)
+
+After the Swift migration, we made another significant improvement: **moving from generic llama.cpp to custom-trained MLX models**.
+
+### The Problem with Base Models
+
+Base LLMs (GPT, Claude, Qwen) are trained to be helpful chat assistants. When given garbled text:
+
+```
+Input: "th wthtr hs bn rly nce ltly"
+Base Model: "It seems like you're trying to say 'the weather has been 
+            really nice lately.' Is there something you'd like to discuss?"
+```
+
+This conversational response is wrong for our use case. We need just the corrected text.
+
+### The Solution: MindFlow Qwen
+
+We fine-tuned Qwen 2.5 3B using LoRA (Low-Rank Adaptation) with MLX:
+
+| Aspect | Value |
+|--------|-------|
+| Base Model | Qwen 2.5 3B Instruct |
+| Trainable Parameters | 6.6M / 3B (0.2%) |
+| Training Data | 4000 synthetic samples + 43 handcrafted examples |
+| Training Time | ~5 minutes on M1 Max |
+
+### Key Innovation: Context-Dependent Training
+
+The breakthrough was training data that shows the same garbled word meaning different things:
+
+```
+"the msses were amzd by the prfrmance" → "masses" (audience context)
+"she msses her fmly when shes away"    → "misses" (family context)
+"he mde a lot of msses while lrning"   → "messes" (cooking context)
+```
+
+This teaches the model that interpretation depends on surrounding words, not just the garbled word itself.
+
+### Model Versions
+
+| Version | Training | Best For |
+|---------|----------|----------|
+| v2 | 2000 samples, context-aware | Literal interpretation (100% accuracy) |
+| v3 | 4000 samples, human patterns | More creative (75% accuracy) |
+
+### Results
+
+After custom training:
+- ✅ No conversational responses
+- ✅ Context-dependent disambiguation
+- ✅ 100% test accuracy on v2
+- ✅ 500ms average latency on M1
+
+---
+
 ## Conclusion
 
 The migration from Rust/WASM to Swift was a **strategic retreat** that enabled tactical advancement. We traded theoretical capability for practical functionality.
@@ -517,7 +573,7 @@ The migration from Rust/WASM to Swift was a **strategic retreat** that enabled t
 
 **The current architecture is not permanent** — it's optimized for the current phase: prove the product works, gather user feedback, iterate quickly. Future phases may require different trade-offs.
 
-The mark of good engineering is not building the most sophisticated system, but building the right system for the current context. For MindType in November 2025, that system is Apple-native Swift with llama.cpp.
+The mark of good engineering is not building the most sophisticated system, but building the right system for the current context. For MindType in November 2025, that system is Apple-native Swift + custom-trained MLX models.
 
 ---
 

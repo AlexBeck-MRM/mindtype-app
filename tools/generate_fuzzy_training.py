@@ -33,6 +33,46 @@ QWERTY_POS = {
 LEFT_HAND = set('qwertasdfgzxcvb')
 RIGHT_HAND = set('yuiophjklnm')
 
+# Same-finger key pairs (slow sequences prone to errors)
+SAME_FINGER_PAIRS = {
+    'e': 'd', 'd': 'e', 'c': 'd', 'd': 'c',  # Left middle
+    'r': 'f', 'f': 'r', 'v': 'f', 'f': 'v',  # Left index
+    'w': 's', 's': 'w', 'x': 's', 's': 'x',  # Left ring
+    'u': 'j', 'j': 'u', 'm': 'j', 'j': 'm',  # Right index
+    'i': 'k', 'k': 'i',                       # Right middle
+    'o': 'l', 'l': 'o',                       # Right ring
+}
+
+# Common muscle memory errors (words typed so fast they blur)
+MUSCLE_MEMORY_ERRORS = {
+    'the': ['teh', 'hte', 'th', 'thw'],
+    'that': ['taht', 'tath', 'htat'],
+    'this': ['tihs', 'thsi', 'htis'],
+    'have': ['hvae', 'ahve', 'hve'],
+    'with': ['wiht', 'wtih', 'iwth'],
+    'from': ['form', 'fomr', 'frmo'],
+    'they': ['tehy', 'thye', 'htey'],
+    'what': ['waht', 'whta', 'hwat'],
+    'your': ['yoru', 'yuor', 'oyur'],
+    'just': ['jsut', 'juts', 'ujst'],
+    'been': ['eben', 'bene', 'benn'],
+    'would': ['woudl', 'owuld', 'wuold'],
+    'could': ['coudl', 'cuold', 'colud'],
+    'should': ['shoudl', 'shuold', 'shold'],
+    'about': ['abuot', 'abotu', 'baout'],
+    'there': ['tehre', 'theer', 'htere'],
+    'their': ['thier', 'teir', 'tehir'],
+    'which': ['whihc', 'wihch', 'hwich'],
+    'think': ['thnk', 'thikn', 'htink'],
+    'people': ['poeple', 'peopel', 'pepole'],
+    'because': ['becuase', 'becasue', 'beacuse'],
+    'through': ['thorugh', 'throuhg', 'trhough'],
+    'before': ['befroe', 'beofre', 'bfore'],
+    'after': ['aftre', 'atfer', 'afetr'],
+    'something': ['somehting', 'somthing', 'soemthing'],
+    'different': ['differnet', 'diferent', 'diferrent'],
+}
+
 # Adjacent keys (including diagonal)
 def get_adjacent_keys(char: str) -> List[str]:
     if char not in QWERTY_POS:
@@ -153,6 +193,125 @@ def corrupt_insert_random(word: str) -> str:
     return ''.join(result)
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# HUMAN RAPID TYPING PATTERNS - Based on typing research
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def corrupt_muscle_memory(word: str) -> str:
+    """Apply common muscle memory errors for frequent words."""
+    word_lower = word.lower()
+    if word_lower in MUSCLE_MEMORY_ERRORS:
+        corrupted = random.choice(MUSCLE_MEMORY_ERRORS[word_lower])
+        # Preserve original case pattern
+        if word[0].isupper():
+            corrupted = corrupted[0].upper() + corrupted[1:]
+        return corrupted
+    return word
+
+
+def corrupt_same_finger(word: str) -> str:
+    """Errors on same-finger sequences (slowest key combinations)."""
+    if len(word) < 3:
+        return word
+    result = list(word)
+    for i in range(len(result) - 1):
+        c1, c2 = result[i].lower(), result[i+1].lower()
+        # Same-finger sequences often get transposed or dropped
+        if c1 in SAME_FINGER_PAIRS and SAME_FINGER_PAIRS.get(c1) == c2:
+            if random.random() < 0.5:
+                # Transpose
+                result[i], result[i+1] = result[i+1], result[i]
+            else:
+                # Drop one
+                result[i] = ''
+            break
+    return ''.join(result)
+
+
+def corrupt_rhythm_error(word: str) -> str:
+    """Rhythm errors: doubled letters wrong, or missing doubles."""
+    result = list(word)
+    
+    # Find double letters
+    for i in range(len(result) - 1):
+        if result[i] == result[i+1]:
+            # Sometimes doubles become singles
+            if random.random() < 0.4:
+                result[i] = ''
+            break
+    else:
+        # No doubles found - maybe add one incorrectly
+        if len(result) > 2 and random.random() < 0.3:
+            idx = random.randint(1, len(result) - 1)
+            result.insert(idx, result[idx-1])
+    
+    return ''.join(result)
+
+
+def corrupt_anticipation(word: str) -> str:
+    """Anticipation error: letter from later in word appears early."""
+    if len(word) < 4:
+        return word
+    result = list(word)
+    # Pick a letter from the second half
+    late_idx = random.randint(len(result) // 2, len(result) - 1)
+    early_idx = random.randint(1, late_idx - 1)
+    # Insert the later letter early
+    result.insert(early_idx, result[late_idx])
+    return ''.join(result)
+
+
+def corrupt_perseveration(word: str) -> str:
+    """Perseveration: repeat a character or motion."""
+    if len(word) < 2:
+        return word
+    result = list(word)
+    idx = random.randint(0, len(result) - 1)
+    # Repeat the character 1-2 extra times
+    repeats = random.randint(1, 2)
+    for _ in range(repeats):
+        result.insert(idx + 1, result[idx])
+    return ''.join(result)
+
+
+def corrupt_vowel_drop(word: str, intensity: float = 0.5) -> str:
+    """Drop vowels (very common in speed typing)."""
+    vowels = 'aeiouAEIOU'
+    result = []
+    vowel_count = sum(1 for c in word if c in vowels)
+    dropped = 0
+    
+    for c in word:
+        # Keep at least one vowel
+        if c in vowels and dropped < vowel_count - 1 and random.random() < intensity:
+            dropped += 1
+            continue
+        result.append(c)
+    
+    return ''.join(result) if result else word
+
+
+def corrupt_home_row_drift(word: str) -> str:
+    """Fingers drift from home row position."""
+    # Map: intended key -> key hit when finger drifted up/down
+    drift_up = {'a': 'q', 's': 'w', 'd': 'e', 'f': 'r', 'g': 't',
+                'h': 'y', 'j': 'u', 'k': 'i', 'l': 'o'}
+    drift_down = {'a': 'z', 's': 'x', 'd': 'c', 'f': 'v', 'g': 'b',
+                  'h': 'n', 'j': 'm'}
+    
+    drift = drift_up if random.random() < 0.5 else drift_down
+    result = []
+    
+    for c in word:
+        if c.lower() in drift and random.random() < 0.3:
+            replacement = drift[c.lower()]
+            result.append(replacement.upper() if c.isupper() else replacement)
+        else:
+            result.append(c)
+    
+    return ''.join(result)
+
+
 def corrupt_run_together(words: List[str]) -> str:
     """Remove spaces between words."""
     if len(words) < 2:
@@ -191,38 +350,63 @@ EXTREME = CorruptionLevel("extreme", 4, 0.7)
 
 
 def corrupt_word(word: str, level: CorruptionLevel) -> str:
-    """Apply corruption operations to a word."""
+    """Apply corruption operations to a word based on human typing patterns."""
     if len(word) < 2 or not word.isalpha():
         return word
     
-    # Different operation weights based on level
+    # First: check for muscle memory errors on common words
+    if word.lower() in MUSCLE_MEMORY_ERRORS and random.random() < 0.6:
+        return corrupt_muscle_memory(word)
+    
+    # Different operation weights based on level - ordered by human frequency
     if level == EXTREME:
-        # For extreme, prefer hand shift and skip (creates "iualpio" patterns)
+        # Extreme: hand shift, vowel drop, heavy skipping
         operations = [
-            (corrupt_hand_shift, 0.35),
-            (corrupt_skip, 0.30),
-            (corrupt_adjacent, 0.20),
+            (corrupt_hand_shift, 0.25),
+            (corrupt_vowel_drop, 0.25),
+            (corrupt_skip, 0.20),
+            (corrupt_adjacent, 0.15),
             (corrupt_transpose, 0.15),
         ]
-    else:
+    elif level == HEAVY:
+        # Heavy: mix of all patterns
         operations = [
-            (corrupt_adjacent, 0.30),
+            (corrupt_vowel_drop, 0.20),
+            (corrupt_adjacent, 0.20),
+            (corrupt_transpose, 0.15),
+            (corrupt_skip, 0.15),
+            (corrupt_same_finger, 0.10),
+            (corrupt_rhythm_error, 0.10),
+            (corrupt_home_row_drift, 0.10),
+        ]
+    elif level == MEDIUM:
+        # Medium: common typing errors
+        operations = [
+            (corrupt_adjacent, 0.25),
             (corrupt_transpose, 0.25),
-            (corrupt_skip, 0.20),
-            (corrupt_double_tap, 0.15),
-            (corrupt_insert_random, 0.10),
+            (corrupt_rhythm_error, 0.15),
+            (corrupt_same_finger, 0.15),
+            (corrupt_skip, 0.10),
+            (corrupt_double_tap, 0.10),
+        ]
+    else:  # LIGHT
+        # Light: subtle errors
+        operations = [
+            (corrupt_transpose, 0.35),
+            (corrupt_adjacent, 0.30),
+            (corrupt_rhythm_error, 0.20),
+            (corrupt_same_finger, 0.15),
         ]
     
     result = word
-    # Apply 1-2 operations (not 4, which was too aggressive)
-    num_ops = min(level.operations, 2) if level == EXTREME else level.operations
+    num_ops = level.operations
     
     for _ in range(num_ops):
         op = random.choices(
             [o[0] for o in operations],
             weights=[o[1] for o in operations]
         )[0]
-        if op in (corrupt_adjacent, corrupt_skip):
+        if op in (corrupt_adjacent, corrupt_skip, corrupt_vowel_drop):
             result = op(result, level.intensity)
         else:
             result = op(result)
@@ -274,61 +458,151 @@ def corrupt_sentence(sentence: str, level: CorruptionLevel) -> str:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 CORPUS = [
-    # Narrative/storytelling
+    # ═══════════════════════════════════════════════════════════════════════════
+    # NARRATIVE / STORYTELLING
+    # ═══════════════════════════════════════════════════════════════════════════
     "Once upon a time there was a prince who wanted to create something new",
     "The masses had no idea who he was however he was a visionary",
     "She walked through the ancient forest looking for answers",
     "The old wizard spoke words of wisdom to the young apprentice",
     "They traveled across mountains and valleys to reach the kingdom",
+    "The hero stood at the edge of the cliff watching the sun rise",
+    "Her story began in a small village on the outskirts of the empire",
+    "The dragon had been sleeping for a thousand years before awakening",
+    "Nobody believed him when he said he had seen the future",
+    "The map led them to a place that should not have existed",
     
-    # Business/professional
+    # ═══════════════════════════════════════════════════════════════════════════
+    # BUSINESS / PROFESSIONAL
+    # ═══════════════════════════════════════════════════════════════════════════
     "Please review the quarterly report and provide your feedback",
     "The meeting has been rescheduled to next Thursday afternoon",
     "We need to discuss the budget allocation for the upcoming project",
     "The client requested additional features for the mobile application",
     "Our team will deliver the presentation by end of day Friday",
+    "The stakeholders have approved the proposed timeline for launch",
+    "I wanted to follow up on our conversation from yesterday",
+    "The performance metrics show significant improvement this quarter",
+    "We should schedule a call to discuss the next steps",
+    "The contract has been reviewed by legal and is ready for signature",
+    "Please ensure all team members have access to the shared drive",
+    "The deadline for submissions has been extended to next week",
     
-    # Academic/technical
+    # ═══════════════════════════════════════════════════════════════════════════
+    # ACADEMIC / TECHNICAL
+    # ═══════════════════════════════════════════════════════════════════════════
     "The research demonstrates a significant correlation between variables",
     "Neural networks have revolutionized the field of machine learning",
     "The hypothesis was validated through extensive experimentation",
     "Quantum computing promises to transform computational capabilities",
     "The algorithm processes data with logarithmic time complexity",
+    "Statistical analysis revealed patterns that were previously unknown",
+    "The methodology was designed to minimize experimental bias",
+    "Preliminary results suggest further investigation is warranted",
+    "The peer review process identified several areas for improvement",
+    "Cross validation confirmed the reliability of our findings",
+    "The database contains over fifty million records for analysis",
+    "Implementation required careful consideration of edge cases",
     
-    # Casual/everyday
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CASUAL / EVERYDAY
+    # ═══════════════════════════════════════════════════════════════════════════
     "I think we should grab coffee sometime this week",
     "The weather has been really nice lately dont you think",
     "My favorite restaurant just opened a new location downtown",
     "Have you seen the latest episode of that show everyone talks about",
     "The concert last night was absolutely incredible",
+    "What time are you planning to leave for the airport tomorrow",
+    "I forgot to mention that Sarah called while you were out",
+    "The traffic was terrible this morning took me an hour to get here",
+    "My phone battery dies so fast now I need to get it replaced",
+    "Remember when we used to hang out at that place every weekend",
+    "I heard they are closing that store at the end of the month",
+    "The movie was better than I expected honestly",
     
-    # Creative/descriptive
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CREATIVE / DESCRIPTIVE
+    # ═══════════════════════════════════════════════════════════════════════════
     "The sunset painted the sky in brilliant shades of orange and purple",
     "Music filled the air as dancers moved gracefully across the stage",
     "The ancient library held secrets waiting to be discovered",
     "Waves crashed against the rocky shore under the moonlit sky",
     "The garden bloomed with flowers of every imaginable color",
+    "Shadows lengthened as evening approached the quiet village",
+    "The aroma of fresh bread drifted through the narrow streets",
+    "Raindrops traced patterns on the window as the storm continued",
+    "The mountains rose majestically against the clear blue sky",
+    "Stars emerged one by one as darkness settled over the land",
     
-    # Instructions/procedural
+    # ═══════════════════════════════════════════════════════════════════════════
+    # INSTRUCTIONS / PROCEDURAL
+    # ═══════════════════════════════════════════════════════════════════════════
     "First you need to install the required dependencies",
     "Make sure to save your work before closing the application",
     "The process involves several steps that must be followed carefully",
     "Remember to check your email for the verification link",
     "Please complete the form and submit it by the deadline",
+    "Click the button in the top right corner to access settings",
+    "You will need to restart the computer for changes to take effect",
+    "Enter your password and then confirm it in the second field",
+    "Select all the files you want to include in the backup",
+    "The system will automatically update when connected to wifi",
     
-    # Opinion/argumentative  
+    # ═══════════════════════════════════════════════════════════════════════════
+    # OPINION / ARGUMENTATIVE
+    # ═══════════════════════════════════════════════════════════════════════════
     "I believe that education is the foundation of a better society",
     "Technology has fundamentally changed how we communicate",
     "The evidence suggests that early intervention is most effective",
     "We should prioritize sustainable solutions for future generations",
     "Quality matters more than quantity in most situations",
+    "There are valid arguments on both sides of this debate",
+    "The benefits clearly outweigh the potential risks in this case",
+    "History has shown that progress requires patience and persistence",
+    "Innovation often comes from unexpected places and perspectives",
+    "The data speaks for itself when you look at the numbers",
     
-    # Questions/conversational
+    # ═══════════════════════════════════════════════════════════════════════════
+    # QUESTIONS / CONVERSATIONAL
+    # ═══════════════════════════════════════════════════════════════════════════
     "What do you think about the proposed changes to the policy",
     "How long have you been working on this particular problem",
     "Where should we meet for the discussion tomorrow",
     "Can you explain the reasoning behind your decision",
     "Would it be possible to extend the deadline by a few days",
+    "Have you had a chance to look at the document I sent",
+    "Do you know if anyone else is planning to attend the event",
+    "What would you suggest we do about the current situation",
+    "Is there anything else I should know before we proceed",
+    "When was the last time you updated the software",
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # EMAILS / MESSAGES (very common rapid typing context)
+    # ═══════════════════════════════════════════════════════════════════════════
+    "Thanks for getting back to me so quickly about this",
+    "Just wanted to check in and see how things are going",
+    "Let me know if you have any questions about the attached",
+    "Sorry for the late reply I was traveling last week",
+    "Looking forward to hearing from you soon",
+    "Hope this email finds you well",
+    "I appreciate your help with this matter",
+    "Please find attached the documents you requested",
+    "Feel free to reach out if you need anything else",
+    "Thanks again for all your hard work on this project",
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CODING / TECHNICAL DISCUSSIONS
+    # ═══════════════════════════════════════════════════════════════════════════
+    "The function returns null when the input is empty",
+    "We should refactor this code to improve readability",
+    "The bug was caused by an off by one error in the loop",
+    "Make sure to handle the edge case where the array is empty",
+    "The tests are failing because of a race condition",
+    "I pushed the changes to the feature branch for review",
+    "The API response includes all the fields we need",
+    "We need to add error handling for network failures",
+    "The performance bottleneck is in the database query",
+    "Consider using a cache to reduce the number of requests",
 ]
 
 
