@@ -11,7 +11,7 @@ from pathlib import Path
 # Paths
 PROJECT_DIR = Path(__file__).parent.parent
 MODELS_DIR = PROJECT_DIR / "apple" / "Models"
-OUTPUT_DIR = PROJECT_DIR / "tools" / "mlx_output"
+OUTPUT_DIR = PROJECT_DIR / "apple" / "Models"
 
 print("╔══════════════════════════════════════════════════════════════╗")
 print("║  M I N D ⠶ T Y P E   M L X   T R A I N I N G                ║")

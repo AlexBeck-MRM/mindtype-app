@@ -338,22 +338,110 @@ CORPUS = [
 # ═══════════════════════════════════════════════════════════════════════════════
 
 HANDCRAFTED_EXAMPLES = [
-    # Format: (corrupted, clean)
-    ("once iualpio a time tbere weas a prince", "Once upon a time there was a prince"),
-    ("teh msaasexd has no idea who he wa", "The masses had no idea who he was"),
-    ("visionsary that create d a new ftookl", "visionary that created a new tool"),
-    ("th workds hasnf experiencex bfore", "the world hasn't experienced before"),
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CONTEXT-DEPENDENT INTERPRETATION
+    # These examples show how sentence context makes garbled words clear
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    # "msses" could be masses/messes/misses - but context clarifies
+    ("the msses were amzd by the prfrmance on stage", "The masses were amazed by the performance on stage"),
+    ("she msses her fmly when shes away frm home", "She misses her family when she's away from home"),
+    ("he mde a lot of msses while lrning to cook", "He made a lot of messes while learning to cook"),
+    
+    # "cnt" could be can't/count/content - context clarifies
+    ("i cnt bleve how fst time flys", "I can't believe how fast time flies"),
+    ("plz cnt the nmber of itms in the bx", "Please count the number of items in the box"),
+    ("the cnt of the artcle was vry informtve", "The content of the article was very informative"),
+    
+    # "prsnt" could be present/prevent/print - context clarifies
+    ("she will prsnt her findngs at the confrnce", "She will present her findings at the conference"),
+    ("we mst prsnt ths from happning agn", "We must prevent this from happening again"),
+    
+    # "rd" could be read/red/road - context clarifies
+    ("i rd the book lst nght it ws grt", "I read the book last night it was great"),
+    ("the rd car drve dwn the strret", "The red car drove down the street"),
+    ("the rd to sccss is nvr strght", "The road to success is never straight"),
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # HEAVILY GARBLED BUT CONTEXT MAKES IT CLEAR
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    # Narrative context
+    ("once iualpio a time tbere weas a prince who wntd to chng the wrld", 
+     "Once upon a time there was a prince who wanted to change the world"),
+    ("teh msaasexd had no idea who he ws hwever he ws a visionsary",
+     "The masses had no idea who he was however he was a visionary"),
+    ("he creatd a nw ftookl tht the wrld hadnt exprienced bfre",
+     "He created a new tool that the world hadn't experienced before"),
+    
+    # Technical context
+    ("th algrthm prcsss th dat vry effcntly wth lgrthmuc complxty",
+     "The algorithm processes the data very efficiently with logarithmic complexity"),
+    ("th nurl ntwrk ws trnd on mlllns of exmpls",
+     "The neural network was trained on millions of examples"),
+    ("dpndncs nd to b instlld bfre rnnng th prgrm",
+     "Dependencies need to be installed before running the program"),
+    
+    # Business context
+    ("th mtng ws rschduld to thrsdy bcse of cnflcts",
+     "The meeting was rescheduled to Thursday because of conflicts"),
+    ("pls rvw th rport nd snd fdbck by eod frdy",
+     "Please review the report and send feedback by end of day Friday"),
+    ("th qrtrly rvnue excdd expcttons ths yr",
+     "The quarterly revenue exceeded expectations this year"),
+    
+    # Casual/everyday context
+    ("i thnk w shld grb cffe smtm ths wk if ur fre",
+     "I think we should grab coffee sometime this week if you're free"),
+    ("th wthr hs bn rly nce ltly dnt u thnk",
+     "The weather has been really nice lately don't you think"),
+    ("my fvrt rstrant jst opnd a nw lctn dwntwn",
+     "My favorite restaurant just opened a new location downtown"),
+    
+    # Academic/research context  
+    ("th rsrch dmnstrts a sgnfcnt crrltn btwn vrbles",
+     "The research demonstrates a significant correlation between variables"),
+    ("th hypthss ws vlddtd thrgh extnsve exprmnttn",
+     "The hypothesis was validated through extensive experimentation"),
+    ("qntm cmptng prmsses to trnsfm cmpttnl cpblts",
+     "Quantum computing promises to transform computational capabilities"),
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # EXTREME GARBLING - Only sentence context makes this work
+    # ═══════════════════════════════════════════════════════════════════════════
+    
+    # These would be impossible to decode without the full sentence
+    ("th snsst pntd th sky n brllnt shds of orng nd prpl",
+     "The sunset painted the sky in brilliant shades of orange and purple"),
+    ("msc flld th ar as dncrs mvd grclly acrss th stg",
+     "Music filled the air as dancers moved gracefully across the stage"),
+    ("th ancnt lbrry hld scrts wtng to b dscvrd",
+     "The ancient library held secrets waiting to be discovered"),
+    ("wvs crshd agnst th rcky shr undr th mnlt sky",
+     "Waves crashed against the rocky shore under the moonlit sky"),
+    
+    # Mixed garbling patterns in single sentences
+    ("i ws wrtng a lttr to my frnd abt th mtng we hd ystrd",
+     "I was writing a letter to my friend about the meeting we had yesterday"),
+    ("th tm ndds to fnsh th prjct bfr th ddlne nxt wk",
+     "The team needs to finish the project before the deadline next week"),
+    ("cn u hlp me undrstnd hw ths systm wrks its cnfsng",
+     "Can you help me understand how this system works it's confusing"),
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # ABBREVIATIONS + TYPOS (velocity typing)
+    # ═══════════════════════════════════════════════════════════════════════════
+    
     ("plz reviw th rport asap", "Please review the report as soon as possible"),
     ("mtg reschd to thurs aftrnn", "Meeting rescheduled to Thursday afternoon"),
-    ("th algrthm prcsss dat effcntly", "The algorithm processes data efficiently"),
-    ("i thnk w shld grb cffe smtm", "I think we should grab coffee sometime"),
-    ("th snst pntd th sky orng nd prpl", "The sunset painted the sky orange and purple"),
     ("frst u nd to instll dpndncs", "First you need to install dependencies"),
     ("wat do u thnk abt th chngs", "What do you think about the changes"),
     ("cn u expln yr rsnng", "Can you explain your reasoning"),
     ("th mtng ws vry prdctv tdy", "The meeting was very productive today"),
     ("pls snd th dcmnts b4 tmrw", "Please send the documents before tomorrow"),
     ("th prjct s almst cmplt nw", "The project is almost complete now"),
+    ("lts scdl a cll fr nxt wk", "Let's schedule a call for next week"),
+    ("thx fr yr hlp w ths", "Thanks for your help with this"),
 ]
 
 

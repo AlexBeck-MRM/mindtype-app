@@ -64,10 +64,9 @@ class MindTypeConfig:
     def __post_init__(self):
         if self.model_path is None:
             project_root = Path(__file__).parent.parent
-            # MindFlow Qwen models - prefer larger/newer versions
+            # MindFlow Qwen models live in apple/Models/
             for candidate in [
-                project_root / "tools" / "mlx_output" / "mindflow-qwen-3b",
-                project_root / "tools" / "mlx_output" / "mindflow-qwen-1.5b",
+                project_root / "apple" / "Models" / "mindflow-qwen-3b",
             ]:
                 if candidate.exists():
                     self.model_path = candidate
@@ -279,6 +278,16 @@ class CorrectionEngine:
         """
         Interpret fuzzy/garbled typing.
         """
+        # Auto-load model if needed
+        if not self._loaded:
+            if not self.load_model():
+                return CorrectionResult(
+                    success=False,
+                    text=text,
+                    confidence=0.0,
+                    reason="model not found"
+                )
+        
         text = text.strip()
         
         # Check minimum requirements

@@ -17,7 +17,7 @@ from pathlib import Path
 # Configuration
 PROJECT_DIR = Path(__file__).parent.parent
 MODELS_DIR = PROJECT_DIR / "apple" / "Models"
-OUTPUT_DIR = PROJECT_DIR / "tools" / "mlx_output"
+OUTPUT_DIR = PROJECT_DIR / "apple" / "Models"
 
 # Training config
 CONFIG = {

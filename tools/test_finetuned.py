@@ -16,7 +16,7 @@ print("║  M I N D ⠶ T Y P E   F I N E - T U N E D   T E S T          ║")
 print("╚══════════════════════════════════════════════════════════════╝")
 print()
 
-MODEL_PATH = "tools/mlx_output/fused_model"
+MODEL_PATH = "apple/Models/mindflow-qwen-3b"
 
 print(f"📦 Loading fine-tuned model from {MODEL_PATH}...")
 model, tokenizer = load(MODEL_PATH)
