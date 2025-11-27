@@ -29,7 +29,6 @@ python3 tools/mindtype_realtime.py
 Models live in `apple/Models/`:
 
 - **mindflow-qwen-3b-v2** — Context-aware, literal interpretation (default)
-- **mindflow-qwen-3b-v3** — 4000 samples, more creative interpretations
 
 ## Training New Models
 

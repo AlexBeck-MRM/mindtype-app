@@ -52,9 +52,8 @@ Just the corrected text. No conversation. No explanations.
 | Version | Training Data | Characteristics |
 |---------|--------------|-----------------|
 | **v2** (default) | 2000 samples, 43 handcrafted context examples | Literal interpretation, 100% accuracy on test suite |
-| **v3** | 4000 samples, human typing pattern simulation | More creative, may paraphrase (75% exact match) |
 
-**v2 is recommended** because it does what you asked—fixes typos without adding its own interpretation.
+**v2 is the only model** and is recommended because it fixes typos without adding its own interpretation.
 
 ---
 
@@ -418,7 +417,6 @@ LENIENT_CONFIG = MindTypeConfig(
 | Directory | Description |
 |-----------|-------------|
 | `mindflow-qwen-3b-v2/` | Default model, literal interpretation |
-| `mindflow-qwen-3b-v3/` | Alternative, more creative |
 
 ---
 

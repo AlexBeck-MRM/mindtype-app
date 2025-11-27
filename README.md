@@ -75,7 +75,6 @@ Mind⠶Type uses **MindFlow Qwen**, a custom fine-tuned model optimized for fuzz
 | Model | Training | Best For | Accuracy |
 |-------|----------|----------|----------|
 | **mindflow-qwen-3b-v2** (default) | 2000 samples, context-aware | Literal interpretation | 100% on test suite |
-| mindflow-qwen-3b-v3 | 4000 samples, human patterns | More creative | 75% on test suite |
 
 ### Why Custom Training?
 
@@ -178,8 +177,7 @@ mindtype/
 │   │   └── Tests/
 │   ├── MindTypeApp/                # macOS menu bar app
 │   └── Models/                     # Fine-tuned models live here
-│       ├── mindflow-qwen-3b-v2/    # Default model (literal)
-│       └── mindflow-qwen-3b-v3/    # Alternative (creative)
+│       └── mindflow-qwen-3b-v2/    # Default model (literal interpretation)
 │
 ├── tools/                          # Python tooling
 │   ├── mindtype_core.py            # Shared engine + config

@@ -548,12 +548,11 @@ The breakthrough was training data that shows the same garbled word meaning diff
 
 This teaches the model that interpretation depends on surrounding words, not just the garbled word itself.
 
-### Model Versions
+### Model Version
 
 | Version | Training | Best For |
 |---------|----------|----------|
 | v2 | 2000 samples, context-aware | Literal interpretation (100% accuracy) |
-| v3 | 4000 samples, human patterns | More creative (75% accuracy) |
 
 ### Results
 

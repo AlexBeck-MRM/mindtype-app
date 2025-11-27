@@ -267,7 +267,6 @@ Output: "Once upon a time there was a prince who wanted to create"
 | Version | Accuracy | Characteristics |
 |---------|----------|-----------------|
 | **v2** (default) | 100% | Literal interpretation, won't paraphrase |
-| v3 | 75% | More creative, may change wording |
 
 ### Demo Commands
 

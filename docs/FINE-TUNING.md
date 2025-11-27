@@ -161,26 +161,22 @@ The evaluation script tests:
 3. **Hand shift** — `yhr` → "the"
 4. **Context-dependent** — `msses` in different contexts
 
-### Comparing Versions
+### Evaluating the Model
 
 ```bash
 # Evaluate v2
 python3 tools/evaluate_model.py --model apple/Models/mindflow-qwen-3b-v2
-
-# Evaluate v3
-python3 tools/evaluate_model.py --model apple/Models/mindflow-qwen-3b-v3
 ```
 
 ---
 
-## Model Versions
+## Model Version
 
 | Version | Training | Best For | Accuracy |
 |---------|----------|----------|----------|
 | **v2** (default) | 2000 samples, context-aware | Literal interpretation | 100% |
-| **v3** | 4000 samples, human patterns | More creative | 75% |
 
-**Recommendation:** Use v2 for most cases. It fixes typos without changing meaning.
+**v2 is the only model** and is recommended because it fixes typos without changing meaning.
 
 ---
 
