@@ -16,8 +16,10 @@ echo
 # ─── Configuration ────────────────────────────────────────────────────────────
 BASE_MODEL="Qwen/Qwen2.5-3B-Instruct"
 MODEL_DIR="apple/Models"
-ADAPTER_NAME="mindflow-qwen-3b-adapters"
-FINAL_NAME="mindflow-qwen-3b"
+# Increment version for each new training run
+VERSION="v4"  # Change this to create a new version
+ADAPTER_NAME="mindflow-qwen-3b-${VERSION}-adapters"
+FINAL_NAME="mindflow-qwen-3b-${VERSION}"
 SAMPLES=2000
 ITERS=250
 

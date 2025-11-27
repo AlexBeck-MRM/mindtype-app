@@ -287,10 +287,10 @@ def main():
     else:
         # Default: evaluate current fine-tuned model
         project_root = Path(__file__).parent.parent
-        default_model = project_root / "apple" / "Models" / "mindflow-qwen-3b"
+        default_model = project_root / "apple" / "Models" / "mindflow-qwen-3b-v2"
         if default_model.exists():
             results = evaluate_model(str(default_model))
-            print_results(results, "mindflow-qwen-3b")
+            print_results(results, "mindflow-qwen-3b-v2")
         else:
             print("No model found. Use --model to specify a model path.")
 

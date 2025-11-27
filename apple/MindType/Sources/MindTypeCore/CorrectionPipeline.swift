@@ -145,11 +145,12 @@ public actor CorrectionPipeline {
                 // Create ONE diff that captures the cumulative change
                 // Use activeRegion boundaries (original text positions) as diff applies to original text
                 // Extract finalRegionText using currentRegion which tracks where the region ended up after all changes
+                // Report the first stage that made changes (typically noise/typos) as the primary correction type
                 let cumulativeDiff = CorrectionDiff(
                     start: activeRegion.start,
                     end: activeRegion.end,
                     text: finalRegionText,
-                    stage: stageDiffs.last?.stage ?? .noise,
+                    stage: stageDiffs.first?.stage ?? .noise,
                     confidence: stageDiffs.map(\.confidence).min() ?? 0.9
                 )
                 finalDiffs.append(cumulativeDiff)
