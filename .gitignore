@@ -24,6 +24,8 @@ Package.resolved
 # ─── Models (large GGUF files) ───────────────────────────────────
 *.gguf
 apple/Models/**/*.gguf
+# MLX safetensors models (too large for git)
+apple/Models/**/*.safetensors
 
 # ─── IDE ─────────────────────────────────────────────────────────
 .idea/
