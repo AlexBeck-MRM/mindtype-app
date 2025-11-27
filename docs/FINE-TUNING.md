@@ -1,382 +1,315 @@
-# MindType Model Fine-Tuning Guide
+# MindFlow Model Fine-Tuning Guide
 
-This guide explains how to fine-tune a language model specifically for MindType's typing intelligence capabilities.
+This guide explains how to fine-tune MindFlow Qwen models for fuzzy typing interpretation.
 
 ---
 
 ## Overview
 
-MindType requires a model that can:
-1. **Interpret garbled input** → Decode speed-typing and typos
-2. **Expand abbreviations** → "defdnt clamd" → "defendant claimed"
-3. **Preserve meaning** → Don't change what the user meant to say
-4. **Be fast** → Run on-device with low latency
+MindFlow models are fine-tuned Qwen 3B models optimized to:
 
-Fine-tuning a base model on MindType-specific data dramatically improves accuracy.
+1. **Interpret garbled input** — Decode velocity typing and typos
+2. **Use context** — `"msses"` → "masses" (performance) or "misses" (family)
+3. **Preserve structure** — Same sentence count in, same sentence count out
+4. **Never converse** — Return only corrected text, no explanations
 
 ---
 
 ## Quick Start
 
-### Step 1: Generate Training Data
-
 ```bash
-cd tools/
+# 1. Generate training data
+python3 tools/generate_fuzzy_training.py --samples 4000 --seed 42
 
-# Install dependencies
-pip install requests beautifulsoup4 nltk
+# 2. Train (LoRA fine-tuning via MLX)
+bash tools/train_fuzzy.sh
 
-# Download corpus from Wikipedia (10,000 sentences)
-python download_corpus.py --source wikipedia --sentences 10000 --output corpus.txt
-
-# Generate training pairs with corruptions
-python generate_training_data.py --input corpus.txt --samples 10 --output training_data.jsonl
-
-# Check output
-head -5 training_data.jsonl
-```
-
-### Step 2: Convert to Training Format
-
-Create a script to convert JSONL to the format required by your training tool:
-
-```python
-#!/usr/bin/env python3
-"""Convert MindType training data to chat format for fine-tuning."""
-
-import json
-import sys
-
-def convert_to_chat_format(input_file, output_file):
-    """Convert to ShareGPT/chat format."""
-    conversations = []
-    
-    with open(input_file, 'r') as f:
-        for line in f:
-            data = json.loads(line)
-            
-            conversation = {
-                "conversations": [
-                    {
-                        "from": "system",
-                        "value": "You decode garbled typing into clear English. Return ONLY the corrected text."
-                    },
-                    {
-                        "from": "human", 
-                        "value": data["input"]
-                    },
-                    {
-                        "from": "gpt",
-                        "value": data["output"]
-                    }
-                ]
-            }
-            conversations.append(conversation)
-    
-    with open(output_file, 'w') as f:
-        json.dump(conversations, f, indent=2)
-    
-    print(f"Converted {len(conversations)} examples to {output_file}")
-
-if __name__ == "__main__":
-    convert_to_chat_format(sys.argv[1], sys.argv[2])
-```
-
-Save as `convert_format.py` and run:
-```bash
-python convert_format.py training_data.jsonl training_chat.json
+# 3. Evaluate
+python3 tools/evaluate_model.py
 ```
 
 ---
 
-## Fine-Tuning Methods
+## Training Data Generation
 
-### Option A: Using Unsloth (Recommended - Fastest)
+The generator (`tools/generate_fuzzy_training.py`) creates realistic typing errors based on human typing research.
 
-[Unsloth](https://github.com/unslothai/unsloth) provides 2x faster fine-tuning with 70% less memory.
+### Error Types
 
-```bash
-# Install
-pip install unsloth
+| Type | Example | Cause |
+|------|---------|-------|
+| **Muscle memory** | `teh` → "the" | Words typed so fast they blur |
+| **Same-finger** | `ed` → "de" | Letters on same finger are slow |
+| **Adjacent key** | `thw` → "the" | QWERTY proximity |
+| **Vowel dropping** | `plse` → "please" | Speed typing skips vowels |
+| **Hand shift** | `yhr` → "the" | Hand shifted one key |
+| **Rhythm errors** | `commming` → "coming" | Double-tap timing |
 
-# Create training script
+### Context-Dependent Examples
+
+The key innovation: handcrafted examples showing the same garbled word with different meanings:
+
+```
+"the msses were amzd by the prfrmance" → "masses" (audience context)
+"she msses her fmly when shes away"    → "misses" (family context)
+"he mde a lot of msses while lrning"   → "messes" (cooking context)
 ```
 
-```python
-# train_unsloth.py
-from unsloth import FastLanguageModel
-import torch
+### Dataset Composition
 
-# Load base model
-model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name="unsloth/Qwen2.5-3B-Instruct-bnb-4bit",
-    max_seq_length=2048,
-    load_in_4bit=True,
-)
-
-# Add LoRA adapters
-model = FastLanguageModel.get_peft_model(
-    model,
-    r=16,  # LoRA rank
-    target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                    "gate_proj", "up_proj", "down_proj"],
-    lora_alpha=16,
-    lora_dropout=0,
-    bias="none",
-    use_gradient_checkpointing="unsloth",
-)
-
-# Load your training data
-from datasets import load_dataset
-dataset = load_dataset("json", data_files="training_chat.json")
-
-# Training
-from trl import SFTTrainer
-from transformers import TrainingArguments
-
-trainer = SFTTrainer(
-    model=model,
-    tokenizer=tokenizer,
-    train_dataset=dataset["train"],
-    dataset_text_field="text",
-    max_seq_length=2048,
-    args=TrainingArguments(
-        per_device_train_batch_size=2,
-        gradient_accumulation_steps=4,
-        warmup_steps=5,
-        max_steps=100,  # Adjust based on dataset size
-        learning_rate=2e-4,
-        fp16=not torch.cuda.is_bf16_supported(),
-        bf16=torch.cuda.is_bf16_supported(),
-        logging_steps=1,
-        output_dir="mindtype_model",
-    ),
-)
-
-trainer.train()
-
-# Save LoRA adapter
-model.save_pretrained("mindtype_lora")
-
-# Merge and export to GGUF
-model.save_pretrained_gguf("mindtype_gguf", tokenizer, quantization_method="q4_k_m")
+```
+13.5% light    — Easy corrections (single typos)
+31.5% medium   — Typical typing errors
+31.5% heavy    — Fast typing errors
+13.5% extreme  — Velocity mode (very garbled)
+9.0%  clean    — No corruption (prevent over-correction)
+1.0%  handcrafted — Context disambiguation examples
 ```
 
-### Option B: Using llama.cpp (CPU/Metal)
-
-llama.cpp includes fine-tuning capabilities:
+### Generating Custom Data
 
 ```bash
-# Clone llama.cpp
-git clone https://github.com/ggerganov/llama.cpp
-cd llama.cpp
+# Default: 2000 samples
+python3 tools/generate_fuzzy_training.py
 
-# Build with Metal support
-make LLAMA_METAL=1
+# More samples
+python3 tools/generate_fuzzy_training.py --samples 4000 --seed 123
 
-# Convert training data to llama.cpp format
-python convert-hf-to-gguf.py /path/to/model --outfile model.gguf
-
-# Fine-tune with LoRA
-./finetune \
-    --model-base model.gguf \
-    --train-data training_data.txt \
-    --lora-out mindtype_lora.gguf \
-    --ctx 2048 \
-    --batch 4 \
-    --threads 8 \
-    --epochs 3
+# Output is saved to tools/mlx_data/train.jsonl and valid.jsonl
 ```
 
-### Option C: Using MLX (Apple Silicon Native)
+---
 
-For M1/M2/M3 Macs, MLX provides native performance:
+## Training with MLX
+
+We use MLX's built-in LoRA training, optimized for Apple Silicon.
+
+### Why LoRA?
+
+Instead of retraining all 3 billion parameters:
+
+```
+Base model: 3,085,939,000 parameters (frozen)
+LoRA adapters: 6,652,000 parameters (trained)
+Trainable: 0.216%
+```
+
+Benefits:
+- **Fast** — 5 minutes on M1 Max
+- **Small** — ~25MB adapters vs 6GB model
+- **Safe** — Base knowledge preserved
+
+### Training Command
 
 ```bash
-# Install MLX
-pip install mlx mlx-lm
-
-# Fine-tune
-python -m mlx_lm.lora \
+python3 -m mlx_lm lora \
     --model Qwen/Qwen2.5-3B-Instruct \
     --train \
-    --data training_chat.json \
-    --batch-size 4 \
-    --lora-layers 16 \
-    --iters 1000
-
-# Convert to GGUF
-python -m mlx_lm.convert --hf-path ./lora_fused_model -q
+    --data tools/mlx_data \
+    --batch-size 2 \
+    --num-layers 16 \
+    --learning-rate 1e-5 \
+    --iters 300 \
+    --save-every 100 \
+    --adapter-path apple/Models/mindflow-qwen-3b-v4-adapters
 ```
 
----
+### Training Parameters
 
-## Training Data Guidelines
+| Parameter | Value | Effect |
+|-----------|-------|--------|
+| `--batch-size` | 2 | Fits in ~8GB memory |
+| `--num-layers` | 16 | How many layers to adapt |
+| `--learning-rate` | 1e-5 | Conservative to avoid forgetting |
+| `--iters` | 300 | ~5 min training |
 
-### Recommended Dataset Size
+### Fusing Adapters
 
-| Use Case | Min Examples | Recommended | Training Time (M1) |
-|----------|-------------|-------------|-------------------|
-| Basic improvement | 1,000 | 5,000 | ~30 min |
-| Good quality | 10,000 | 25,000 | ~2 hours |
-| High quality | 50,000 | 100,000 | ~8 hours |
+After training, merge adapters into the base model:
 
-### Data Quality Checklist
-
-- [ ] Diverse sentence types (academic, casual, legal, technical)
-- [ ] Varying error intensities (light, medium, heavy)
-- [ ] Include abbreviation expansions
-- [ ] Include transpositions, deletions, insertions
-- [ ] No duplicate input/output pairs
-- [ ] Clean, grammatically correct outputs
-
-### Error Distribution
-
-Aim for this distribution in your training data:
-
-```
-transpose:     25%  (teh → the)
-delete:        20%  (wrld → world)  
-duplicate:     15%  (helllo → hello)
-adjacent:      15%  (wprld → world)
-abbreviation:  15%  (defdnt → defendant)
-visual:        5%   (befinitely → definitely)
-misspelling:   5%   (definately → definitely)
+```bash
+python3 -m mlx_lm fuse \
+    --model Qwen/Qwen2.5-3B-Instruct \
+    --adapter-path apple/Models/mindflow-qwen-3b-v4-adapters \
+    --save-path apple/Models/mindflow-qwen-3b-v4
 ```
 
 ---
 
 ## Evaluation
 
-### Test Set Creation
-
-Reserve 10% of your data for evaluation:
+### Run Evaluation
 
 ```bash
-# Split training data
-head -n 9000 training_data.jsonl > train.jsonl
-tail -n 1000 training_data.jsonl > test.jsonl
+python3 tools/evaluate_model.py --model apple/Models/mindflow-qwen-3b-v2
 ```
 
-### Metrics to Track
+### Metrics
 
-1. **Exact Match Rate** - % of outputs exactly matching expected
-2. **Word Error Rate (WER)** - Levenshtein distance at word level
-3. **Character Error Rate (CER)** - Levenshtein distance at char level
-4. **Intent Preservation** - Does output mean the same thing?
+| Metric | Meaning |
+|--------|---------|
+| **Similarity** | Character-level similarity (Levenshtein) |
+| **Exact Match** | Output exactly matches expected |
+| **Latency** | Time per interpretation |
 
-### Evaluation Script
+### Test Cases
 
-```python
-#!/usr/bin/env python3
-"""Evaluate fine-tuned model on test set."""
+The evaluation script tests:
 
-import json
-from difflib import SequenceMatcher
+1. **Muscle memory** — `teh`, `jsut`, `taht`
+2. **Vowel dropping** — `th wthtr hs bn rly nce`
+3. **Hand shift** — `yhr` → "the"
+4. **Context-dependent** — `msses` in different contexts
 
-def word_error_rate(reference, hypothesis):
-    """Calculate WER."""
-    ref_words = reference.split()
-    hyp_words = hypothesis.split()
-    
-    # Simple Levenshtein at word level
-    matcher = SequenceMatcher(None, ref_words, hyp_words)
-    return 1.0 - matcher.ratio()
+### Comparing Versions
 
-def evaluate(test_file, model_outputs_file):
-    """Evaluate model outputs against expected."""
-    exact_matches = 0
-    total_wer = 0
-    count = 0
-    
-    with open(test_file) as tf, open(model_outputs_file) as mf:
-        for test_line, model_line in zip(tf, mf):
-            test = json.loads(test_line)
-            model = json.loads(model_line)
-            
-            expected = test["output"]
-            actual = model["output"]
-            
-            if expected.strip().lower() == actual.strip().lower():
-                exact_matches += 1
-            
-            total_wer += word_error_rate(expected, actual)
-            count += 1
-    
-    print(f"Exact Match Rate: {exact_matches/count*100:.1f}%")
-    print(f"Average WER: {total_wer/count*100:.1f}%")
+```bash
+# Evaluate v2
+python3 tools/evaluate_model.py --model apple/Models/mindflow-qwen-3b-v2
 
-if __name__ == "__main__":
-    import sys
-    evaluate(sys.argv[1], sys.argv[2])
+# Evaluate v3
+python3 tools/evaluate_model.py --model apple/Models/mindflow-qwen-3b-v3
 ```
 
 ---
 
-## Using Your Fine-Tuned Model
+## Model Versions
 
-### 1. Copy the Model
+| Version | Training | Best For | Accuracy |
+|---------|----------|----------|----------|
+| **v2** (default) | 2000 samples, context-aware | Literal interpretation | 100% |
+| **v3** | 4000 samples, human patterns | More creative | 75% |
 
-```bash
-# Copy your fine-tuned GGUF to MindType models folder
-cp mindtype_gguf/model-q4_k_m.gguf \
-   "/path/to/MindType/project/apple/Models/mindtype-finetuned.gguf"
-```
+**Recommendation:** Use v2 for most cases. It fixes typos without changing meaning.
 
-### 2. Update Model Discovery
+---
 
-The model will be automatically discovered if you name it appropriately. Or update `LlamaLMAdapter.swift`:
+## Automated Training Workflow
 
-```swift
-public static let supportedModels = [
-    "mindtype-finetuned.gguf",        // Your fine-tuned model (best)
-    "qwen2.5-3b-instruct-q4_k_m.gguf", // Fallback
-    "qwen2.5-0.5b-instruct-q4_k_m.gguf", // Smallest
-]
-```
-
-### 3. Test
+The `train_fuzzy.sh` script handles the full workflow:
 
 ```bash
-cd apple/MindType
-swift run MindTypeDemo -i
+bash tools/train_fuzzy.sh
+```
+
+Steps:
+1. Evaluate current model (baseline)
+2. Generate training data
+3. Train LoRA adapters
+4. Fuse into final model
+5. Evaluate new model
+6. Compare results
+
+### Configuring train_fuzzy.sh
+
+Edit the config section:
+
+```bash
+VERSION="v4"      # Change for each new training run
+SAMPLES=2000      # Training samples
+ITERS=250         # Training iterations
 ```
 
 ---
 
 ## Troubleshooting
 
-### "Out of memory" during training
+### Model outputs are conversational
 
-- Reduce batch size to 1
-- Use gradient checkpointing
-- Use 4-bit quantization during training
-- Use a smaller base model (1.5B instead of 3B)
+The model is reverting to chat mode. Signs:
+- "It seems like you're trying to say..."
+- Adding explanatory text
+- Asking questions
 
-### Model outputs are worse after fine-tuning
+**Fix:** Retrain with stricter prompts or use v2.
 
-- Training data may have errors - review samples
-- Learning rate too high - reduce to 1e-5
-- Overtrained - reduce epochs/steps
-- Data format mismatch - check chat template
+### Output is worse than input
 
-### Model is slow on device
+Possible causes:
+- Learning rate too high (try 5e-6)
+- Too many iterations (try 150)
+- Bad training data
 
-- Ensure Metal/GPU acceleration is enabled
-- Use smaller quantization (q4_k_m)
-- Reduce context length in prompts
+**Fix:** Check training data quality, reduce training.
+
+### Out of memory
+
+**Fix:** Reduce batch size to 1:
+
+```bash
+python3 -m mlx_lm lora --batch-size 1 ...
+```
+
+### Terminal corrupted after demo crash
+
+```bash
+reset
+# or
+stty sane
+```
+
+---
+
+## Adding New Training Examples
+
+### Handcrafted Examples
+
+Edit `tools/generate_fuzzy_training.py`, find `HANDCRAFTED_EXAMPLES`:
+
+```python
+HANDCRAFTED_EXAMPLES = [
+    # Add your examples
+    ("your garbled input here", "The expected clean output here"),
+]
+```
+
+### New Error Patterns
+
+Add new corruption functions:
+
+```python
+def corrupt_my_pattern(word: str) -> str:
+    """My custom corruption pattern."""
+    # Your logic here
+    return corrupted
+
+# Add to operation weights in corrupt_word()
+operations = [
+    (corrupt_my_pattern, 0.1),  # 10% chance
+    ...
+]
+```
+
+---
+
+## Using Your Model
+
+### Update Default Path
+
+Edit `tools/mindtype_core.py`:
+
+```python
+MODEL_PATHS = [
+    project_root / "apple" / "Models" / "mindflow-qwen-3b-v4",  # Your new model
+    project_root / "apple" / "Models" / "mindflow-qwen-3b-v2",  # Fallback
+]
+```
+
+### Test Interactively
+
+```bash
+python3 tools/mindtype_mlx.py
+```
 
 ---
 
 ## Resources
 
-- [Unsloth GitHub](https://github.com/unslothai/unsloth) - Fast fine-tuning
-- [llama.cpp](https://github.com/ggerganov/llama.cpp) - GGUF and inference
-- [MLX](https://github.com/ml-explore/mlx) - Apple Silicon native
-- [LoRA Paper](https://arxiv.org/abs/2106.09685) - Low-Rank Adaptation
-- [QLoRA Paper](https://arxiv.org/abs/2305.14314) - Quantized LoRA
+- [MLX Documentation](https://ml-explore.github.io/mlx/)
+- [MLX-LM GitHub](https://github.com/ml-explore/mlx-examples/tree/main/llms/mlx_lm)
+- [LoRA Paper](https://arxiv.org/abs/2106.09685)
+- [Qwen Model Card](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct)
 
 ---
 
 *Last updated: November 2025*
-
