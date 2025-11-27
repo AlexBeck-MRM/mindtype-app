@@ -143,7 +143,6 @@ def main():
     # Initialize
     config = MindTypeConfig(
         min_words=3,
-        similarity_threshold=0.35,
         return_original_on_failure=True,
         show_confidence=True,
     )

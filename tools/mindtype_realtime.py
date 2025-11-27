@@ -367,7 +367,6 @@ def main():
     # Configuration per Mind⠶Flow guide
     config = MindTypeConfig(
         min_words=3,
-        similarity_threshold=0.35,
         pause_ms=500,  # Per guide: ~500ms pause trigger
         return_original_on_failure=True,
     )
