@@ -22,8 +22,8 @@ Packages/
 Package.resolved
 
 # ─── Models (large GGUF files) ───────────────────────────────────
-apple/Models/*.gguf
 *.gguf
+apple/Models/**/*.gguf
 
 # ─── IDE ─────────────────────────────────────────────────────────
 .idea/
