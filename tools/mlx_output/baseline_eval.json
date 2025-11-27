@@ -1,0 +1,130 @@
+{
+  "model": "tools/mlx_output/fused_v2",
+  "scores": {
+    "similarity": 0.7511569696702135,
+    "exact_match_rate": 0.06666666666666667,
+    "avg_latency_ms": 448.847230275472
+  },
+  "results": [
+    {
+      "input": "teh quick brown fox jumps",
+      "expected": "the quick brown fox jumps",
+      "actual": "The quick brown fox jumps over the lazy dog.",
+      "similarity": 0.7246376811594203,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "I was writting a lettr to my freind",
+      "expected": "I was writing a letter to my friend",
+      "actual": "I was writing a letter to my friend.",
+      "similarity": 0.9859154929577465,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "Plese send me the docuemnts",
+      "expected": "Please send me the documents",
+      "actual": "Please send me the documents.",
+      "similarity": 0.9824561403508771,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "th meetng ws rescheduld to thrsday",
+      "expected": "the meeting was rescheduled to Thursday",
+      "actual": "The meeting has been rescheduled to Thursday.",
+      "similarity": 0.9047619047619048,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "we nd to discss th prject tmrrw",
+      "expected": "we need to discuss the project tomorrow",
+      "actual": "We need to discuss the project tomorrow.",
+      "similarity": 0.9873417721518988,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "cn u reviw ths by eod",
+      "expected": "can you review this by end of day",
+      "actual": "Can you please review this by the end of the day?",
+      "similarity": 0.8048780487804879,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "oncee iupon a tiem there ws a king",
+      "expected": "once upon a time there was a king",
+      "actual": "Once upon a time there was a king.",
+      "similarity": 0.9850746268656716,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "th msses wr amzd by th prfrmance",
+      "expected": "the masses were amazed by the performance",
+      "actual": "The market capitalization weighted index dominates the benchmark.",
+      "similarity": 0.39622641509433965,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "plz snd th rprt asap its urgnt",
+      "expected": "please send the report asap it's urgent",
+      "actual": "Please send the report as soon as possible as it's urgent.",
+      "similarity": 0.8041237113402062,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "iualpio",
+      "expected": "upon",
+      "actual": "I'm not sure what you mean by \"iualpio.\" Could you please provide more context or clarify your question?",
+      "similarity": 0.07407407407407407,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "msaasexd",
+      "expected": "masses",
+      "actual": "Massage therapy treatment.",
+      "similarity": 0.3125,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "th visionsary creatd a nw ftookl",
+      "expected": "the visionary created a new tool",
+      "actual": "The visionary created a new framework.",
+      "similarity": 0.8285714285714286,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "wrkds hasnf experiencex bfore",
+      "expected": "world hasn't experienced before",
+      "actual": "Work experience before this job.",
+      "similarity": 0.6666666666666666,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "frst do ths. thn do tht. fnlly chck.",
+      "expected": "First do this. Then do that. Finally check.",
+      "actual": "First do this. Then do that. Finally check.",
+      "similarity": 1.0,
+      "exact_match": true,
+      "difficulty": "structural"
+    },
+    {
+      "input": "wat do u thnk? cn u hlp?",
+      "expected": "What do you think? Can you help?",
+      "actual": "What do you think? Can you help with something?",
+      "similarity": 0.810126582278481,
+      "exact_match": false,
+      "difficulty": "structural"
+    }
+  ]
+}

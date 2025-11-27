@@ -1,0 +1,130 @@
+{
+  "model": "tools/mlx_output/mindflow-qwen-1.5b",
+  "scores": {
+    "similarity": 0.7391006542586546,
+    "exact_match_rate": 0.0,
+    "avg_latency_ms": 424.66320991516113
+  },
+  "results": [
+    {
+      "input": "I was writting a lettr to my freind about the meeting",
+      "expected": "I was writing a letter to my friend about the meeting",
+      "actual": "I was writing a letter to my friend about the meeting.",
+      "similarity": 0.9906542056074766,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "Plese send me the docuemnts by tomorow morning",
+      "expected": "Please send me the documents by tomorrow morning",
+      "actual": "Please send me the documents by tomorrow morning.",
+      "similarity": 0.9896907216494846,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "The reserach team discoverd an intresting patern in the data",
+      "expected": "The research team discovered an interesting pattern in the data",
+      "actual": "The research team discovered an interesting pattern in the data.",
+      "similarity": 0.9921259842519685,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "th meetng ws rescheduld to thrsday bcause of the storm",
+      "expected": "the meeting was rescheduled to Thursday because of the storm",
+      "actual": "The meeting was rescheduled to Thursday because of the storm.",
+      "similarity": 0.9917355371900827,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "we nd to discss th prject tmrrw with the client",
+      "expected": "we need to discuss the project tomorrow with the client",
+      "actual": "We need to discuss the project timeline with the client.",
+      "similarity": 0.8828828828828829,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "cn u reviw ths report and snd feedback by friday",
+      "expected": "can you review this report and send feedback by Friday",
+      "actual": "Could you please review this report and provide feedback by Friday?",
+      "similarity": 0.8099173553719008,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "oncee iupon a tiem there ws a prince who wantd to chng the wrld",
+      "expected": "once upon a time there was a prince who wanted to change the world",
+      "actual": "Once upon a time there was a prince who wanted to change the world.",
+      "similarity": 0.9924812030075187,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "th msses wr amzd by th visionary's prfrmance at the confrence",
+      "expected": "the masses were amazed by the visionary's performance at the conference",
+      "actual": "The market capitalization has increased due to the visionary's performance at the conference.",
+      "similarity": 0.7439024390243902,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "plz snd th rprt asap its urgnt we nd it for th mtng",
+      "expected": "please send the report asap it's urgent we need it for the meeting",
+      "actual": "Please send the report as soon as possible as it's urgent and we need it for the meeting.",
+      "similarity": 0.8516129032258064,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "once iualpio a time tbere weas a prince tgbhat wanted to crezt e a new ways to write",
+      "expected": "Once upon a time there was a prince who wanted to create a new way to write",
+      "actual": "Once upon a time there was a prince who wanted to create a new way to write.",
+      "similarity": 0.9933774834437086,
+      "exact_match": false,
+      "difficulty": "fuzzy"
+    },
+    {
+      "input": "the msaasexd has no idea who he wa showever he was a visionsary that create d a nw tool",
+      "expected": "the masses had no idea who he was however he was a visionary that created a new tool",
+      "actual": "The marketing strategy has no idea who he was but he was a visionary that created a new tool.",
+      "similarity": 0.8361581920903954,
+      "exact_match": false,
+      "difficulty": "fuzzy"
+    },
+    {
+      "input": "th algoritm prcsss th dat vry effciently nd prdcs accurt rslts",
+      "expected": "the algorithm processes the data very efficiently and produces accurate results",
+      "actual": "The algorithm processes the data very efficiently and produces accurate results.",
+      "similarity": 0.9937106918238994,
+      "exact_match": false,
+      "difficulty": "fuzzy"
+    },
+    {
+      "input": "frst do ths. thn do tht. fnlly chck evrythng bfore submtng.",
+      "expected": "First do this. Then do that. Finally check everything before submitting.",
+      "actual": "First, do this. Then, do that. Finally, check everything before submitting.",
+      "similarity": 0.9795918367346939,
+      "exact_match": false,
+      "difficulty": "structural"
+    },
+    {
+      "input": "wat do u thnk abt the prposal? cn u hlp me improv it?",
+      "expected": "What do you think about the proposal? Can you help me improve it?",
+      "actual": "What do you think about the proposal and could you help me improve it?",
+      "similarity": 0.9185185185185185,
+      "exact_match": false,
+      "difficulty": "structural"
+    },
+    {
+      "input": "the prjct is almst done. we jst need to finsh testing. then we cn deploy.",
+      "expected": "The project is almost done. We just need to finish testing. Then we can deploy.",
+      "actual": "The project is almost done. We just need to finish testing before we can deploy.",
+      "similarity": 0.9433962264150944,
+      "exact_match": false,
+      "difficulty": "structural"
+    }
+  ]
+}

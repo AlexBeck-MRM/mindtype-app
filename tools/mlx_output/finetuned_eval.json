@@ -1,0 +1,130 @@
+{
+  "model": "tools/mlx_output/fused_fuzzy_v1",
+  "scores": {
+    "similarity": 0.5370332365991151,
+    "exact_match_rate": 0.06666666666666667,
+    "avg_latency_ms": 226.11514727274576
+  },
+  "results": [
+    {
+      "input": "teh quick brown fox jumps",
+      "expected": "the quick brown fox jumps",
+      "actual": "The quick brown fox walked through the ancient forest",
+      "similarity": 0.5641025641025641,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "I was writting a lettr to my freind",
+      "expected": "I was writing a letter to my friend",
+      "actual": "I was writing something to the mobile",
+      "similarity": 0.6388888888888888,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "Plese send me the docuemnts",
+      "expected": "Please send me the documents",
+      "actual": "Please send the documentation",
+      "similarity": 0.8421052631578947,
+      "exact_match": false,
+      "difficulty": "light"
+    },
+    {
+      "input": "th meetng ws rescheduld to thrsday",
+      "expected": "the meeting was rescheduled to Thursday",
+      "actual": "The meeting was rescheduled to next Thursday",
+      "similarity": 0.9397590361445783,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "we nd to discss th prject tmrrw",
+      "expected": "we need to discuss the project tomorrow",
+      "actual": "We need to discuss the next steps",
+      "similarity": 0.75,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "cn u reviw ths by eod",
+      "expected": "can you review this by end of day",
+      "actual": "Can you explain the reasoning behind your decision",
+      "similarity": 0.5542168674698795,
+      "exact_match": false,
+      "difficulty": "medium"
+    },
+    {
+      "input": "oncee iupon a tiem there ws a king",
+      "expected": "once upon a time there was a king",
+      "actual": "Once upon a time there was a king",
+      "similarity": 1.0,
+      "exact_match": true,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "th msses wr amzd by th prfrmance",
+      "expected": "the masses were amazed by the performance",
+      "actual": "The research demonstrates a significant correlation between variables",
+      "similarity": 0.23636363636363636,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "plz snd th rprt asap its urgnt",
+      "expected": "please send the report asap it's urgent",
+      "actual": "Please proceed to save the report by end of day",
+      "similarity": 0.5581395348837209,
+      "exact_match": false,
+      "difficulty": "heavy"
+    },
+    {
+      "input": "iualpio",
+      "expected": "upon",
+      "actual": "What do you think about the proposed changes to the policy",
+      "similarity": 0.12903225806451613,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "msaasexd",
+      "expected": "masses",
+      "actual": "Make sure to save your work before closing the application",
+      "similarity": 0.1875,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "th visionsary creatd a nw ftookl",
+      "expected": "the visionary created a new tool",
+      "actual": "The masses had no idea who he was however",
+      "similarity": 0.3287671232876712,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "wrkds hasnf experiencex bfore",
+      "expected": "world hasn't experienced before",
+      "actual": "The research demonstrates a significant correlation between variables",
+      "similarity": 0.2,
+      "exact_match": false,
+      "difficulty": "extreme"
+    },
+    {
+      "input": "frst do ths. thn do tht. fnlly chck.",
+      "expected": "First do this. Then do that. Finally check.",
+      "actual": "First we need to discuss the proposed changes",
+      "similarity": 0.4772727272727273,
+      "exact_match": false,
+      "difficulty": "structural"
+    },
+    {
+      "input": "wat do u thnk? cn u hlp?",
+      "expected": "What do you think? Can you help?",
+      "actual": "What do you think about that particular topic",
+      "similarity": 0.6493506493506493,
+      "exact_match": false,
+      "difficulty": "structural"
+    }
+  ]
+}

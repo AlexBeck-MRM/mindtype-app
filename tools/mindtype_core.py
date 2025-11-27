@@ -64,9 +64,10 @@ class MindTypeConfig:
     def __post_init__(self):
         if self.model_path is None:
             project_root = Path(__file__).parent.parent
+            # MindFlow Qwen models - prefer larger/newer versions
             for candidate in [
-                project_root / "tools" / "mlx_output" / "fused_v2",
-                project_root / "tools" / "mlx_output" / "fused_1.5b",
+                project_root / "tools" / "mlx_output" / "mindflow-qwen-3b",
+                project_root / "tools" / "mlx_output" / "mindflow-qwen-1.5b",
             ]:
                 if candidate.exists():
                     self.model_path = candidate
