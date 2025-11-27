@@ -290,38 +290,98 @@ apple/MindType/
 
 ---
 
+## Python Demos (MLX)
+
+For rapid prototyping and Apple Silicon optimization, MindType includes Python demos using MLX.
+
+### Demo Scripts
+
+```bash
+# ENTER mode - type, press Enter, see interpretation
+python3 tools/mindtype_mlx.py
+
+# Real-time mode - interpretations happen as you pause
+python3 tools/mindtype_realtime.py
+```
+
+### Core Engine (`tools/mindtype_core.py`)
+
+The Python core implements the fuzzy typing interpreter:
+
+```python
+from tools.mindtype_core import CorrectionEngine, MindTypeConfig
+
+config = MindTypeConfig(
+    min_words=3,           # Minimum words before interpreting
+    length_ratio_max=1.8,  # Output can be up to 1.8x input length
+    length_ratio_min=0.5,  # Output must be at least 0.5x input
+    sentence_tolerance=1,  # Allow ±1 sentence difference
+    enable_self_review=True,  # LLM validates its own output
+    pause_ms=600,          # Pause before auto-correct (realtime)
+)
+
+engine = CorrectionEngine(config)
+engine.load_model()
+
+result = engine.correct("once iualpio a time tbere weas a prince")
+print(result.text)  # "Once upon a time there was a prince"
+```
+
+### Configuration Presets
+
+| Preset | Use Case |
+|--------|----------|
+| `STRICT_CONFIG` | More validation, less hallucination risk |
+| `BALANCED_CONFIG` | Default settings |
+| `LENIENT_CONFIG` | Trust LLM more, faster |
+
+### Validation Strategy
+
+The engine validates interpretations structurally (not lexically):
+
+1. **Reject conversational responses** — "I'm not sure...", "Can you..."
+2. **Check length ratio** — Output must be 0.5x–1.8x input length
+3. **Check sentence count** — Must match within tolerance (±1)
+4. **Check for garbled output** — Rejects if output still looks garbled
+
+**Why no word matching?** With fuzzy typing, input words are garbled (`"msaasexd"`) and don't match output words (`"masses"`). We trust the LLM for word-level interpretation and validate structure only.
+
+---
+
 ## Prompt Engineering
 
-The LM receives ChatML-formatted prompts:
+The LM receives ChatML-formatted prompts for **interpretation** (not correction):
 
 ```xml
 <|im_start|>system
-You are a Typo Correction Expert.
-Fix only obvious typing errors (transpositions, repeated letters, adjacent keys).
+You interpret garbled/fuzzy typing into what the user intended to write.
 
-Rules:
-- Fix transposed letters
-- Fix double letters
-- Fix adjacent key errors
-- Never change meaning or introduce new information.
-- Respond with valid JSON ONLY: {"replacement":"<corrected text>"}
+The user types VERY fast, so:
+- Letters may be transposed (teh → the)
+- Letters may be missing (bcause → because)
+- Keys may be adjacent wrong keys (wprds → words)
+- Words may be run together (onceupon → once upon)
+- Words may be split (cre ate → create)
+- Words may be completely garbled but sound similar
+
+Your job: Figure out what they MEANT to type.
+
+RULES:
+1. Output the interpreted text, nothing else
+2. Keep the same meaning and intent
+3. Keep roughly the same structure (sentence count)
+4. Fix ALL the typing errors
+5. Do NOT add new ideas or change the topic
 <|im_end|>
 <|im_start|>user
-Correct the fragment between <text> tags using the rules above.
-
-Fragment to correct:
-<text>I was writting a lettr</text>
-Context before: ""
-Context after: ""
-
-Output nothing besides the JSON object.
+once iualpio a time tbere weas a prince tgbhat wanted to crezt e
 <|im_end|>
 <|im_start|>assistant
 ```
 
 **Expected response:**
-```json
-{"replacement":"I was writing a letter"}
+```
+Once upon a time there was a prince who wanted to create
 ```
 
 ---
@@ -403,5 +463,5 @@ public enum MindTypeError: Error, Sendable {
 
 *For product vision and design principles, see [CORE.md](CORE.md).*
 
-<!-- DOC META: VERSION=0.9 | UPDATED=2025-11-26 -->
+<!-- DOC META: VERSION=0.9.1 | UPDATED=2025-11-27 -->
 

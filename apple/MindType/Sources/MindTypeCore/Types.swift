@@ -197,6 +197,177 @@ public struct PipelineConfiguration: Sendable {
     }
 }
 
+// MARK: - Marker State (Caret Organism)
+
+/// The state machine for the "Caret Organism" — the intelligent visual marker
+/// that accompanies the cursor and travels through text during corrections.
+public enum MarkerState: Equatable, Sendable {
+    /// No editable field focused — marker invisible
+    case dormant
+    /// Field focused, no typing activity — marker at rest beside caret
+    case idle(position: Int)
+    /// User is typing (burst phase) — marker pulses gently
+    case listening(position: Int)
+    /// Pause detected, preparing correction — marker speeds up
+    case thinking(position: Int)
+    /// Marker traveling through text, unveiling fixes
+    case sweeping(from: Int, to: Int, progress: Double)
+    /// Sweep finished — brief success state before returning to idle
+    case complete(position: Int)
+    /// User disabled with ⌥◀ — marker hidden until blur/refocus
+    case disabled
+    /// Error state — model failed, etc.
+    case error(String)
+    
+    public var position: Int? {
+        switch self {
+        case .dormant, .disabled: return nil
+        case .idle(let pos), .listening(let pos), .thinking(let pos), .complete(let pos): return pos
+        case .sweeping(_, let to, _): return to
+        case .error: return nil
+        }
+    }
+    
+    public var isActive: Bool {
+        switch self {
+        case .dormant, .disabled, .error: return false
+        default: return true
+        }
+    }
+    
+    public var isAnimating: Bool {
+        switch self {
+        case .listening, .thinking, .sweeping: return true
+        default: return false
+        }
+    }
+    
+    /// Braille symbol — middle 2x2 grid (dots 2,3,5,6)
+    /// Grid:  2 5
+    ///        3 6
+    public var brailleSymbol: String {
+        switch self {
+        case .dormant, .disabled: return ""
+        case .idle: return "⠤"      // dots 3,6 — horizontal, stable
+        case .listening: return "⠴" // dots 3,5,6 — growing, active
+        case .thinking: return "⠦"  // dots 2,3,6 — processing
+        case .sweeping: return "⠶"  // dots 2,3,5,6 — full, traveling
+        case .complete: return "⠲"  // dots 2,5,6 — satisfied
+        case .error: return "⠆"     // dots 2,3 — interrupted
+        }
+    }
+    
+    public var accessibilityDescription: String {
+        switch self {
+        case .dormant: return "Correction marker inactive"
+        case .idle: return "Correction marker ready"
+        case .listening: return "Typing detected"
+        case .thinking: return "Preparing corrections"
+        case .sweeping: return "Applying corrections"
+        case .complete: return "Corrections complete"
+        case .disabled: return "Correction marker disabled"
+        case .error(let msg): return "Error: \(msg)"
+        }
+    }
+}
+
+// MARK: - Sweep State
+
+/// Represents an in-progress sweep animation
+public struct SweepState: Sendable, Equatable {
+    public let startPosition: Int
+    public let endPosition: Int
+    public let progress: Double
+    public let corrections: [CorrectionDiff]
+    public let duration: TimeInterval
+    
+    public init(
+        startPosition: Int,
+        endPosition: Int,
+        progress: Double = 0.0,
+        corrections: [CorrectionDiff] = [],
+        duration: TimeInterval = 0.3
+    ) {
+        self.startPosition = startPosition
+        self.endPosition = endPosition
+        self.progress = max(0.0, min(1.0, progress))
+        self.corrections = corrections
+        self.duration = duration
+    }
+    
+    public var currentPosition: Int {
+        let range = Double(endPosition - startPosition)
+        return startPosition + Int(range * progress)
+    }
+    
+    public func shouldUnveilCorrection(at index: Int) -> Bool {
+        guard index < corrections.count else { return false }
+        let correction = corrections[index]
+        return currentPosition >= correction.end
+    }
+}
+
+// MARK: - Typing Rhythm
+
+/// Represents the burst-pause-correct typing rhythm
+public enum TypingRhythm: Equatable, Sendable {
+    case idle
+    case bursting(since: Date)
+    case paused(since: Date)
+    case correcting
+    
+    public var isBursting: Bool {
+        if case .bursting = self { return true }
+        return false
+    }
+    
+    public var isPaused: Bool {
+        if case .paused = self { return true }
+        return false
+    }
+}
+
+// MARK: - Device Tier
+
+/// Hardware capability tier for adaptive processing
+public enum DeviceTier: String, Sendable, CaseIterable {
+    case high
+    case balanced
+    case graceful
+    
+    public var tokenWindow: Int {
+        switch self {
+        case .high: return 48
+        case .balanced: return 24
+        case .graceful: return 16
+        }
+    }
+    
+    public var targetLatencyMs: Int {
+        switch self {
+        case .high: return 15
+        case .balanced: return 25
+        case .graceful: return 30
+        }
+    }
+    
+    public var markerFPS: Int {
+        switch self {
+        case .high: return 60
+        case .balanced: return 30
+        case .graceful: return 15
+        }
+    }
+    
+    public var sweepDuration: TimeInterval {
+        switch self {
+        case .high: return 0.25
+        case .balanced: return 0.35
+        case .graceful: return 0.5
+        }
+    }
+}
+
 // MARK: - Errors
 
 /// Errors that can occur in the MindType pipeline
@@ -207,6 +378,9 @@ public enum MindTypeError: Error, LocalizedError {
     case caretUnsafe
     case regionEmpty
     case invalidState(String)
+    case accessibilityNotGranted
+    case secureFieldDetected
+    case imeActive
     
     public var errorDescription: String? {
         switch self {
@@ -222,6 +396,12 @@ public enum MindTypeError: Error, LocalizedError {
             return "Active region is empty"
         case .invalidState(let reason):
             return "Invalid pipeline state: \(reason)"
+        case .accessibilityNotGranted:
+            return "Accessibility permissions not granted"
+        case .secureFieldDetected:
+            return "Cannot process secure text fields"
+        case .imeActive:
+            return "Cannot process during IME composition"
         }
     }
 }

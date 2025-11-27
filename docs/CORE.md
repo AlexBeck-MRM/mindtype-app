@@ -15,7 +15,29 @@
 
 ## Mission
 
-Mind⠶Type amplifies human capability by removing the cognitive overhead of mechanical accuracy. Users operate at the speed of thought, trusting the system to handle translation between rapid intent and polished communication.
+Mind⠶Type amplifies human capability by removing the cognitive overhead of mechanical accuracy. Users operate at the speed of thought, trusting the system to **interpret their intent**—even when individual words are completely garbled.
+
+## Philosophy: Interpretation, Not Correction
+
+Mind⠶Type is **fundamentally different from autocorrect**:
+
+| Autocorrect | Mind⠶Type |
+|-------------|-----------|
+| Dictionary lookup per word | LLM interprets full context |
+| Fails on unknown patterns | Handles completely garbled text |
+| "teh" → "the" | "iualpio" → "upon" |
+| Rejects what it doesn't recognize | Reasons about what you meant |
+
+**The key insight:** When typing at velocity, words become unrecognizable. `"msaasexd"` doesn't look like "masses"—but in context, that's clearly what was meant. Mind⠶Type uses the surrounding text to decode intent.
+
+### Example
+
+```
+Input:  "the msaasexd has no idea who he wa showever he was a visionsary"
+Output: "The masses had no idea who he was, however he was a visionary"
+```
+
+The model doesn't match `"msaasexd"` to a dictionary. It interprets: *"Given 'he was a visionary' and 'no idea who he was', what noun makes sense here?"*
 
 ---
 
@@ -84,10 +106,12 @@ These scenarios define **who** Mind⠶Type serves and **what** success looks lik
 |-----------|-------|
 | **Profile** | Former stenographer, 225 WPM on stenotype |
 | **Challenge** | Standard keyboard limits speed to ~100 WPM |
-| **Solution** | **Velocity Mode** — phonetic shorthand understanding |
-| **Success** | "Th defdnt clamd" → "The defendant claimed" at 180+ WPM |
+| **Solution** | **Velocity Mode** — LLM interprets completely garbled input |
+| **Success** | `"msaasexd"` → "masses", `"iualpio"` → "upon" at 180+ WPM |
 
-**Key requirements:** Sub-15ms latency, complete trust interface.
+**Key requirements:** Full fuzzy interpretation, context-aware decoding, complete trust interface.
+
+**How it works:** At extreme typing speeds, words become unrecognizable. Mind⠶Type doesn't try to match them—it interprets what you meant from the surrounding context. `"ftookl"` becomes "tool" because you're writing about someone who "created a new [something]."
 
 ### Scenario 7: Data Whisperer — Priya
 
@@ -151,38 +175,53 @@ These principles are **invariants**. Violating them is a bug, not a tradeoff.
 
 ---
 
-## The Three-Stage Pipeline
+## The Interpretation Pipeline
 
-Each correction wave processes text through three sequential stages:
+Mind⠶Type interprets text in waves, each applying progressive refinement:
 
-| Stage | Purpose | Speed | Examples |
-|-------|---------|-------|----------|
-| **Noise** | Mechanical typo fixes | Fast | teh→the, hte→the, writting→writing |
-| **Context** | Grammar & coherence | Medium | Subject-verb agreement, articles |
-| **Tone** | Style adjustment | Slow | Optional: Casual ↔ Professional |
+| Stage | Purpose | What it Does |
+|-------|---------|--------------|
+| **Interpret** | Decode garbled text | `"tbere weas"` → "there was" |
+| **Structure** | Fix grammar & flow | Subject-verb agreement, articles |
+| **Tone** | Adjust style (optional) | Casual ↔ Professional |
 
-### Processing Flow
+### How Interpretation Works
+
+Unlike autocorrect, Mind⠶Type doesn't match individual words—it interprets the whole sentence:
 
 ```
-Input: "I was writting a lettr to my freind becuase I beleive"
-                                          ↑ caret here
+Input: "once iualpio a time tbere weas a prince tgbhat wanted to crezt e"
+                                                                    ↑ caret
 
 ┌─────────────────────────────────────────────────────────────────┐
-│ Stage 1: NOISE                                                  │
-│ ├─ "writting" → "writing"                                       │
-│ ├─ "lettr" → "letter"                                           │
-│ ├─ "freind" → "friend"                                          │
-│ └─ "beleive" → "believe"                                        │
+│ 1. INTERPRET (whole-context LLM)                                │
+│    The model reads the full text and asks:                      │
+│    "What did this person intend to type?"                       │
+│                                                                 │
+│    Context clues: "a time", "prince", "wanted" → fairy tale     │
+│    ├─ "iualpio" → "upon" (phonetic + context)                   │
+│    ├─ "tbere weas" → "there was" (adjacent keys)                │
+│    ├─ "tgbhat" → "who" (contextual guess)                       │
+│    └─ "crezt e" → "create" (split word repair)                  │
 ├─────────────────────────────────────────────────────────────────┤
-│ Stage 2: CONTEXT                                                │
-│ └─ Grammar intact, no changes                                   │
+│ 2. VALIDATE (structural checks)                                 │
+│    ├─ Same sentence count? ✓                                    │
+│    ├─ Similar length (0.5x–1.8x)? ✓                             │
+│    └─ Not conversational response? ✓                            │
 ├─────────────────────────────────────────────────────────────────┤
-│ Stage 3: TONE (if enabled)                                      │
-│ └─ Style adjustment if toneTarget != none                       │
+│ 3. SELF-REVIEW (optional)                                       │
+│    LLM asks itself: "Is this interpretation reasonable?"        │
 └─────────────────────────────────────────────────────────────────┘
 
-Output: "I was writing a letter to my friend because I believe"
+Output: "Once upon a time there was a prince who wanted to create"
 ```
+
+### Why This Works
+
+1. **Context provides signal** — Even completely garbled words have semantic context
+2. **LLMs reason, not match** — The model uses linguistic patterns, not dictionary lookup
+3. **Structure is preserved** — Even with heavy interpretation, sentence count stays the same
+4. **Trust, but verify** — Structural validation catches hallucinations
 
 ---
 
@@ -218,7 +257,7 @@ See [IMPLEMENTATION.md](IMPLEMENTATION.md) for technical details and [adr/0009-s
 
 ---
 
-*Mind⠶Type doesn't just correct typing—it unlocks human potential at the intersection of thought and text.*
+*Mind⠶Type doesn't correct typing—it interprets intent. Type at the speed of thought.*
 
-<!-- DOC META: VERSION=2.0 | UPDATED=2025-11-26 -->
+<!-- DOC META: VERSION=2.1 | UPDATED=2025-11-27 -->
 

@@ -6,20 +6,69 @@
 
 ## What is Mind⠶Type?
 
-Mind⠶Type is a **caret-safe text correction system** that improves your typing in real-time using on-device language models. All processing happens locally—no data ever leaves your device.
+Mind⠶Type is a **fuzzy typing interpreter** that understands what you *meant* to type, not just what you typed. Unlike autocorrect, which fixes individual words, Mind⠶Type interprets your **intent** from the full context—even when your typing is completely garbled.
 
-| Stage | Purpose | Examples |
-|-------|---------|----------|
-| **Noise** | Fix typos | teh → the, becuase → because |
-| **Context** | Improve grammar | "Me and him went" → "He and I went" |
-| **Tone** | Adjust style | casual ↔ professional |
+| What it does | Example |
+|--------------|---------|
+| **Interprets garbled words** | `iualpio` → "upon" |
+| **Decodes velocity typing** | `msaasexd` → "masses" |
+| **Understands run-togethers** | `crezt e` → "create" |
+| **Preserves meaning** | Your intent, not your keystrokes |
+
+### This is NOT Autocorrect
+
+| Autocorrect | Mind⠶Type |
+|-------------|-----------|
+| Matches words in dictionary | Interprets intent from context |
+| Fails on unknown words | Decodes any garbled input |
+| Per-word corrections | Whole-sentence understanding |
+| "Did you mean...?" | Just knows |
 
 ### Core Principles
 
 - 🔒 **Private** — 100% on-device processing, no cloud
-- ⚡ **Fast** — Metal-accelerated inference on Apple Silicon (~1-2s latency)
+- ⚡ **Fast** — Metal-accelerated inference on Apple Silicon
 - 🎯 **Caret-safe** — Never modifies text at or after your cursor
-- 🧠 **Intelligent** — Real LLM intent interpretation via Qwen 1.5B
+- 🧠 **Intelligent** — LLM-powered intent interpretation via MLX/Qwen
+
+---
+
+## Fuzzy Typing in Action
+
+Type at the speed of thought. Mind⠶Type figures out what you meant.
+
+**Input (garbled):**
+```
+once iualpio a time tbere weas a prince tgbhat wanted to crezt e a new 
+ways to write. the msaasexd has no idea who he wa showever he was a 
+visionsary that create d a new ftookl atht the workds hasnf experiencex before.
+```
+
+**Output (interpreted):**
+```
+Once upon a time there was a prince who wanted to create a new way to 
+write. The masses had no idea who he was, however he was a visionary 
+that created a new tool that the world hadn't experienced before.
+```
+
+### How it Works
+
+Mind⠶Type uses a fine-tuned language model to **interpret** rather than **correct**:
+
+1. **Word-level interpretation** — `iualpio` becomes "upon" through phonetic and contextual reasoning
+2. **Structure preservation** — Same number of sentences, same overall meaning
+3. **Self-review** — The model validates its interpretations make sense
+4. **Structural guards** — Output must match input structure (length, sentences)
+
+### Try the Demo
+
+```bash
+# ENTER mode - type, press Enter, see interpretation
+python3 tools/mindtype_mlx.py
+
+# Real-time mode - interpretations happen as you type
+python3 tools/mindtype_realtime.py
+```
 
 ---
 

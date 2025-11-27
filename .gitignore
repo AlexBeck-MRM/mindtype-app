@@ -50,3 +50,5 @@ tools/mlx_output/fused_v2/
 # MLX adapter weights (large binary files)
 tools/mlx_output/**/*.safetensors
 
+*.pyc
+__pycache__/
